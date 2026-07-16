@@ -73,4 +73,10 @@ def sidebar_nav() -> None:
         st.page_link("pages/4_莊子AI.py", label="莊子 AI", icon="🤖")
         st.page_link("pages/5_地圖與百科.py", label="地圖／百科", icon="🗺️")
         st.divider()
+        st.markdown("**下載 PDF**（Next 網站）")
+        st.markdown(
+            "- [本機下載頁](http://localhost:3000/download/)\n"
+            "- [GitHub Pages](https://show0621.github.io/zhuangzi-atlas/download/)"
+        )
+        st.divider()
         st.caption("內容來源：content/　版本 V0.2")

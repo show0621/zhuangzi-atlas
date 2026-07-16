@@ -36,8 +36,14 @@ const FILES = [
   },
 ] as const;
 
+const PAGES_DOWNLOAD =
+  "https://show0621.github.io/zhuangzi-atlas/download/";
+const STREAMLIT_HINT =
+  "若你目前在 Streamlit 手機版閱讀，PDF 下載請改到本頁（Next 網站）。";
+
 export default function DownloadPage() {
   const pdfHref = assetPath(`/downloads/${PDF_PRIMARY.name}`);
+  const pdfAliasHref = assetPath(`/downloads/${FILES[0].name}`);
 
   return (
     <div className="space-y-10">
@@ -49,17 +55,56 @@ export default function DownloadPage() {
         </p>
       </header>
 
-      <section className="rounded-2xl border border-accent/30 bg-accent/5 px-6 py-7 space-y-4">
-        <h2 className="font-serif text-xl text-ink">{PDF_PRIMARY.label}</h2>
-        <p className="text-sm text-muted leading-relaxed max-w-xl">{PDF_PRIMARY.desc}</p>
-        <a
-          href={pdfHref}
-          download={PDF_PRIMARY.name}
-          className="inline-flex items-center justify-center rounded-full bg-accent px-8 py-3.5 text-base font-medium text-white shadow-sm transition hover:opacity-92 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        >
-          下載完整書 PDF
-        </a>
-        <p className="text-xs text-muted font-mono break-all">{PDF_PRIMARY.name}</p>
+      <section className="rounded-2xl border-2 border-accent bg-accent/8 px-6 py-8 space-y-5 shadow-[0_12px_36px_rgba(61,92,79,0.12)]">
+        <p className="text-xs tracking-[0.18em] text-accent font-medium">
+          主要下載
+        </p>
+        <h2 className="font-serif text-2xl sm:text-3xl text-ink">
+          {PDF_PRIMARY.label}
+        </h2>
+        <p className="text-sm sm:text-base text-muted leading-relaxed max-w-xl">
+          {PDF_PRIMARY.desc}
+        </p>
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <a
+            href={pdfHref}
+            download={PDF_PRIMARY.name}
+            className="inline-flex items-center justify-center rounded-full bg-accent px-10 py-4 text-lg font-medium text-white shadow-md transition hover:opacity-92 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          >
+            下載完整書 PDF
+          </a>
+          <a
+            href={pdfAliasHref}
+            download={FILES[0].name}
+            className="inline-flex items-center justify-center rounded-full border border-accent/40 bg-white/60 px-6 py-3 text-sm font-medium text-accent transition hover:bg-white"
+          >
+            中文檔名版
+          </a>
+        </div>
+        <p className="text-xs text-muted font-mono break-all">{pdfHref}</p>
+      </section>
+
+      <section className="rounded-2xl border border-line/70 bg-white/35 px-5 py-5 space-y-2 text-sm leading-relaxed">
+        <h2 className="font-serif text-xl text-ink/90">如何使用這本書</h2>
+        <p className="text-ink/85">
+          見書中<strong className="text-ink">緒論／導論</strong>
+          〈導論：如何閱讀《莊子》〉——已說明三層聲音（原典／注家／現代詮釋）、寓言讀法與內外雜篇路線。印刷 PDF
+          將導論編為緒論，置於目錄之前；網站亦可讀
+          <Link href="/chapters/導論/" className="text-accent hover:underline mx-1">
+            〈導論〉全文
+          </Link>
+          。此處不重複長文。
+        </p>
+        <p className="text-muted text-xs">{STREAMLIT_HINT}</p>
+        <p className="text-muted text-xs">
+          線上固定網址：
+          <a
+            href={PAGES_DOWNLOAD}
+            className="text-accent hover:underline ml-1 break-all"
+          >
+            {PAGES_DOWNLOAD}
+          </a>
+        </p>
       </section>
 
       <section className="space-y-3">

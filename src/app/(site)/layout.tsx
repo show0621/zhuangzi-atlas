@@ -35,7 +35,11 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="hover:text-accent transition-colors"
+                  className={
+                    item.href === "/download/"
+                      ? "rounded-full bg-accent/90 px-3 py-1 text-white hover:opacity-90 transition"
+                      : "hover:text-accent transition-colors"
+                  }
                 >
                   {item.label}
                 </Link>

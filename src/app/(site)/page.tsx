@@ -63,6 +63,12 @@ export default function HomePage() {
             </div>
             <div className="flex flex-wrap gap-3 pt-1">
               <Link
+                href="/download/"
+                className="rounded-full bg-accent px-6 py-3 text-sm font-medium text-white shadow-[0_10px_28px_rgba(61,92,79,0.22)] transition hover:opacity-90"
+              >
+                下載完整書 PDF
+              </Link>
+              <Link
                 href="/immersive/"
                 className="rounded-full border border-line/80 bg-white/35 px-5 py-3 text-sm text-muted hover:text-ink transition"
               >
@@ -73,12 +79,6 @@ export default function HomePage() {
                 className="rounded-full border border-line/80 bg-white/35 px-5 py-3 text-sm text-muted hover:text-ink transition"
               >
                 全書目錄
-              </Link>
-              <Link
-                href="/download/"
-                className="rounded-full border border-line/80 bg-white/35 px-5 py-3 text-sm text-muted hover:text-ink transition"
-              >
-                下載印刷版
               </Link>
             </div>
           </div>
@@ -151,7 +151,7 @@ export default function HomePage() {
             ["/themes/", "主題閱讀", "焦慮、死亡、工作…"],
             ["/ai/", "莊子 AI", "檢索本庫內容並附上來源"],
             ["/search/", "搜尋", "全文檢索"],
-            ["/download/", "下載印刷版", "HTML／Markdown 成冊稿，影印裝訂"],
+            ["/download/", "下載完整書 PDF", "A4 印刷版全書，可直接帶到影印店"],
           ].map(([href, title, desc]) => (
             <Link
               key={href}

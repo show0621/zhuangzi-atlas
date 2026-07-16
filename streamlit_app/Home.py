@@ -26,13 +26,38 @@ st.markdown(
 """
 )
 
-NEXT_IMMERSIVE = "http://localhost:3000/immersive/逍遙遊/"
+NEXT_BASE = "http://localhost:3000"
+PAGES_BASE = "https://show0621.github.io/zhuangzi-atlas"
+NEXT_IMMERSIVE = f"{NEXT_BASE}/immersive/逍遙遊/"
 MODE_LINKS = [
     ("純文字", "text"),
     ("沉浸", "immersive"),
     ("繪圖", "pict"),
     ("播客", "podcast"),
 ]
+
+st.subheader("下載完整書 PDF")
+st.caption(
+    "Streamlit 版不含檔案下載。請開啟 Next 網站下載頁（本機需 `npm run dev`，或用 GitHub Pages）。"
+)
+dl1, dl2 = st.columns(2)
+with dl1:
+    st.link_button(
+        "本機：下載印刷版",
+        f"{NEXT_BASE}/download/",
+        use_container_width=True,
+        type="primary",
+    )
+with dl2:
+    st.link_button(
+        "線上：GitHub Pages",
+        f"{PAGES_BASE}/download/",
+        use_container_width=True,
+    )
+st.markdown(
+    f"[直接 PDF（線上）]({PAGES_BASE}/downloads/zhuangzi-atlas-print.pdf) · "
+    f"[中文檔名]({PAGES_BASE}/downloads/莊子全解-印刷版.pdf)"
+)
 
 st.subheader("山上讀書（Next 四版一鍵）")
 st.caption("需先在本機執行 `npm run dev`。點擊即開啟對應版本（`?mode=`）。")
@@ -45,7 +70,7 @@ for col, (label, mode) in zip(mode_cols, MODE_LINKS):
             use_container_width=True,
             type="primary" if mode == "immersive" else "secondary",
         )
-st.markdown(f"[山上總覽 →](http://localhost:3000/immersive/)")
+st.markdown(f"[山上總覽 →]({NEXT_BASE}/immersive/)")
 
 chapters = load_chapter_index()
 drafts = [c for c in chapters if c.get("status") in {"draft", "review", "published"}]
