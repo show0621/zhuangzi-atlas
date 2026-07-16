@@ -174,33 +174,35 @@ async function main() {
   const wordHtml = toWordHtml(extractArticleBody(raw));
 
   // html-to-docx 為 CJS；動態 import 取其 default
-  const mod = await import("html-to-docx");
-  const HTMLtoDOCX = (mod as { default: typeof mod }).default ?? mod;
+  const mod = (await import("html-to-docx")) as unknown as {
+    default?: typeof import("html-to-docx").default;
+  };
+  const HTMLtoDOCX = mod.default ?? (mod as unknown as typeof import("html-to-docx").default);
 
-  const buffer = await (HTMLtoDOCX as (html: string, header: string | null, opts: object) => Promise<Buffer>)(
-    wordHtml,
-    null,
-    {
-      orientation: "portrait",
-      pageSize: { width: A4_WIDTH, height: A4_HEIGHT },
-      margins: {
-        top: 1134, // ~20mm
-        right: 907, // ~16mm
-        bottom: 1134,
-        left: 1474, // ~26mm 裝訂邊
-      },
-      title: SITE.title,
-      subject: `${SITE.subtitle}｜${SITE.title} -人生玩家`,
-      creator: SITE.author,
-      lastModifiedBy: SITE.author,
-      description: `${SITE.title}（${SITE.englishTitle}）印刷成冊稿 Word 版`,
-      keywords: [SITE.title, "莊子", "人生玩家", SITE.author],
-      font: "Microsoft JhengHei",
-      fontSize: 22, // 11pt
-      lang: "zh-TW",
-      decodeUnicode: true,
+  const bufferOrBlob = await HTMLtoDOCX(wordHtml, null, {
+    orientation: "portrait",
+    pageSize: { width: A4_WIDTH, height: A4_HEIGHT },
+    margins: {
+      top: 1134, // ~20mm
+      right: 907, // ~16mm
+      bottom: 1134,
+      left: 1474, // ~26mm 裝訂邊
     },
-  );
+    title: SITE.title,
+    subject: `${SITE.subtitle}｜${SITE.title} -人生玩家`,
+    creator: SITE.author,
+    lastModifiedBy: SITE.author,
+    description: `${SITE.title}（${SITE.englishTitle}）印刷成冊稿 Word 版`,
+    keywords: [SITE.title, "莊子", "人生玩家", SITE.author],
+    font: "Microsoft JhengHei",
+    fontSize: 22, // 11pt
+    lang: "zh-TW",
+    decodeUnicode: true,
+  });
+
+  const buffer = Buffer.isBuffer(bufferOrBlob)
+    ? bufferOrBlob
+    : Buffer.from(await (bufferOrBlob as Blob).arrayBuffer());
 
   fs.mkdirSync(OUT_DIR, { recursive: true });
   fs.mkdirSync(PUBLIC_DIR, { recursive: true });
