@@ -1,0 +1,102 @@
+.immersive-root {
+  --ink-soft: #24302b;
+  --mist: #eef5f2;
+  --jade: #3d5c4f;
+  color: var(--ink-soft);
+}
+
+.immersive-glass {
+  background: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.48) 0%,
+    rgba(240, 248, 245, 0.28) 45%,
+    rgba(220, 235, 230, 0.22) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow:
+    0 10px 40px rgba(60, 90, 80, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(18px) saturate(1.15);
+  -webkit-backdrop-filter: blur(18px) saturate(1.15);
+}
+
+.immersive-prose {
+  line-height: 1.9;
+  font-size: 1.05rem;
+}
+
+.immersive-prose h1,
+.immersive-prose h2,
+.immersive-prose h3 {
+  font-family: var(--font-serif-loaded), "Noto Serif TC", serif;
+  letter-spacing: 0.03em;
+}
+
+.immersive-prose p {
+  margin: 0.95rem 0;
+}
+
+.immersive-prose blockquote {
+  border-left: 2px solid rgba(61, 92, 79, 0.45);
+  margin: 1.2rem 0;
+  padding-left: 1rem;
+  color: rgba(45, 60, 55, 0.85);
+  font-family: var(--font-serif-loaded), "Noto Serif TC", serif;
+}
+
+.immersive-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+  margin: 1rem 0;
+}
+
+.immersive-prose th,
+.immersive-prose td {
+  border: 1px solid rgba(120, 150, 140, 0.35);
+  padding: 0.45rem 0.55rem;
+}
+
+.immersive-prose pre {
+  background: rgba(35, 50, 45, 0.88);
+  color: #e8f2ee;
+  padding: 0.9rem;
+  border-radius: 0.85rem;
+  overflow-x: auto;
+  font-size: 0.85rem;
+}
+
+/* 光球掠過：文字被點亮 */
+.immersive-cursor-on,
+.immersive-cursor-on * {
+  cursor: none !important;
+}
+
+.immersive-prose p,
+.immersive-prose li,
+.immersive-prose blockquote,
+.immersive-prose h2,
+.immersive-prose h3 {
+  transition:
+    text-shadow 0.35s ease,
+    color 0.35s ease,
+    transform 0.35s ease;
+}
+
+.immersive-cursor-on .immersive-prose p:hover,
+.immersive-cursor-on .immersive-prose li:hover,
+.immersive-cursor-on .immersive-prose blockquote:hover {
+  color: #1a2822;
+  text-shadow:
+    0 0 12px rgba(220, 245, 235, 0.95),
+    0 0 28px rgba(170, 210, 195, 0.55);
+  transform: translateY(-1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .immersive-prose p,
+  .immersive-prose li,
+  .immersive-prose blockquote {
+    transition: none;
+  }
+}

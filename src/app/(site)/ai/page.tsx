@@ -1,7 +1,7 @@
 import { AiClient } from "@/components/AiClient";
 import type { RagChunk } from "@/lib/rag";
-import ragIndex from "../../../content/indexes/rag-chunks.json";
-import themeMap from "../../../content/indexes/theme-map.json";
+import ragIndex from "../../../../content/indexes/rag-chunks.json";
+import themeMap from "../../../../content/indexes/theme-map.json";
 
 export const metadata = {
   title: "莊子 AI",

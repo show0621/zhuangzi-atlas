@@ -13,7 +13,18 @@
 - 電子書合併、靜態 RAG、本機 Ollama 接口
 - GitHub Actions → GitHub Pages
 
-## Streamlit 手機版（建議日常閱讀）
+## 山上沉浸閱讀（微風・清水・玻璃書頁）
+
+打開：
+
+```bash
+npm run dev
+```
+
+前往 [http://localhost:3000/immersive/](http://localhost:3000/immersive/)
+
+特色：霧面玻璃書頁、微風粒子、可開關風聲、節與節淡入淡出、光球游標點亮文字。
+
 
 內容與 Next 網站共用 `content/`。Streamlit 較適合手機瀏覽與本機互動。
 

@@ -25,10 +25,16 @@ export default function HomePage() {
           </p>
           <div className="flex flex-wrap gap-3 pt-2">
             <Link
-              href="/chapters/逍遙遊/"
+              href="/immersive/"
               className="rounded-md bg-accent px-5 py-2.5 text-sm text-white hover:opacity-90 transition"
             >
-              開始閱讀〈逍遙遊〉
+              山上讀書（沉浸式）
+            </Link>
+            <Link
+              href="/chapters/逍遙遊/"
+              className="rounded-md border border-line bg-paper/70 px-5 py-2.5 text-sm hover:border-accent transition"
+            >
+              普通閱讀〈逍遙遊〉
             </Link>
             <Link
               href="/toc/"
@@ -46,7 +52,7 @@ export default function HomePage() {
               href="/ai/"
               className="rounded-md border border-line bg-paper/70 px-5 py-2.5 text-sm hover:border-accent transition"
             >
-              莊子 AI：從本庫提問
+              莊子 AI
             </Link>
           </div>
         </div>
