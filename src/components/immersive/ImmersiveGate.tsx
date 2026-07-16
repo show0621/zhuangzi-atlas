@@ -59,8 +59,31 @@ export function ImmersiveGate({ chapters }: { chapters: ChapterOption[] }) {
         </h1>
 
         <p className="mx-auto mt-6 max-w-xl text-center text-base leading-relaxed text-[#3d4f48]/90 sm:text-lg">
-          三種版本可切換：純文字、沉浸、繪圖。一男一女對答導讀，分單元說故事再講意思——像坐在樹下聽播客。
+          四種版本一鍵切換：純文字、沉浸、繪圖、播客。頁內即可換版，重整後仍記住你的選擇。
         </p>
+
+        <div className="mx-auto mt-6 flex w-full max-w-lg flex-wrap justify-center gap-2">
+          {(
+            [
+              ["text", "純文字"],
+              ["immersive", "沉浸"],
+              ["pict", "繪圖"],
+              ["podcast", "播客"],
+            ] as const
+          ).map(([mode, label]) => (
+            <Link
+              key={mode}
+              href={`/immersive/逍遙遊/?mode=${mode}`}
+              className={`rounded-full px-4 py-2 text-sm transition ${
+                mode === "immersive"
+                  ? "bg-[#3d5c4f] text-[#f3faf7] hover:opacity-90"
+                  : "border border-white/35 bg-white/25 text-[#2a332e] backdrop-blur-md hover:bg-white/40"
+              }`}
+            >
+              {label}
+            </Link>
+          ))}
+        </div>
 
         <div className="mx-auto mt-8 grid w-full max-w-lg grid-cols-2 gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -83,7 +106,7 @@ export function ImmersiveGate({ chapters }: { chapters: ChapterOption[] }) {
             {featured.map((c) => (
               <Link
                 key={c.slug}
-                href={`/immersive/${c.slug}/`}
+                href={`/immersive/${c.slug}/?mode=immersive`}
                 className="group rounded-2xl border border-white/25 bg-white/20 px-4 py-4 backdrop-blur-md transition hover:bg-white/40 hover:shadow-[0_0_30px_rgba(190,220,210,0.35)]"
               >
                 <span className="text-xs text-[#5a6e66]">{c.part}</span>
@@ -96,7 +119,7 @@ export function ImmersiveGate({ chapters }: { chapters: ChapterOption[] }) {
 
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              href="/immersive/逍遙遊/"
+              href="/immersive/逍遙遊/?mode=immersive"
               className="rounded-full bg-[#3d5c4f] px-5 py-2.5 text-sm text-[#f3faf7] hover:opacity-90 transition"
             >
               從〈逍遙遊〉開始

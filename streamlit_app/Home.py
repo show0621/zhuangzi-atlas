@@ -23,10 +23,29 @@ st.markdown(
 **全書 34 篇架構正文已齊（draft）**：導論 + 內／外／雜篇皆依 17 節出版格式寫完。
 
 手機請點左上角 **≡** 切換目錄、閱讀、搜尋、莊子 AI、地圖／百科。
-
-若想體驗「山上・樹下・微風・清水玻璃書頁」的沉浸閱讀，請開啟 Next 網站的 `/immersive/`（需 `npm run dev`）。
 """
 )
+
+NEXT_IMMERSIVE = "http://localhost:3000/immersive/逍遙遊/"
+MODE_LINKS = [
+    ("純文字", "text"),
+    ("沉浸", "immersive"),
+    ("繪圖", "pict"),
+    ("播客", "podcast"),
+]
+
+st.subheader("山上讀書（Next 四版一鍵）")
+st.caption("需先在本機執行 `npm run dev`。點擊即開啟對應版本（`?mode=`）。")
+mode_cols = st.columns(4)
+for col, (label, mode) in zip(mode_cols, MODE_LINKS):
+    with col:
+        st.link_button(
+            label,
+            f"{NEXT_IMMERSIVE}?mode={mode}",
+            use_container_width=True,
+            type="primary" if mode == "immersive" else "secondary",
+        )
+st.markdown(f"[山上總覽 →](http://localhost:3000/immersive/)")
 
 chapters = load_chapter_index()
 drafts = [c for c in chapters if c.get("status") in {"draft", "review", "published"}]

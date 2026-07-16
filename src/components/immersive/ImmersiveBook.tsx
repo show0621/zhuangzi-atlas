@@ -5,14 +5,21 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import gsap from "gsap";
+import {
+  immersiveChapterHref,
+  VIEW_MODE_LABELS,
+  VIEW_MODE_SUBTITLES,
+  VIEW_MODES,
+  type ViewMode,
+} from "@/lib/immersiveMode";
 import { getPodcastShow } from "@/lib/podcastScript";
 import { AmbientWind } from "./AmbientWind";
 import { NarrationPlayer } from "./NarrationPlayer";
 import { PictureBookMode } from "./PictureBookMode";
 
+export type { ViewMode };
+
 type ChapterOption = { slug: string; title: string; part: string };
-/** 純文字 | 沉浸（山風玻璃）| 繪圖（lo-fi 繪本） */
-export type ViewMode = "text" | "immersive" | "pict";
 
 export function ImmersiveBook({
   slug,
@@ -65,7 +72,7 @@ export function ImmersiveBook({
 
   useEffect(() => {
     const el = panelRef.current;
-    if (!el || mode === "pict") return;
+    if (!el || mode === "pict" || mode === "podcast") return;
     gsap.fromTo(
       el,
       { opacity: 0, y: 18, filter: "blur(8px)" },
@@ -89,56 +96,50 @@ export function ImmersiveBook({
     });
   }
 
-  const modeLabel =
-    mode === "pict"
-      ? "時光靜好・繪圖版"
-      : mode === "immersive"
-        ? "山上微風・沉浸版"
-        : "清水卷・純文字版";
-
-  const modes: { id: ViewMode; label: string }[] = [
-    { id: "text", label: "純文字" },
-    { id: "immersive", label: "沉浸" },
-    { id: "pict", label: "繪圖" },
-  ];
+  const modeLabel = VIEW_MODE_SUBTITLES[mode];
+  const showAmbient = mode === "immersive" || mode === "text" || mode === "podcast";
 
   return (
     <div className="relative z-[2] mx-auto flex min-h-screen max-w-3xl flex-col px-4 pb-16 pt-6 sm:px-6">
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <Link
-          href="/immersive/"
-          className="text-sm text-[#2a332e]/75 transition hover:text-[#2a332e]"
-        >
-          ← 回山上
-        </Link>
-        <div className="flex flex-wrap items-center gap-2">
+      <div className="sticky top-3 z-30 mb-5">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/35 bg-white/45 px-3 py-2.5 shadow-[0_10px_30px_rgba(60,90,80,0.1)] backdrop-blur-md sm:px-4">
+          <Link
+            href="/immersive/"
+            className="text-sm text-[#2a332e]/75 transition hover:text-[#2a332e]"
+          >
+            ← 回山上
+          </Link>
           <div
-            className="flex items-center gap-0.5 rounded-full border border-white/30 bg-white/20 p-0.5 text-xs backdrop-blur-md"
+            className="flex flex-1 flex-wrap items-center justify-center gap-0.5 sm:justify-end"
             role="tablist"
             aria-label="閱讀版本"
           >
-            {modes.map((m) => (
+            {VIEW_MODES.map((id) => (
               <button
-                key={m.id}
+                key={id}
                 type="button"
                 role="tab"
-                aria-selected={mode === m.id}
-                onClick={() => onModeChange(m.id)}
-                className={`rounded-full px-3 py-1.5 transition ${
-                  mode === m.id ? "bg-[#3d5c4f] text-[#f3faf7]" : "text-[#2a332e]/80"
+                aria-selected={mode === id}
+                onClick={() => onModeChange(id)}
+                className={`rounded-full px-3 py-2 text-xs font-medium transition sm:text-sm ${
+                  mode === id
+                    ? "bg-[#3d5c4f] text-[#f3faf7] shadow-[0_4px_14px_rgba(61,92,79,0.28)]"
+                    : "text-[#2a332e]/80 hover:bg-white/50"
                 }`}
               >
-                {m.label}
+                {VIEW_MODE_LABELS[id]}
               </button>
             ))}
           </div>
-          {(mode === "immersive" || mode === "text") && <AmbientWind />}
-          <Link
-            href={`/chapters/${slug}/`}
-            className="rounded-full border border-white/30 bg-white/15 px-3 py-1.5 text-xs text-[#2a332e]/80 backdrop-blur-md transition hover:bg-white/30"
-          >
-            知識庫版
-          </Link>
+          <div className="flex items-center gap-2">
+            {showAmbient && <AmbientWind />}
+            <Link
+              href={`/chapters/${slug}/`}
+              className="rounded-full border border-white/30 bg-white/15 px-3 py-1.5 text-xs text-[#2a332e]/80 backdrop-blur-md transition hover:bg-white/30"
+            >
+              知識庫版
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -150,71 +151,88 @@ export function ImmersiveBook({
         <p className="mt-2 text-sm text-[#4a5c55]/85">{modeLabel}</p>
       </header>
 
-      <div className="mb-4">
-        <NarrationPlayer
-          show={show}
-          unitIndex={podcastUnit}
-          onUnitChange={setPodcastUnit}
-          label={
-            mode === "pict"
-              ? "繪本雙人導讀"
-              : mode === "immersive"
-                ? "山風雙人導讀"
-                : "文字雙人導讀"
-          }
-        />
-      </div>
-
-      {mode === "pict" ? (
-        <PictureBookMode
-          slug={slug}
-          title={title}
-          unitIndex={podcastUnit}
-          onUnitChange={setPodcastUnit}
-        />
+      {mode === "podcast" ? (
+        <div className="mb-2">
+          <NarrationPlayer
+            show={show}
+            unitIndex={podcastUnit}
+            onUnitChange={setPodcastUnit}
+            label="樹下雙人導讀・播客"
+            featured
+          />
+        </div>
       ) : (
         <>
-          <article
-            ref={panelRef}
-            className={`immersive-prose flex-1 rounded-3xl px-5 py-7 sm:px-9 sm:py-10 ${
-              mode === "immersive"
-                ? "immersive-glass immersive-glass--deep"
-                : "immersive-glass"
-            }`}
-          >
-            <h2 className="font-serif text-xl text-[#24302b] sm:text-2xl">{current.title}</h2>
-            <div className="mt-5">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{current.body}</ReactMarkdown>
-            </div>
-          </article>
-
-          <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <button
-              type="button"
-              disabled={idx <= 0}
-              onClick={() => goSection(idx - 1)}
-              className="rounded-full border border-white/35 bg-white/20 px-4 py-2 text-sm backdrop-blur-md transition hover:bg-white/35 disabled:opacity-35"
-            >
-              上一節
-            </button>
-            <p className="text-center text-xs text-[#4a5c55]">
-              {idx + 1} / {sections.length}
-            </p>
-            <button
-              type="button"
-              disabled={idx >= sections.length - 1}
-              onClick={() => goSection(idx + 1)}
-              className="rounded-full border border-white/35 bg-white/20 px-4 py-2 text-sm backdrop-blur-md transition hover:bg-white/35 disabled:opacity-35"
-            >
-              下一節
-            </button>
+          <div className="mb-4">
+            <NarrationPlayer
+              show={show}
+              unitIndex={podcastUnit}
+              onUnitChange={setPodcastUnit}
+              label={
+                mode === "pict"
+                  ? "繪本雙人導讀"
+                  : mode === "immersive"
+                    ? "山風雙人導讀"
+                    : "文字雙人導讀"
+              }
+            />
           </div>
+
+          {mode === "pict" ? (
+            <PictureBookMode
+              slug={slug}
+              title={title}
+              unitIndex={podcastUnit}
+              onUnitChange={setPodcastUnit}
+            />
+          ) : (
+            <>
+              <article
+                ref={panelRef}
+                className={`immersive-prose flex-1 rounded-3xl px-5 py-7 sm:px-9 sm:py-10 ${
+                  mode === "immersive"
+                    ? "immersive-glass immersive-glass--deep"
+                    : "immersive-glass"
+                }`}
+              >
+                <h2 className="font-serif text-xl text-[#24302b] sm:text-2xl">{current.title}</h2>
+                <div className="mt-5">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{current.body}</ReactMarkdown>
+                </div>
+              </article>
+
+              <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <button
+                  type="button"
+                  disabled={idx <= 0}
+                  onClick={() => goSection(idx - 1)}
+                  className="rounded-full border border-white/35 bg-white/20 px-4 py-2 text-sm backdrop-blur-md transition hover:bg-white/35 disabled:opacity-35"
+                >
+                  上一節
+                </button>
+                <p className="text-center text-xs text-[#4a5c55]">
+                  {idx + 1} / {sections.length}
+                </p>
+                <button
+                  type="button"
+                  disabled={idx >= sections.length - 1}
+                  onClick={() => goSection(idx + 1)}
+                  className="rounded-full border border-white/35 bg-white/20 px-4 py-2 text-sm backdrop-blur-md transition hover:bg-white/35 disabled:opacity-35"
+                >
+                  下一節
+                </button>
+              </div>
+            </>
+          )}
         </>
       )}
 
       <nav className="mt-8 flex flex-col gap-2 text-sm sm:flex-row sm:justify-between">
         {prev ? (
-          <Link href={`/immersive/${prev.slug}/`} className="text-[#2f5d50] hover:underline">
+          <Link
+            href={immersiveChapterHref(prev.slug, mode)}
+            className="text-[#2f5d50] hover:underline"
+          >
             ← 〈{prev.title}〉
           </Link>
         ) : (
@@ -222,7 +240,7 @@ export function ImmersiveBook({
         )}
         {next ? (
           <Link
-            href={`/immersive/${next.slug}/`}
+            href={immersiveChapterHref(next.slug, mode)}
             className="text-[#2f5d50] hover:underline sm:text-right"
           >
             〈{next.title}〉 →

@@ -10,6 +10,8 @@ type Props = {
   unitIndex?: number;
   onUnitChange?: (index: number) => void;
   label?: string;
+  /** Featured layout when user picks 播客 mode. */
+  featured?: boolean;
 };
 
 type VoiceChoice = {
@@ -68,6 +70,7 @@ export function NarrationPlayer({
   unitIndex,
   onUnitChange,
   label = "雙人導讀・分單元",
+  featured = false,
 }: Props) {
   const [episodeIdx, setEpisodeIdx] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -277,10 +280,25 @@ export function NarrationPlayer({
 
   if (!episode) return null;
 
+  const playSize = featured ? "h-14 w-14" : "h-11 w-11";
+  const scriptMax = featured ? "max-h-[min(28rem,55vh)]" : "max-h-44";
+
   return (
-    <div className="immersive-glass rounded-2xl px-4 py-3 sm:px-5 sm:py-4">
+    <div
+      className={`immersive-glass ${
+        featured
+          ? "rounded-3xl px-5 py-5 sm:px-8 sm:py-7 shadow-[0_16px_40px_rgba(60,90,80,0.12)]"
+          : "rounded-2xl px-4 py-3 sm:px-5 sm:py-4"
+      }`}
+    >
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-xs tracking-[0.18em] text-[#5a6e66]">{label}</p>
+        <p
+          className={`tracking-[0.18em] text-[#5a6e66] ${
+            featured ? "text-sm" : "text-xs"
+          }`}
+        >
+          {label}
+        </p>
         <button
           type="button"
           onClick={() => setShowVoicePick((v) => !v)}
@@ -290,12 +308,20 @@ export function NarrationPlayer({
         </button>
       </div>
 
-      <div className="mt-2 flex flex-wrap items-center gap-2">
+      {featured && (
+        <p className="mt-2 text-sm leading-relaxed text-[#3d4f48]/90">
+          一男一女分單元對談：先說故事，再講意思。點播放即可聽。
+        </p>
+      )}
+
+      <div className={`flex flex-wrap items-center gap-2 ${featured ? "mt-4" : "mt-2"}`}>
         <select
           aria-label="選擇單元"
           value={safeIdx}
           onChange={(e) => changeUnit(Number(e.target.value))}
-          className="max-w-full rounded-full border border-white/35 bg-white/25 px-3 py-1.5 text-xs text-[#24302b] backdrop-blur-md outline-none"
+          className={`max-w-full rounded-full border border-white/35 bg-white/25 px-3 py-1.5 text-[#24302b] backdrop-blur-md outline-none ${
+            featured ? "text-sm" : "text-xs"
+          }`}
         >
           {episodes.map((ep, i) => (
             <option key={ep.id} value={i}>
@@ -341,21 +367,27 @@ export function NarrationPlayer({
         </div>
       )}
 
-      <div className="mt-3 flex items-center gap-3">
+      <div className={`flex items-center gap-3 ${featured ? "mt-5" : "mt-3"}`}>
         <button
           type="button"
           onClick={togglePlay}
           disabled={!supported}
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#3d5c4f] text-[#f3faf7] shadow-[0_6px_20px_rgba(61,92,79,0.28)] transition hover:opacity-90 disabled:opacity-40"
+          className={`flex ${playSize} shrink-0 items-center justify-center rounded-full bg-[#3d5c4f] text-[#f3faf7] shadow-[0_6px_20px_rgba(61,92,79,0.28)] transition hover:opacity-90 disabled:opacity-40`}
           aria-label={playing && !paused ? "暫停" : "播放"}
         >
           {playing && !paused ? (
             <span className="flex gap-1">
-              <span className="h-3.5 w-1 rounded-sm bg-current" />
-              <span className="h-3.5 w-1 rounded-sm bg-current" />
+              <span className={`${featured ? "h-4 w-1.5" : "h-3.5 w-1"} rounded-sm bg-current`} />
+              <span className={`${featured ? "h-4 w-1.5" : "h-3.5 w-1"} rounded-sm bg-current`} />
             </span>
           ) : (
-            <span className="ml-0.5 border-y-[7px] border-l-[11px] border-y-transparent border-l-current" />
+            <span
+              className={`ml-0.5 border-y-transparent border-l-current ${
+                featured
+                  ? "border-y-[9px] border-l-[14px]"
+                  : "border-y-[7px] border-l-[11px]"
+              }`}
+            />
           )}
         </button>
 
@@ -371,7 +403,10 @@ export function NarrationPlayer({
         </button>
 
         <div className="min-w-0 flex-1">
-          <div className="flex h-8 items-end justify-between gap-[2px]" aria-hidden>
+          <div
+            className={`flex items-end justify-between gap-[2px] ${featured ? "h-10" : "h-8"}`}
+            aria-hidden
+          >
             {bars.map((i) => {
               const mid = Math.abs(i - bars.length / 2) / (bars.length / 2);
               const base = 0.25 + (1 - mid) * 0.55;
@@ -403,16 +438,20 @@ export function NarrationPlayer({
         </div>
 
         <div
-          className={`h-9 w-9 shrink-0 rounded-full border border-white/40 bg-gradient-to-br from-[#f6efe2] to-[#c9d9cf] shadow-inner ${
-            playing && !paused ? "animate-[immSpin_8s_linear_infinite]" : ""
-          }`}
+          className={`shrink-0 rounded-full border border-white/40 bg-gradient-to-br from-[#f6efe2] to-[#c9d9cf] shadow-inner ${
+            featured ? "h-11 w-11" : "h-9 w-9"
+          } ${playing && !paused ? "animate-[immSpin_8s_linear_infinite]" : ""}`}
           aria-hidden
           title="悠閒轉盤"
         />
       </div>
 
       {/* Script lines with highlight */}
-      <ul className="mt-3 max-h-44 space-y-2 overflow-y-auto pr-1 text-sm leading-relaxed">
+      <ul
+        className={`mt-3 space-y-2 overflow-y-auto pr-1 leading-relaxed ${scriptMax} ${
+          featured ? "text-base" : "text-sm"
+        }`}
+      >
         {episode.lines.map((line, i) => {
           const active = i === lineIdx;
           const isMale = line.speaker === "male";

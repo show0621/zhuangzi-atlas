@@ -1,6 +1,19 @@
 import Link from "next/link";
 import { CHAPTERS, SITE, chaptersByPart, PART_ORDER } from "@/lib/catalog";
 import { assetPath } from "@/lib/assetPath";
+import {
+  immersiveChapterHref,
+  VIEW_MODE_LABELS,
+  VIEW_MODES,
+  type ViewMode,
+} from "@/lib/immersiveMode";
+
+const MODE_HINTS: Record<ViewMode, string> = {
+  text: "清水玻璃書頁",
+  immersive: "山上・樹下・微風",
+  pict: "lo-fi 繪本翻頁",
+  podcast: "一男一女導讀對談",
+};
 
 export default function HomePage() {
   const inner = chaptersByPart("內篇");
@@ -24,20 +37,36 @@ export default function HomePage() {
             </p>
             <p className="text-lg text-muted">{SITE.subtitle}</p>
             <p className="text-base leading-relaxed text-ink/85 max-w-xl">
-              打開山上讀書：純文字、沉浸、繪圖三版可切換；一男一女分單元對答導讀。知識庫仍在，入口先留給舒服的停留。
+              山上讀書一鍵四版：純文字、沉浸、繪圖、播客。頁內即可切換，重整後仍記住你的選擇。
             </p>
+            <div className="grid gap-2 sm:grid-cols-2 pt-1">
+              {VIEW_MODES.map((mode) => (
+                <Link
+                  key={mode}
+                  href={immersiveChapterHref("逍遙遊", mode)}
+                  className={`rounded-2xl px-4 py-3 text-sm transition ${
+                    mode === "immersive"
+                      ? "bg-accent text-white shadow-[0_10px_28px_rgba(61,92,79,0.22)] hover:opacity-90"
+                      : "border border-line bg-white/55 hover:border-accent/50"
+                  }`}
+                >
+                  <span className="font-medium">{VIEW_MODE_LABELS[mode]}</span>
+                  <span
+                    className={`mt-0.5 block text-xs ${
+                      mode === "immersive" ? "text-white/80" : "text-muted"
+                    }`}
+                  >
+                    {MODE_HINTS[mode]}
+                  </span>
+                </Link>
+              ))}
+            </div>
             <div className="flex flex-wrap gap-3 pt-1">
               <Link
                 href="/immersive/"
-                className="rounded-full bg-accent px-6 py-3 text-sm text-white shadow-[0_10px_28px_rgba(61,92,79,0.22)] hover:opacity-90 transition"
+                className="rounded-full border border-line/80 bg-white/35 px-5 py-3 text-sm text-muted hover:text-ink transition"
               >
-                進入山上讀書
-              </Link>
-              <Link
-                href="/immersive/逍遙遊/"
-                className="rounded-full border border-line bg-white/55 px-5 py-3 text-sm hover:border-accent/50 transition"
-              >
-                〈逍遙遊〉三版閱讀
+                山上總覽
               </Link>
               <Link
                 href="/toc/"
@@ -97,7 +126,7 @@ export default function HomePage() {
           {inner.map((ch) => (
             <Link
               key={ch.id}
-              href={`/immersive/${ch.slug}/`}
+              href={immersiveChapterHref(ch.slug, "immersive")}
               className="group rounded-2xl border border-line/70 bg-white/35 px-5 py-4 hover:border-accent/40 transition"
             >
               <p className="text-xs text-muted">

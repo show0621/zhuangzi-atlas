@@ -1,11 +1,41 @@
 "use client";
 
-import { useState } from "react";
-import { ImmersiveBook, type ViewMode } from "@/components/immersive/ImmersiveBook";
+import { useCallback, useEffect, useState } from "react";
+import { ImmersiveBook } from "@/components/immersive/ImmersiveBook";
 import { GlowCursor } from "@/components/immersive/GlowCursor";
 import { WindField } from "@/components/immersive/WindField";
+import {
+  IMMERSIVE_MODE_STORAGE_KEY,
+  parseViewMode,
+  type ViewMode,
+} from "@/lib/immersiveMode";
 
 type ChapterOption = { slug: string; title: string; part: string };
+
+function readInitialMode(): ViewMode {
+  if (typeof window === "undefined") return "immersive";
+  const fromUrl = parseViewMode(new URLSearchParams(window.location.search).get("mode"));
+  if (fromUrl) return fromUrl;
+  try {
+    const fromStore = parseViewMode(localStorage.getItem(IMMERSIVE_MODE_STORAGE_KEY));
+    if (fromStore) return fromStore;
+  } catch {
+    /* ignore */
+  }
+  return "immersive";
+}
+
+function persistMode(mode: ViewMode) {
+  try {
+    localStorage.setItem(IMMERSIVE_MODE_STORAGE_KEY, mode);
+  } catch {
+    /* ignore */
+  }
+  if (typeof window === "undefined") return;
+  const url = new URL(window.location.href);
+  url.searchParams.set("mode", mode);
+  window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+}
 
 export function ImmersiveReaderShell({
   slug,
@@ -20,12 +50,29 @@ export function ImmersiveReaderShell({
   content: string;
   chapters: ChapterOption[];
 }) {
-  const [mode, setMode] = useState<ViewMode>("immersive");
+  const [mode, setModeState] = useState<ViewMode>("immersive");
+
+  useEffect(() => {
+    const next = readInitialMode();
+    setModeState(next);
+    persistMode(next);
+  }, [slug]);
+
+  const setMode = useCallback((next: ViewMode) => {
+    setModeState(next);
+    persistMode(next);
+  }, []);
+
+  const showWind = mode === "immersive" || mode === "text" || mode === "podcast";
 
   return (
     <div className="immersive-root relative min-h-screen overflow-x-hidden">
-      {mode === "immersive" ? <MountainBackdrop /> : <SoftBackdrop soft={mode === "text"} />}
-      {(mode === "immersive" || mode === "text") && <WindField />}
+      {mode === "immersive" || mode === "podcast" ? (
+        <MountainBackdrop />
+      ) : (
+        <SoftBackdrop soft={mode === "text"} />
+      )}
+      {showWind && <WindField />}
       <GlowCursor />
       <ImmersiveBook
         slug={slug}
