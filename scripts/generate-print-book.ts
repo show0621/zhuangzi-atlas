@@ -23,8 +23,12 @@ const MD_NAME = "zhuangzi-atlas-print.md";
 const HTML_NAME = "zhuangzi-atlas-print.html";
 const PDF_NAME = "zhuangzi-atlas-print.pdf";
 const README_NAME = "README-列印說明.md";
-const COVER_IMAGE = "assets/print-cover-minecraft.png";
-const BOOK_SPINE_TITLE = `${SITE.title} -人生玩家`;
+const COVER_IMAGE = "assets/print-cover-minecraft.jpg";
+const COVER_IMAGE_FALLBACK = "assets/print-cover-minecraft.png";
+const EPIGRAPH_IMAGE = "assets/epigraph-calligraphy.png";
+const AFTERWORD_IMAGE = "assets/afterword-calligraphy.png";
+const SPINE_IMAGE = "assets/spine-calligraphy.png";
+const BOOK_SPINE_TITLE = `${SITE.title}．人生玩家`;
 
 const EPIGRAPH_TEXT =
   "人生不過短短三萬天，要放膽體驗，要勇敢冒險與嘗試，不要把自己困在方寸之間。";
@@ -34,13 +38,35 @@ const AUTHOR_FLAP = {
   name: "李孟霖",
   role: "編集",
   paragraphs: [
-    "出生於台灣。年少時不學無術，母親說以後應該是放牛吃草長大、撿牛屎賺錢。這幾年在人世中載浮載沉，見證過人性純粹的惡，也感受過美好。是個迷途的小書僮。",
-    "未來打算寫一本結合 OECD 指引與各國判決的移轉訂價與預先訂價實務指南。（有時間的話。）",
+    "出生於台灣。年少時不學無術，母親說以後長大應該是放牛吃草、撿牛屎賺錢。這幾年在人世中載浮載沉，見證過人性純粹的惡，也感受過美好。是個迷途的小書僮。",
+    "未來打算寫一本結合 OECD 指引與各國判決的移轉訂價與預先訂價實務指南。（有時間的話）",
   ],
 } as const;
 
 const PAGE_BREAK_MD = "\n\n<div class=\"pagebreak\"></div>\n\n";
 const PAGE_BREAK_HTML = '<div class="pagebreak"></div>\n';
+
+function resolvePublicAsset(...candidates: string[]): string {
+  for (const rel of candidates) {
+    const abs = path.join(PUBLIC_DIR, rel);
+    if (fs.existsSync(abs)) return rel;
+  }
+  return candidates[0];
+}
+
+function assetDataUri(relPath: string): string {
+  const abs = path.join(PUBLIC_DIR, relPath);
+  if (!fs.existsSync(abs)) return relPath;
+  const buf = fs.readFileSync(abs);
+  const ext = path.extname(abs).toLowerCase();
+  const mime =
+    ext === ".jpg" || ext === ".jpeg"
+      ? "image/jpeg"
+      : ext === ".webp"
+        ? "image/webp"
+        : "image/png";
+  return `data:${mime};base64,${buf.toString("base64")}`;
+}
 
 function coverMarkdown(): string {
   return `# ${SITE.title}
@@ -64,7 +90,7 @@ function authorFlapMarkdown(): string {
   return `%%RAW%%
 <section class="author-flap-page" id="作者介紹">
   <p class="author-flap-label">書面折頁｜作者介紹</p>
-  <h1 class="author-flap-name">${escapeHtml(AUTHOR_FLAP.name)}</h1>
+  <p class="author-flap-name">${escapeHtml(AUTHOR_FLAP.name)}</p>
   <p class="author-flap-role">${escapeHtml(AUTHOR_FLAP.role)}・《${escapeHtml(SITE.title)}》</p>
 ${paras}
 </section>
@@ -73,22 +99,24 @@ ${paras}
 }
 
 function epigraphMarkdown(): string {
+  const img = resolvePublicAsset(EPIGRAPH_IMAGE);
   return `%%RAW%%
 <section class="epigraph-page">
-  <p class="calligraphy epigraph-text">${escapeHtml(EPIGRAPH_TEXT)}</p>
+  <img class="calligraphy-img epigraph-img" src="${img}" alt="${escapeHtml(EPIGRAPH_TEXT)}" />
+  <p class="calligraphy-fallback sr-only">${escapeHtml(EPIGRAPH_TEXT)}</p>
 </section>
 %%/RAW%%
 `;
 }
 
 function spineMarkdown(): string {
+  const img = resolvePublicAsset(SPINE_IMAGE);
   return `%%RAW%%
 <section class="spine-page">
   <div class="spine-strip" aria-label="書脊橫條">
-    <span class="spine-title">${escapeHtml(BOOK_SPINE_TITLE)}</span>
-    <span class="spine-author">${escapeHtml(SITE.author)}</span>
+    <img class="spine-calligraphy" src="${img}" alt="${escapeHtml(BOOK_SPINE_TITLE)}" />
   </div>
-  <p class="spine-hint">書脊橫條面｜裝訂成冊時可貼於書脊</p>
+  <p class="spine-hint">書脊｜白底黑字｜${escapeHtml(BOOK_SPINE_TITLE)}</p>
 </section>
 %%/RAW%%
 `;
@@ -205,7 +233,8 @@ function afterwordMarkdown(): string {
 
 %%RAW%%
 <div class="afterword-calligraphy-wrap">
-  <p class="calligraphy afterword-calligraphy">${escapeHtml(AFTERWORD_CALLIGRAPHY)}</p>
+  <img class="calligraphy-img afterword-img" src="${resolvePublicAsset(AFTERWORD_IMAGE)}" alt="${escapeHtml(AFTERWORD_CALLIGRAPHY)}" />
+  <p class="calligraphy-fallback sr-only">${escapeHtml(AFTERWORD_CALLIGRAPHY)}</p>
 </div>
 %%/RAW%%
 `;
@@ -338,6 +367,7 @@ function mdToHtml(md: string): string {
   let inOl = false;
   let inBq = false;
   let para: string[] = [];
+  let i = 0;
 
   const flushPara = () => {
     if (!para.length) return;
@@ -364,14 +394,23 @@ function mdToHtml(md: string): string {
     }
   };
 
-  for (const raw of lines) {
-    const line = raw;
+  const isTableRow = (s: string) => /^\s*\|.*\|\s*$/.test(s);
+  const isTableSep = (s: string) =>
+    /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(s);
+  const splitCells = (s: string): string[] => {
+    const trimmed = s.trim().replace(/^\|/, "").replace(/\|$/, "");
+    return trimmed.split("|").map((c) => c.trim());
+  };
+
+  while (i < lines.length) {
+    const line = lines[i];
 
     if (line.trim() === "%%PAGEBREAK%%") {
       flushPara();
       closeLists();
       closeBq();
       out.push(PAGE_BREAK_HTML);
+      i += 1;
       continue;
     }
 
@@ -381,6 +420,7 @@ function mdToHtml(md: string): string {
       closeLists();
       closeBq();
       out.push(rawBlocks[Number(rawMatch[1])]);
+      i += 1;
       continue;
     }
 
@@ -390,6 +430,41 @@ function mdToHtml(md: string): string {
       closeLists();
       closeBq();
       out.push(fences[Number(fenceMatch[1])]);
+      i += 1;
+      continue;
+    }
+
+    // GFM tables: header | sep | body rows
+    if (
+      isTableRow(line) &&
+      i + 1 < lines.length &&
+      isTableSep(lines[i + 1])
+    ) {
+      flushPara();
+      closeLists();
+      closeBq();
+      const header = splitCells(line);
+      i += 2;
+      const bodyRows: string[][] = [];
+      while (i < lines.length && isTableRow(lines[i]) && !isTableSep(lines[i])) {
+        bodyRows.push(splitCells(lines[i]));
+        i += 1;
+      }
+      out.push('<table class="md-table">');
+      out.push("<thead><tr>");
+      for (const cell of header) {
+        out.push(`<th>${inlineFormat(cell)}</th>`);
+      }
+      out.push("</tr></thead>");
+      out.push("<tbody>");
+      for (const row of bodyRows) {
+        out.push("<tr>");
+        for (let c = 0; c < header.length; c += 1) {
+          out.push(`<td>${inlineFormat(row[c] ?? "")}</td>`);
+        }
+        out.push("</tr>");
+      }
+      out.push("</tbody></table>");
       continue;
     }
 
@@ -398,6 +473,7 @@ function mdToHtml(md: string): string {
       closeLists();
       closeBq();
       out.push("<hr />");
+      i += 1;
       continue;
     }
 
@@ -410,6 +486,7 @@ function mdToHtml(md: string): string {
       const text = h[2].replace(/\s+#*$/, "");
       const id = slugifyHeading(text.replace(/[*_`]/g, ""));
       out.push(`<h${level} id="${id}">${inlineFormat(text)}</h${level}>`);
+      i += 1;
       continue;
     }
 
@@ -426,6 +503,7 @@ function mdToHtml(md: string): string {
         inUl = true;
       }
       out.push(`<li>${inlineFormat(ul[1])}</li>`);
+      i += 1;
       continue;
     }
 
@@ -442,6 +520,7 @@ function mdToHtml(md: string): string {
         inOl = true;
       }
       out.push(`<li>${inlineFormat(ol[1])}</li>`);
+      i += 1;
       continue;
     }
 
@@ -454,6 +533,7 @@ function mdToHtml(md: string): string {
         inBq = true;
       }
       if (bq[1].trim()) out.push(`<p>${inlineFormat(bq[1])}</p>`);
+      i += 1;
       continue;
     }
 
@@ -461,12 +541,14 @@ function mdToHtml(md: string): string {
       flushPara();
       closeLists();
       closeBq();
+      i += 1;
       continue;
     }
 
     closeLists();
     closeBq();
     para.push(line);
+    i += 1;
   }
 
   flushPara();
@@ -477,23 +559,32 @@ function mdToHtml(md: string): string {
 }
 
 function illustratedCoverHtml(): string {
+  const coverRel = resolvePublicAsset(COVER_IMAGE, COVER_IMAGE_FALLBACK);
+  const coverSrc = assetDataUri(coverRel);
   return `<section class="cover-page">
   <div class="cover-spine-band">
     <span>${escapeHtml(BOOK_SPINE_TITLE)}</span>
-    <span>${escapeHtml(SITE.author)}</span>
   </div>
   <div class="cover-art-wrap">
-    <img class="cover-art" src="${COVER_IMAGE}" alt="Minecraft 風格勇者立於山巔面向太陽與浩瀚宇宙" />
+    <img class="cover-art" src="${coverSrc}" alt="Minecraft 風格勇者立於山巔面向太陽與浩瀚宇宙" />
   </div>
   <div class="cover-titles">
     <p class="cover-english">${escapeHtml(SITE.englishTitle)}</p>
-    <h1 class="cover-title">${escapeHtml(SITE.title)}</h1>
+    <p class="cover-title">${escapeHtml(SITE.title)}</p>
     <p class="cover-tagline">人生玩家</p>
     <p class="cover-subtitle">${escapeHtml(SITE.subtitle)}</p>
     <p class="cover-author">${escapeHtml(SITE.author)}</p>
     <p class="cover-meta">版本 ${escapeHtml(SITE.version)}・${YEAR}</p>
   </div>
 </section>`;
+}
+
+/** Embed local asset images as data URIs so PDF print never loses cover/calligraphy. */
+function embedAssetImages(html: string): string {
+  return html.replace(
+    /src="(assets\/[^"]+)"/g,
+    (_m, rel: string) => `src="${assetDataUri(rel)}"`,
+  );
 }
 
 /** Replace the plain markdown-converted cover block with the illustrated cover. */
@@ -528,9 +619,6 @@ function buildPrintHtml(bodyHtml: string): string {
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${escapeHtml(SITE.title)} — ${escapeHtml(SITE.author)}</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Liu+Jian+Mao+Cao&family=Zhi+Mang+Xing&display=swap" rel="stylesheet" />
   <style>
     :root {
       --ink: #1a1a1a;
@@ -614,6 +702,27 @@ function buildPrintHtml(bodyHtml: string): string {
       border-top: 1px solid var(--rule);
       margin: 2em 0;
     }
+    table.md-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.9em 0 1.2em;
+      font-size: 0.95rem;
+      page-break-inside: auto;
+    }
+    table.md-table th,
+    table.md-table td {
+      border: 1px solid #cfcfcf;
+      padding: 0.4em 0.55em;
+      vertical-align: top;
+      text-align: left;
+    }
+    table.md-table th {
+      background: #f3f6f4;
+      font-weight: 600;
+      color: #1f2e28;
+    }
+    table.md-table tr { break-inside: avoid; page-break-inside: avoid; }
+    table.md-table thead { display: table-header-group; }
     a { color: #2a4a3c; text-decoration: underline; text-underline-offset: 2px; }
     code {
       font-family: ui-monospace, "Noto Sans Mono CJK TC", Consolas, monospace;
@@ -658,30 +767,34 @@ function buildPrintHtml(bodyHtml: string): string {
       min-height: calc(297mm - 2 * var(--vert));
       display: flex;
       flex-direction: column;
-      background:
+      background-color: #0b1220;
+      background-image:
         radial-gradient(ellipse at 70% 18%, rgba(255, 180, 60, 0.35), transparent 45%),
         radial-gradient(ellipse at 20% 80%, rgba(80, 40, 160, 0.4), transparent 50%),
         linear-gradient(165deg, #070b16 0%, #1a1030 42%, #0d1a28 100%);
       color: #f7f1e6;
-      overflow: hidden;
+      overflow: visible;
       page-break-inside: avoid;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
     .cover-spine-band {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
       gap: 1rem;
       padding: 0.7rem 1.1rem;
-      background: linear-gradient(90deg, #1a0f08, #3a2412 40%, #6b3a14 70%, #1a0f08);
-      border-bottom: 2px solid var(--cover-gold);
+      background: #fff;
+      border-bottom: 1px solid #ddd;
       font-family: "Noto Serif TC", "Source Han Serif TC", serif;
       font-size: 0.95rem;
       letter-spacing: 0.12em;
-      color: var(--cover-gold);
+      color: #111;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
     .cover-art-wrap {
-      flex: 1 1 auto;
-      min-height: 0;
+      flex: 0 0 auto;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -689,15 +802,18 @@ function buildPrintHtml(bodyHtml: string): string {
     }
     .cover-art {
       width: 100%;
-      max-height: 155mm;
+      max-height: 145mm;
+      height: auto;
       object-fit: cover;
       object-position: center 35%;
       border: 1px solid rgba(240, 195, 106, 0.35);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+      display: block;
     }
     .cover-titles {
       padding: 1.1rem 1.4rem 1.6rem;
       text-align: center;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
     .cover-english {
       margin: 0;
@@ -705,14 +821,14 @@ function buildPrintHtml(bodyHtml: string): string {
       letter-spacing: 0.18em;
       text-transform: uppercase;
       font-size: 0.78rem;
-      color: rgba(247, 241, 230, 0.7);
+      color: #d8cfc0;
     }
     .cover-title {
       margin: 0.35rem 0 0.15rem;
       font-size: 2.6rem;
       letter-spacing: 0.28em;
       color: #fff8ea;
-      text-shadow: 0 2px 18px rgba(255, 122, 61, 0.35);
+      font-weight: 700;
       break-before: avoid !important;
       page-break-before: avoid !important;
     }
@@ -720,40 +836,44 @@ function buildPrintHtml(bodyHtml: string): string {
       margin: 0.2rem 0 0.55rem;
       font-size: 1.35rem;
       letter-spacing: 0.35em;
-      color: var(--cover-ember);
+      color: #ff7a3d;
       font-weight: 600;
     }
     .cover-subtitle {
       margin: 0.2rem 0;
-      color: rgba(247, 241, 230, 0.82);
+      color: #e8dfd0;
       letter-spacing: 0.08em;
     }
     .cover-author {
       margin: 0.85rem 0 0.2rem;
       font-size: 1.15rem;
       letter-spacing: 0.16em;
-      color: var(--cover-gold);
+      color: #f0c36a;
       font-weight: 600;
     }
     .cover-meta {
       margin: 0;
       font-size: 0.85rem;
-      color: rgba(247, 241, 230, 0.55);
+      color: #b8ae9e;
     }
 
     /* —— 書面折頁｜作者介紹 —— */
     .author-flap-page {
-      min-height: calc(297mm - 2 * var(--vert) - 10mm);
-      max-width: 118mm;
-      margin-left: auto;
-      padding: 14mm 8mm 16mm 10mm;
+      box-sizing: border-box;
+      width: 105mm;
+      max-width: 48%;
+      margin: 8mm 0 8mm auto;
+      padding: 14mm 10mm 16mm 12mm;
       border-left: 1px solid #d8c9a8;
-      background:
-        linear-gradient(90deg, rgba(248, 244, 236, 0.2), rgba(248, 244, 236, 0.95) 18%, #faf6ef);
+      background: #faf6ef;
+      /* 勿用 100vh：會把底色撐破到下一頁 */
+      min-height: 0;
+      max-height: none;
       page-break-inside: avoid;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      break-inside: avoid;
+      display: block;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
     .author-flap-label {
       margin: 0 0 1.6rem;
@@ -767,6 +887,7 @@ function buildPrintHtml(bodyHtml: string): string {
       font-size: 1.85rem;
       letter-spacing: 0.2em;
       color: #2a2118;
+      font-weight: 700;
       break-before: avoid !important;
       page-break-before: avoid !important;
     }
@@ -785,77 +906,76 @@ function buildPrintHtml(bodyHtml: string): string {
     }
     .author-flap-body:last-child { margin-bottom: 0; }
 
-    /* —— 草寫狂放書法 —— */
-    .calligraphy {
-      font-family: "Liu Jian Mao Cao", "Zhi Mang Xing", "Segoe Print", "KaiTi", cursive;
-      font-weight: 400;
-      line-height: 1.55;
-      letter-spacing: 0.06em;
-      color: #1c1410;
+    /* —— 書法圖（避免網頁字型缺字回落標楷） —— */
+    .calligraphy-img {
+      display: block;
+      width: 100%;
+      max-width: 170mm;
+      height: auto;
+      margin: 0 auto;
+    }
+    .epigraph-img { max-width: 175mm; }
+    .afterword-img { max-width: 150mm; }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      border: 0;
     }
     .epigraph-page {
-      min-height: calc(297mm - 2 * var(--vert) - 10mm);
+      min-height: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 18mm 12mm;
+      padding: 28mm 10mm;
       page-break-inside: avoid;
-    }
-    .epigraph-text {
-      margin: 0;
-      max-width: 18em;
-      font-size: 2.05rem;
-      text-align: center;
-      transform: rotate(-1.5deg);
-      text-shadow: 1px 1px 0 rgba(0,0,0,0.04);
+      break-inside: avoid;
     }
     .afterword-calligraphy-wrap {
-      margin-top: 4.5rem;
+      margin-top: 3.5rem;
       min-height: 42mm;
       display: flex;
-      align-items: flex-end;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
       padding-bottom: 0.5rem;
-    }
-    .afterword-calligraphy {
-      margin: 0;
-      font-size: 1.85rem;
-      text-align: center;
-      transform: rotate(-1.2deg);
     }
 
     /* —— 書脊橫條面 —— */
     .spine-page {
-      min-height: calc(297mm - 2 * var(--vert) - 10mm);
+      min-height: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       gap: 1.5rem;
+      padding: 16mm 0;
       page-break-inside: avoid;
+      break-inside: avoid;
+      background: #fff;
     }
     .spine-strip {
-      width: 14mm;
-      min-height: 210mm;
-      padding: 10mm 2mm;
+      width: 28mm;
+      min-height: 220mm;
+      padding: 8mm 3mm;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: space-between;
-      background: linear-gradient(180deg, #1a0f08, #4a2a12 45%, #1a0f08);
-      border: 1px solid #c9a24a;
-      color: #f0c36a;
-      writing-mode: vertical-rl;
-      text-orientation: mixed;
-      letter-spacing: 0.22em;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+      justify-content: center;
+      background: #fff;
+      border: 1px solid #ddd;
+      color: #111;
+      box-shadow: none;
     }
-    .spine-title {
-      font-size: 1.05rem;
-      font-weight: 600;
-    }
-    .spine-author {
-      font-size: 0.95rem;
+    .spine-calligraphy {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 210mm;
+      object-fit: contain;
     }
     .spine-hint {
       margin: 0;
@@ -866,16 +986,22 @@ function buildPrintHtml(bodyHtml: string): string {
 
     @page {
       size: A4;
-      /* 左側稍寬：單面影印後左側裝訂成冊 */
-      margin: 18mm 16mm 20mm 26mm;
+      /* 左側稍寬：單面影印後左側裝訂成冊；下方留給頁碼 */
+      margin: 18mm 16mm 22mm 26mm;
+      @bottom-center {
+        content: counter(page);
+        font-family: "Noto Serif TC", "Source Han Serif TC", serif;
+        font-size: 9pt;
+        color: #555;
+      }
     }
 
-    @page cover {
-      margin: 0;
+    @page :first {
+      @bottom-center { content: none; }
     }
 
     @media print {
-      body { background: white; }
+      body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .toolbar { display: none !important; }
       .sheet {
         max-width: none;
@@ -892,28 +1018,48 @@ function buildPrintHtml(bodyHtml: string): string {
       }
       .pagebreak::after { display: none; }
       a { color: inherit; text-decoration: none; }
-      h1 { break-before: page; page-break-before: always; }
-      .sheet > h1:first-child,
-      .cover-page .cover-title { break-before: avoid; page-break-before: avoid; }
+      /* 正文 h1 換頁；封面／折頁內標題除外 */
+      h1 {
+        break-before: page;
+        page-break-before: always;
+      }
+      .cover-page h1,
+      .cover-page .cover-title,
+      .author-flap-page h1,
+      .author-flap-name {
+        break-before: avoid !important;
+        page-break-before: avoid !important;
+      }
+      .sheet > h1:first-of-type { break-before: avoid; page-break-before: avoid; }
       .cover-page {
         margin: 0;
-        min-height: 100vh;
-        page: cover;
-        break-after: page;
-        page-break-after: always;
+        min-height: auto;
+        max-height: none;
+        break-inside: avoid;
+        page-break-inside: avoid;
+        /* 分頁只交給後面的 .pagebreak，避免雙重換頁產生空白頁 */
+        break-after: auto;
+        page-break-after: auto;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
       }
+      .cover-art { max-height: 130mm; }
       .epigraph-page,
-      .spine-page,
-      .author-flap-page {
-        min-height: 100vh;
+      .spine-page {
+        min-height: 0;
       }
       .author-flap-page {
-        max-width: none;
-        width: 42%;
+        width: 105mm;
+        max-width: 48%;
         margin-left: auto;
         margin-right: 0;
+        min-height: 0 !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+        break-after: auto;
+        page-break-after: auto;
       }
-      blockquote, pre.code, li { break-inside: avoid; page-break-inside: avoid; }
+      blockquote, pre.code, li, table.md-table { break-inside: avoid; page-break-inside: avoid; }
     }
   </style>
 </head>
@@ -977,15 +1123,26 @@ function copyToPublic(files: string[]) {
 }
 
 function ensureCoverAsset() {
-  const publicAsset = path.join(PUBLIC_DIR, COVER_IMAGE);
-  const distAsset = path.join(OUT_DIR, COVER_IMAGE);
-  fs.mkdirSync(path.dirname(publicAsset), { recursive: true });
-  fs.mkdirSync(path.dirname(distAsset), { recursive: true });
-  if (!fs.existsSync(publicAsset)) {
-    throw new Error(`找不到封面圖：${publicAsset}`);
+  const assets = [
+    COVER_IMAGE,
+    COVER_IMAGE_FALLBACK,
+    EPIGRAPH_IMAGE,
+    AFTERWORD_IMAGE,
+    SPINE_IMAGE,
+  ];
+  for (const rel of assets) {
+    const publicAsset = path.join(PUBLIC_DIR, rel);
+    if (!fs.existsSync(publicAsset)) continue;
+    const distAsset = path.join(OUT_DIR, rel);
+    fs.mkdirSync(path.dirname(distAsset), { recursive: true });
+    fs.copyFileSync(publicAsset, distAsset);
+    console.log("asset", distAsset);
   }
-  fs.copyFileSync(publicAsset, distAsset);
-  console.log("cover asset", distAsset);
+  const coverOk = fs.existsSync(path.join(PUBLIC_DIR, COVER_IMAGE))
+    || fs.existsSync(path.join(PUBLIC_DIR, COVER_IMAGE_FALLBACK));
+  if (!coverOk) {
+    throw new Error(`找不到封面圖：${COVER_IMAGE} 或 ${COVER_IMAGE_FALLBACK}`);
+  }
 }
 
 function main() {
@@ -1000,7 +1157,7 @@ function main() {
 
   for (const m of missing) console.warn("missing", m);
 
-  const bodyHtml = injectIllustratedCover(mdToHtml(md));
+  const bodyHtml = embedAssetImages(injectIllustratedCover(mdToHtml(md)));
   const html = buildPrintHtml(bodyHtml);
   const htmlPath = path.join(OUT_DIR, HTML_NAME);
   fs.writeFileSync(htmlPath, html, "utf8");

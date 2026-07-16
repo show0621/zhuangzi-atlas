@@ -128,8 +128,15 @@ async function tryPuppeteer(htmlPath: string): Promise<string | null> {
         format: "A4",
         printBackground: true,
         preferCSSPageSize: true,
-        displayHeaderFooter: false,
-        margin: { top: "0", right: "0", bottom: "0", left: "0" },
+        displayHeaderFooter: true,
+        headerTemplate: "<div></div>",
+        footerTemplate: `
+          <div style="width:100%;text-align:center;font-size:9px;color:#555;font-family:'Noto Serif TC',serif;padding-bottom:4px;">
+            <span class="pageNumber"></span>
+          </div>
+        `,
+        // 與 HTML @page 大致對齊；footer 需要底邊空間
+        margin: { top: "16mm", right: "14mm", bottom: "18mm", left: "24mm" },
       });
 
       return writeOutputs(Buffer.from(pdf));

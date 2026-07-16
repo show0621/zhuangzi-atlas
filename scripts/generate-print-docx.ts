@@ -1,222 +1,610 @@
 #!/usr/bin/env tsx
 /**
- * 從印刷 HTML 產出 Word（.docx），供下載編輯／列印。
+ * 從印刷 Markdown 產出可開啟的 Word（.docx）。
+ * 使用 docx 套件直接組 OOXML，避免 html-to-docx 損壞檔案。
  *
- * 用法：
- *   npm run ebook:docx
- *   （請先 npm run ebook:print）
- *
- * 輸出：
- *   - public/downloads/zhuangzi-atlas-print.docx
- *   - public/downloads/莊子全解-印刷版.docx（同內容別名）
- *   - dist/ebook/ 同步一份
+ * 用法：npm run ebook:docx（請先 npm run ebook:print）
  */
 import fs from "fs";
 import path from "path";
+import {
+  AlignmentType,
+  BorderStyle,
+  Document,
+  Footer,
+  HeadingLevel,
+  ImageRun,
+  Packer,
+  PageBreak,
+  PageNumber,
+  Paragraph,
+  Table,
+  TableCell,
+  TableRow,
+  TextRun,
+  WidthType,
+  type FileChild,
+} from "docx";
 import { SITE } from "../src/lib/catalog";
 
 const OUT_DIR = path.join(process.cwd(), "dist", "ebook");
 const PUBLIC_DIR = path.join(process.cwd(), "public", "downloads");
-const HTML_NAME = "zhuangzi-atlas-print.html";
+const MD_NAME = "zhuangzi-atlas-print.md";
 const DOCX_NAME = "zhuangzi-atlas-print.docx";
 const DOCX_ALIAS = "莊子全解-印刷版.docx";
-const COVER_IMAGE = path.join(PUBLIC_DIR, "assets", "print-cover-minecraft.png");
 
-// A4 in twips (1 inch = 1440 twip)
-const A4_WIDTH = 11906;
-const A4_HEIGHT = 16838;
+const COVER_CANDIDATES = [
+  "assets/print-cover-minecraft.jpg",
+  "assets/print-cover-minecraft.png",
+];
+const EPIGRAPH_IMAGE = "assets/epigraph-calligraphy.png";
+const AFTERWORD_IMAGE = "assets/afterword-calligraphy.png";
+const BOOK_SPINE = `${SITE.title}．人生玩家`;
+const SPINE_IMAGE = "assets/spine-calligraphy.png";
 
-function resolveHtmlPath(): string {
-  const candidates = [
-    path.join(PUBLIC_DIR, HTML_NAME),
-    path.join(OUT_DIR, HTML_NAME),
+const PAGE_BREAK_MD = '<div class="pagebreak"></div>';
+
+type Block =
+  | { type: "heading"; level: number; text: string }
+  | { type: "para"; text: string }
+  | { type: "ul"; items: string[] }
+  | { type: "ol"; items: string[] }
+  | { type: "quote"; lines: string[] }
+  | { type: "table"; header: string[]; rows: string[][] }
+  | { type: "hr" }
+  | { type: "pagebreak" }
+  | { type: "raw-skip" };
+
+function resolveAsset(...cands: string[]): string | null {
+  for (const rel of cands) {
+    const abs = path.join(PUBLIC_DIR, rel);
+    if (fs.existsSync(abs)) return abs;
+  }
+  return null;
+}
+
+function stripInlineMd(text: string): string {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/__(.+?)__/g, "$1")
+    .replace(/(^|[^*])\*([^*]+)\*(?!\*)/g, "$1$2")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .trim();
+}
+
+function isTableRow(s: string) {
+  return /^\s*\|.*\|\s*$/.test(s);
+}
+function isTableSep(s: string) {
+  return /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(s);
+}
+function splitCells(s: string): string[] {
+  return s
+    .trim()
+    .replace(/^\|/, "")
+    .replace(/\|$/, "")
+    .split("|")
+    .map((c) => c.trim());
+}
+
+function parseMarkdown(md: string): Block[] {
+  let src = md.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
+  // drop raw HTML blocks used for print-only sections; front matter handled separately
+  src = src.replace(/%%RAW%%[\s\S]*?%%\/RAW%%/g, "\n%%RAWSKIP%%\n");
+  src = src.replace(/<!--[\s\S]*?-->/g, "");
+  src = src.replace(/```[\w]*\r?\n([\s\S]*?)```/g, (_m, code: string) => {
+    return `\n${code.trim()}\n`;
+  });
+
+  const lines = src.split(/\r?\n/);
+  const blocks: Block[] = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    if (!trimmed) {
+      i += 1;
+      continue;
+    }
+    if (trimmed === "%%RAWSKIP%%") {
+      blocks.push({ type: "raw-skip" });
+      i += 1;
+      continue;
+    }
+    if (trimmed === PAGE_BREAK_MD || trimmed.includes('class="pagebreak"')) {
+      blocks.push({ type: "pagebreak" });
+      i += 1;
+      continue;
+    }
+    if (/^---+$/.test(trimmed)) {
+      blocks.push({ type: "hr" });
+      i += 1;
+      continue;
+    }
+
+    if (isTableRow(line) && i + 1 < lines.length && isTableSep(lines[i + 1])) {
+      const header = splitCells(line).map(stripInlineMd);
+      i += 2;
+      const rows: string[][] = [];
+      while (i < lines.length && isTableRow(lines[i]) && !isTableSep(lines[i])) {
+        rows.push(splitCells(lines[i]).map(stripInlineMd));
+        i += 1;
+      }
+      blocks.push({ type: "table", header, rows });
+      continue;
+    }
+
+    const h = line.match(/^(#{1,6})\s+(.+)$/);
+    if (h) {
+      blocks.push({
+        type: "heading",
+        level: h[1].length,
+        text: stripInlineMd(h[2].replace(/\s+#*$/, "")),
+      });
+      i += 1;
+      continue;
+    }
+
+    if (/^\s*[-*]\s+/.test(line)) {
+      const items: string[] = [];
+      while (i < lines.length && /^\s*[-*]\s+/.test(lines[i])) {
+        items.push(stripInlineMd(lines[i].replace(/^\s*[-*]\s+/, "")));
+        i += 1;
+      }
+      blocks.push({ type: "ul", items });
+      continue;
+    }
+
+    if (/^\s*\d+\.\s+/.test(line)) {
+      const items: string[] = [];
+      while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i])) {
+        items.push(stripInlineMd(lines[i].replace(/^\s*\d+\.\s+/, "")));
+        i += 1;
+      }
+      blocks.push({ type: "ol", items });
+      continue;
+    }
+
+    if (/^>\s?/.test(line)) {
+      const q: string[] = [];
+      while (i < lines.length && /^>\s?/.test(lines[i])) {
+        const t = stripInlineMd(lines[i].replace(/^>\s?/, ""));
+        if (t) q.push(t);
+        i += 1;
+      }
+      blocks.push({ type: "quote", lines: q });
+      continue;
+    }
+
+    // skip leftover HTML tags
+    if (trimmed.startsWith("<") && trimmed.endsWith(">")) {
+      i += 1;
+      continue;
+    }
+
+    const para: string[] = [line];
+    i += 1;
+    while (
+      i < lines.length &&
+      lines[i].trim() &&
+      !lines[i].match(/^#{1,6}\s/) &&
+      !/^\s*[-*]\s+/.test(lines[i]) &&
+      !/^\s*\d+\.\s+/.test(lines[i]) &&
+      !/^>\s?/.test(lines[i]) &&
+      !isTableRow(lines[i]) &&
+      lines[i].trim() !== PAGE_BREAK_MD &&
+      !lines[i].includes('class="pagebreak"') &&
+      lines[i].trim() !== "%%RAWSKIP%%" &&
+      !/^---+$/.test(lines[i].trim())
+    ) {
+      para.push(lines[i]);
+      i += 1;
+    }
+    blocks.push({ type: "para", text: stripInlineMd(para.join(" ")) });
+  }
+
+  return blocks;
+}
+
+function headingLevel(level: number) {
+  if (level <= 1) return HeadingLevel.HEADING_1;
+  if (level === 2) return HeadingLevel.HEADING_2;
+  if (level === 3) return HeadingLevel.HEADING_3;
+  return HeadingLevel.HEADING_4;
+}
+
+function thinBorder() {
+  return {
+    style: BorderStyle.SINGLE,
+    size: 4,
+    color: "999999",
+  };
+}
+
+function cell(text: string, bold = false) {
+  return new TableCell({
+    borders: {
+      top: thinBorder(),
+      bottom: thinBorder(),
+      left: thinBorder(),
+      right: thinBorder(),
+    },
+    width: { size: 3000, type: WidthType.DXA },
+    children: [
+      new Paragraph({
+        children: [new TextRun({ text, bold, font: "Microsoft JhengHei", size: 20 })],
+      }),
+    ],
+  });
+}
+
+function imageParagraph(filePath: string, widthPx: number, heightPx: number): Paragraph {
+  const data = fs.readFileSync(filePath);
+  const isJpg = filePath.toLowerCase().endsWith(".jpg") || filePath.toLowerCase().endsWith(".jpeg");
+  return new Paragraph({
+    alignment: AlignmentType.CENTER,
+    children: [
+      new ImageRun({
+        type: isJpg ? "jpg" : "png",
+        data,
+        transformation: { width: widthPx, height: heightPx },
+      }),
+    ],
+  });
+}
+
+function coverChildren(): FileChild[] {
+  const out: FileChild[] = [];
+  out.push(
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 120 },
+      children: [
+        new TextRun({
+          text: BOOK_SPINE,
+          bold: true,
+          font: "Microsoft JhengHei",
+          size: 22,
+          color: "111111",
+        }),
+      ],
+    }),
+  );
+
+  const coverPath = resolveAsset(...COVER_CANDIDATES);
+  if (coverPath) {
+    out.push(imageParagraph(coverPath, 480, 640));
+  }
+
+  const lines: Array<{ text: string; size: number; bold?: boolean; color?: string }> = [
+    { text: SITE.englishTitle, size: 18, color: "666666" },
+    { text: SITE.title, size: 48, bold: true },
+    { text: "人生玩家", size: 28, bold: true, color: "C45C26" },
+    { text: SITE.subtitle, size: 20, color: "555555" },
+    { text: SITE.author, size: 24, bold: true, color: "8A6A2A" },
   ];
-  for (const p of candidates) {
-    if (fs.existsSync(p)) return p;
-  }
-  throw new Error(`找不到 ${HTML_NAME}。請先執行：npm run ebook:print`);
-}
-
-function extractArticleBody(html: string): string {
-  const m = html.match(/<article class="sheet">([\s\S]*?)<\/article>/i);
-  if (!m) throw new Error("印刷 HTML 找不到 <article class=\"sheet\">");
-  return m[1];
-}
-
-function toWordHtml(body: string): string {
-  let s = body;
-
-  // 封面圖改為 data URI，Word 才能內嵌
-  if (fs.existsSync(COVER_IMAGE)) {
-    const b64 = fs.readFileSync(COVER_IMAGE).toString("base64");
-    s = s.replace(
-      /src="assets\/print-cover-minecraft\.png"/g,
-      `src="data:image/png;base64,${b64}"`,
+  for (const L of lines) {
+    out.push(
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        spacing: { before: 80, after: 80 },
+        children: [
+          new TextRun({
+            text: L.text,
+            bold: L.bold,
+            size: L.size,
+            color: L.color,
+            font: "Microsoft JhengHei",
+          }),
+        ],
+      }),
     );
   }
+  return out;
+}
 
-  // html-to-docx 的分頁標記
-  s = s.replace(
-    /<div class="pagebreak"><\/div>/g,
-    '<div class="page-break" style="page-break-after: always;"><span>&nbsp;</span></div>',
-  );
+function authorFlapChildren(): FileChild[] {
+  return [
+    new Paragraph({
+      children: [
+        new TextRun({
+          text: "書面折頁｜作者介紹",
+          size: 18,
+          color: "8A7350",
+          font: "Microsoft JhengHei",
+        }),
+      ],
+    }),
+    new Paragraph({
+      spacing: { before: 200, after: 80 },
+      children: [
+        new TextRun({ text: "李孟霖", bold: true, size: 36, font: "Microsoft JhengHei" }),
+      ],
+    }),
+    new Paragraph({
+      spacing: { after: 200 },
+      children: [
+        new TextRun({
+          text: `編集・《${SITE.title}》`,
+          size: 20,
+          color: "7A6248",
+          font: "Microsoft JhengHei",
+        }),
+      ],
+    }),
+    new Paragraph({
+      spacing: { after: 160 },
+      children: [
+        new TextRun({
+          text: "出生於台灣。年少時不學無術，母親說以後長大應該是放牛吃草、撿牛屎賺錢。這幾年在人世中載浮載沉，見證過人性純粹的惡，也感受過美好。是個迷途的小書僮。",
+          size: 22,
+          font: "Microsoft JhengHei",
+        }),
+      ],
+    }),
+    new Paragraph({
+      children: [
+        new TextRun({
+          text: "未來打算寫一本結合 OECD 指引與各國判決的移轉訂價與預先訂價實務指南。（有時間的話）",
+          size: 22,
+          font: "Microsoft JhengHei",
+        }),
+      ],
+    }),
+  ];
+}
 
-  // 封面橫條／標題：補 inline 樣式（Word 不吃完整 CSS）
-  const spineBand = s.match(/<div class="cover-spine-band">([\s\S]*?)<\/div>/);
-  if (spineBand) {
-    const bandText = spineBand[1]
-      .replace(/<\/?span[^>]*>/g, " · ")
-      .replace(/\s+/g, " ")
-      .replace(/·\s*·/g, "·")
-      .trim();
-    s = s.replace(
-      spineBand[0],
-      `<div style="background:#3a2412;color:#f0c36a;padding:10pt 12pt;margin-bottom:12pt;">
-  <p style="margin:0;font-size:12pt;letter-spacing:2pt;"><strong>${bandText}</strong></p>
-</div>`,
-    );
+function blocksToChildren(blocks: Block[], afterImg: string | null): FileChild[] {
+  const out: FileChild[] = [];
+  let skipNextPlainCover = true;
+  let afterInserted = false;
+
+  for (const b of blocks) {
+    if (b.type === "pagebreak") {
+      out.push(new Paragraph({ children: [new PageBreak()] }));
+      continue;
+    }
+    if (b.type === "raw-skip") continue;
+    if (b.type === "hr") continue;
+
+    // Skip the plain markdown cover block (title/subtitle/author) — replaced by illustrated cover
+    if (
+      skipNextPlainCover &&
+      b.type === "heading" &&
+      b.level === 1 &&
+      b.text.includes(SITE.title) &&
+      !b.text.includes("自序")
+    ) {
+      // consume following short cover paras until next pagebreak-ish content already handled
+      skipNextPlainCover = false;
+      continue;
+    }
+    if (
+      !skipNextPlainCover &&
+      out.length < 3 &&
+      b.type === "para" &&
+      (b.text === SITE.subtitle ||
+        b.text === SITE.englishTitle ||
+        b.text === SITE.author ||
+        b.text === BOOK_SPINE ||
+        b.text.startsWith("版本 "))
+    ) {
+      continue;
+    }
+
+    if (b.type === "heading") {
+      if (b.text.includes("版權") && afterImg && !afterInserted) {
+        out.push(
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            spacing: { before: 300, after: 200 },
+            children: [
+              new ImageRun({
+                type: "png",
+                data: fs.readFileSync(afterImg),
+                transformation: { width: 420, height: 236 },
+              }),
+            ],
+          }),
+        );
+        afterInserted = true;
+      }
+      out.push(
+        new Paragraph({
+          heading: headingLevel(b.level),
+          spacing: { before: 280, after: 120 },
+          children: [
+            new TextRun({
+              text: b.text,
+              bold: true,
+              font: "Microsoft JhengHei",
+              size: b.level === 1 ? 32 : b.level === 2 ? 26 : 22,
+            }),
+          ],
+        }),
+      );
+      continue;
+    }
+
+    if (b.type === "para") {
+      out.push(
+        new Paragraph({
+          spacing: { after: 140 },
+          children: [
+            new TextRun({ text: b.text, font: "Microsoft JhengHei", size: 22 }),
+          ],
+        }),
+      );
+      continue;
+    }
+
+    if (b.type === "ul" || b.type === "ol") {
+      b.items.forEach((item, idx) => {
+        out.push(
+          new Paragraph({
+            spacing: { after: 80 },
+            children: [
+              new TextRun({
+                text: `${b.type === "ol" ? `${idx + 1}. ` : "• "}${item}`,
+                font: "Microsoft JhengHei",
+                size: 22,
+              }),
+            ],
+          }),
+        );
+      });
+      continue;
+    }
+
+    if (b.type === "quote") {
+      for (const line of b.lines) {
+        out.push(
+          new Paragraph({
+            spacing: { after: 80 },
+            indent: { left: 360 },
+            children: [
+              new TextRun({
+                text: line,
+                italics: true,
+                font: "Microsoft JhengHei",
+                size: 22,
+                color: "333333",
+              }),
+            ],
+          }),
+        );
+      }
+      continue;
+    }
+
+    if (b.type === "table") {
+      const rows = [
+        new TableRow({
+          children: b.header.map((h) => cell(h, true)),
+        }),
+        ...b.rows.map(
+          (r) =>
+            new TableRow({
+              children: b.header.map((_, i) => cell(r[i] ?? "")),
+            }),
+        ),
+      ];
+      out.push(
+        new Table({
+          width: { size: 9000, type: WidthType.DXA },
+          rows,
+        }),
+      );
+      out.push(new Paragraph({ children: [] }));
+    }
   }
 
-  s = s.replace(
-    /<img class="cover-art"([^>]*)>/g,
-    '<img$1 width="520" style="width:100%;max-width:520pt;height:auto;" />',
-  );
-
-  s = s.replace(
-    /class="cover-title"/g,
-    'style="font-size:28pt;text-align:center;letter-spacing:6pt;margin:8pt 0;"',
-  );
-  s = s.replace(
-    /class="cover-tagline"/g,
-    'style="font-size:16pt;text-align:center;color:#c45c26;letter-spacing:4pt;"',
-  );
-  s = s.replace(
-    /class="cover-subtitle"|class="cover-english"|class="cover-meta"/g,
-    'style="text-align:center;color:#555;font-size:11pt;"',
-  );
-  s = s.replace(
-    /class="cover-author"/g,
-    'style="text-align:center;font-size:14pt;color:#8a6a2a;font-weight:bold;margin-top:12pt;"',
-  );
-
-  // 書面折頁｜作者介紹
-  s = s.replace(
-    /class="author-flap-page"[^>]*>/g,
-    'style="padding:36pt 28pt;border-left:1px solid #d8c9a8;background:#faf6ef;">',
-  );
-  s = s.replace(
-    /class="author-flap-label"/g,
-    'style="font-size:10pt;letter-spacing:3pt;color:#8a7350;margin-bottom:18pt;"',
-  );
-  s = s.replace(
-    /class="author-flap-name"/g,
-    'style="font-size:22pt;letter-spacing:4pt;margin:0 0 6pt;"',
-  );
-  s = s.replace(
-    /class="author-flap-role"/g,
-    'style="font-size:11pt;color:#7a6248;margin:0 0 18pt;"',
-  );
-  s = s.replace(
-    /class="author-flap-body"/g,
-    'style="font-size:12pt;line-height:1.9;text-align:justify;margin:0 0 12pt;"',
-  );
-
-  // 草寫題辭／後記：以楷體近似狂放書法（Word 端常見字型）
-  s = s.replace(
-    /class="calligraphy epigraph-text"/g,
-    'style="font-family:KaiTi,DFKai-SB,標楷體,serif;font-size:22pt;text-align:center;line-height:1.6;"',
-  );
-  s = s.replace(
-    /class="calligraphy afterword-calligraphy"/g,
-    'style="font-family:KaiTi,DFKai-SB,標楷體,serif;font-size:20pt;text-align:center;margin-top:48pt;"',
-  );
-  s = s.replace(
-    /class="epigraph-page"/g,
-    'style="padding:48pt 24pt;text-align:center;"',
-  );
-  s = s.replace(
-    /class="afterword-calligraphy-wrap"/g,
-    'style="margin-top:36pt;text-align:center;"',
-  );
-
-  // 書脊
-  s = s.replace(
-    /class="spine-title"/g,
-    'style="font-size:14pt;font-weight:bold;"',
-  );
-  s = s.replace(/class="spine-author"/g, 'style="font-size:12pt;"');
-  s = s.replace(
-    /class="spine-hint"/g,
-    'style="color:#666;font-size:10pt;margin-top:12pt;"',
-  );
-  s = s.replace(
-    /<div class="spine-strip"([^>]*)>/,
-    '<div$1 style="border:1px solid #c9a24a;background:#2a180c;color:#f0c36a;padding:18pt;text-align:center;">',
-  );
-
-  return `<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-  <meta charset="utf-8" />
-  <title>${SITE.title}</title>
-</head>
-<body>
-${s}
-</body>
-</html>`;
+  return out;
 }
 
 async function main() {
-  const htmlPath = resolveHtmlPath();
-  console.log("來源 HTML：", htmlPath);
+  const mdPath = path.join(PUBLIC_DIR, MD_NAME);
+  const altMd = path.join(OUT_DIR, MD_NAME);
+  const src = fs.existsSync(mdPath) ? mdPath : altMd;
+  if (!fs.existsSync(src)) {
+    throw new Error(`找不到 ${MD_NAME}。請先執行：npm run ebook:print`);
+  }
 
-  const raw = fs.readFileSync(htmlPath, "utf8");
-  const wordHtml = toWordHtml(extractArticleBody(raw));
+  console.log("來源 Markdown：", src);
+  const md = fs.readFileSync(src, "utf8");
+  const blocks = parseMarkdown(md);
 
-  // html-to-docx 為 CJS；動態 import 取其 default
-  const mod = (await import("html-to-docx")) as unknown as {
-    default?: typeof import("html-to-docx").default;
-  };
-  const HTMLtoDOCX = mod.default ?? (mod as unknown as typeof import("html-to-docx").default);
+  const children: FileChild[] = [];
+  children.push(...coverChildren());
+  children.push(new Paragraph({ children: [new PageBreak()] }));
+  children.push(...authorFlapChildren());
+  children.push(new Paragraph({ children: [new PageBreak()] }));
 
-  const bufferOrBlob = await HTMLtoDOCX(wordHtml, null, {
-    orientation: "portrait",
-    pageSize: { width: A4_WIDTH, height: A4_HEIGHT },
-    margins: {
-      top: 1134, // ~20mm
-      right: 907, // ~16mm
-      bottom: 1134,
-      left: 1474, // ~26mm 裝訂邊
-    },
-    title: SITE.title,
-    subject: `${SITE.subtitle}｜${SITE.title} -人生玩家`,
+  const epi = resolveAsset(EPIGRAPH_IMAGE);
+  if (epi) {
+    children.push(imageParagraph(epi, 520, 292));
+    children.push(new Paragraph({ children: [new PageBreak()] }));
+  }
+
+  children.push(...blocksToChildren(blocks, resolveAsset(AFTERWORD_IMAGE)));
+
+  const spineImg = resolveAsset(SPINE_IMAGE);
+  if (spineImg) {
+    children.push(new Paragraph({ children: [new PageBreak()] }));
+    children.push(
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 120 },
+        children: [
+          new TextRun({
+            text: "書脊",
+            size: 18,
+            color: "666666",
+            font: "Microsoft JhengHei",
+          }),
+        ],
+      }),
+    );
+    children.push(imageParagraph(spineImg, 160, 520));
+  }
+
+  const doc = new Document({
     creator: SITE.author,
-    lastModifiedBy: SITE.author,
-    description: `${SITE.title}（${SITE.englishTitle}）印刷成冊稿 Word 版`,
-    keywords: [SITE.title, "莊子", "人生玩家", SITE.author],
-    font: "Microsoft JhengHei",
-    fontSize: 22, // 11pt
-    lang: "zh-TW",
-    decodeUnicode: true,
+    title: SITE.title,
+    description: `${SITE.title} 印刷成冊稿 Word 版`,
+    sections: [
+      {
+        properties: {
+          page: {
+            size: {
+              width: 11906, // A4
+              height: 16838,
+            },
+            margin: {
+              top: 1134,
+              right: 907,
+              bottom: 1134,
+              left: 1474,
+            },
+          },
+        },
+        footers: {
+          default: new Footer({
+            children: [
+              new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                  new TextRun({
+                    children: [PageNumber.CURRENT],
+                    font: "Microsoft JhengHei",
+                    size: 18,
+                    color: "555555",
+                  }),
+                ],
+              }),
+            ],
+          }),
+        },
+        children,
+      },
+    ],
   });
 
-  const buffer = Buffer.isBuffer(bufferOrBlob)
-    ? bufferOrBlob
-    : Buffer.from(await (bufferOrBlob as Blob).arrayBuffer());
-
+  const buffer = await Packer.toBuffer(doc);
   fs.mkdirSync(OUT_DIR, { recursive: true });
   fs.mkdirSync(PUBLIC_DIR, { recursive: true });
 
   const distPath = path.join(OUT_DIR, DOCX_NAME);
   const publicPath = path.join(PUBLIC_DIR, DOCX_NAME);
   const aliasPath = path.join(PUBLIC_DIR, DOCX_ALIAS);
-
   fs.writeFileSync(distPath, buffer);
   fs.writeFileSync(publicPath, buffer);
   fs.writeFileSync(aliasPath, buffer);
 
-  const mb = (buffer.length / 1024 / 1024).toFixed(2);
-  console.log(`wrote ${publicPath} (${mb} MB)`);
+  console.log(`wrote ${publicPath} (${(buffer.length / 1024 / 1024).toFixed(2)} MB)`);
   console.log(`wrote ${aliasPath}`);
   console.log(`wrote ${distPath}`);
   console.log("\nWord 已就緒。");

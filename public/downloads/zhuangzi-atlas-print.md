@@ -8,7 +8,7 @@ lang: zh-Hant
 
 **原典・白話・哲學・人生智慧**
 
-莊子全解 -人生玩家
+莊子全解．人生玩家
 
 Zhuangzi Atlas
 
@@ -22,10 +22,10 @@ Zhuangzi Atlas
 %%RAW%%
 <section class="author-flap-page" id="作者介紹">
   <p class="author-flap-label">書面折頁｜作者介紹</p>
-  <h1 class="author-flap-name">李孟霖</h1>
+  <p class="author-flap-name">李孟霖</p>
   <p class="author-flap-role">編集・《莊子全解》</p>
-  <p class="author-flap-body">出生於台灣。年少時不學無術，母親說以後應該是放牛吃草長大、撿牛屎賺錢。這幾年在人世中載浮載沉，見證過人性純粹的惡，也感受過美好。是個迷途的小書僮。</p>
-  <p class="author-flap-body">未來打算寫一本結合 OECD 指引與各國判決的移轉訂價與預先訂價實務指南。（有時間的話。）</p>
+  <p class="author-flap-body">出生於台灣。年少時不學無術，母親說以後長大應該是放牛吃草、撿牛屎賺錢。這幾年在人世中載浮載沉，見證過人性純粹的惡，也感受過美好。是個迷途的小書僮。</p>
+  <p class="author-flap-body">未來打算寫一本結合 OECD 指引與各國判決的移轉訂價與預先訂價實務指南。（有時間的話）</p>
 </section>
 %%/RAW%%
 
@@ -34,7 +34,8 @@ Zhuangzi Atlas
 
 %%RAW%%
 <section class="epigraph-page">
-  <p class="calligraphy epigraph-text">人生不過短短三萬天，要放膽體驗，要勇敢冒險與嘗試，不要把自己困在方寸之間。</p>
+  <img class="calligraphy-img epigraph-img" src="assets/epigraph-calligraphy.png" alt="人生不過短短三萬天，要放膽體驗，要勇敢冒險與嘗試，不要把自己困在方寸之間。" />
+  <p class="calligraphy-fallback sr-only">人生不過短短三萬天，要放膽體驗，要勇敢冒險與嘗試，不要把自己困在方寸之間。</p>
 </section>
 %%/RAW%%
 
@@ -6738,7 +6739,8 @@ flowchart TD
 
 %%RAW%%
 <div class="afterword-calligraphy-wrap">
-  <p class="calligraphy afterword-calligraphy">人生如逆旅，我亦是行人。</p>
+  <img class="calligraphy-img afterword-img" src="assets/afterword-calligraphy.png" alt="人生如逆旅，我亦是行人。" />
+  <p class="calligraphy-fallback sr-only">人生如逆旅，我亦是行人。</p>
 </div>
 %%/RAW%%
 
@@ -6768,9 +6770,8 @@ flowchart TD
 %%RAW%%
 <section class="spine-page">
   <div class="spine-strip" aria-label="書脊橫條">
-    <span class="spine-title">莊子全解 -人生玩家</span>
-    <span class="spine-author">李孟霖編集</span>
+    <img class="spine-calligraphy" src="assets/spine-calligraphy.png" alt="莊子全解．人生玩家" />
   </div>
-  <p class="spine-hint">書脊橫條面｜裝訂成冊時可貼於書脊</p>
+  <p class="spine-hint">書脊｜白底黑字｜莊子全解．人生玩家</p>
 </section>
 %%/RAW%%

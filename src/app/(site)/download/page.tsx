@@ -151,7 +151,7 @@ export default function DownloadPage() {
           <li>目錄</li>
           <li>內篇 → 外篇 → 雜篇正文</li>
           <li>後記／版權頁</li>
-          <li>書脊橫條（莊子全解 -人生玩家）</li>
+          <li>書脊（白底黑字草書：莊子全解．人生玩家）</li>
         </ol>
       </section>
 
