@@ -17,7 +17,8 @@ export default function AiPage() {
       <header className="space-y-2">
         <h1 className="font-serif text-3xl">莊子 AI</h1>
         <p className="leading-relaxed text-muted">
-          這個頁面只檢索本站已寫入的內容，再將命中的段落整理並標示來源；目前不呼叫外部 LLM，也不把內容偽託為莊子原話。
+          可選兩種模式：純檢索（免模型），或本機 Ollama LLM（知識庫 RAG + 離線回答，不需雲端 API
+          Key）。回答會附引用，且不把內容偽託為莊子原話。
         </p>
       </header>
       <AiClient chunks={(ragIndex as RagIndex).chunks} themeMap={themeMap as ThemeMap} />

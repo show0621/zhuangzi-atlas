@@ -15,7 +15,9 @@
     "ebook:epub": "tsx scripts/generate-ebook.ts --format epub",
     "ebook:pdf": "tsx scripts/generate-ebook.ts --format pdf",
     "rag:build": "tsx scripts/build-rag-index.ts",
-    "indexes:build": "tsx scripts/build-indexes.ts && npm run rag:build"
+    "indexes:build": "tsx scripts/build-indexes.ts && npm run rag:build",
+    "ai:serve": "tsx scripts/local-ai-server.ts",
+    "ai:ask": "tsx scripts/ask-local.ts"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",

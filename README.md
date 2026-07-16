@@ -71,9 +71,21 @@ scripts/        # scaffold／ebook／validate
 
 推送至 `main` 後，Actions workflow `deploy.yml` 會建置並部署。若站點不在根網域，請在 `next.config.ts` 設定 `basePath`。
 
-## 寫作規範
+## 本機 LLM（不需雲端 API）
 
-見 [`AGENTS.md`](./AGENTS.md)。
+1. 安裝 [Ollama](https://ollama.com/download)
+2. `ollama pull qwen2.5:3b`
+3. `npm run ai:serve`（本機橋接服務，port 8787）
+4. `npm run dev` → 開啟「莊子 AI」→ 選「本機 LLM」
+
+命令列也可直接問：
+
+```bash
+npm run ai:ask -- 什麼是無待？
+```
+
+回答一律先檢索本庫內容，再交本機模型改寫；沒有 API Key，資料也不上傳。
+
 
 ## 授權
 
