@@ -1,0 +1,16 @@
+---
+description: 撰寫或修訂莊子全解篇章時必讀
+globs:
+  - content/**/*.md
+  - prompts/**/*.md
+alwaysApply: false
+---
+
+撰寫 `content/` 下任何內容前，先讀專案根目錄 `AGENTS.md`。
+
+強制：
+- 區分原典／歷代注家／現代詮釋
+- 篇章維持 01–17 固定標題
+- 貼近原文脈絡，不改成純主題拼貼
+- 更新 frontmatter `status` 與 `updated`
+- 現代應用必須回扣原文概念
