@@ -1055,18 +1055,8 @@ function buildPrintHtml(bodyHtml: string): string {
 
     @page {
       size: A4;
-      /* 左側稍寬：單面影印後左側裝訂成冊；下方留給頁碼 */
+      /* 左側稍寬：單面影印後左側裝訂成冊；下方留給 Puppeteer 頁腳頁碼 */
       margin: 18mm 16mm 22mm 26mm;
-      @bottom-center {
-        content: counter(page);
-        font-family: "Noto Serif TC", "Source Han Serif TC", serif;
-        font-size: 9pt;
-        color: #555;
-      }
-    }
-
-    @page :first {
-      @bottom-center { content: none; }
     }
 
     @media print {
