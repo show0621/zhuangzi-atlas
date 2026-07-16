@@ -4,6 +4,7 @@ import { SITE } from "@/lib/catalog";
 const nav = [
   { href: "/immersive/", label: "山上讀書" },
   { href: "/toc/", label: "目錄" },
+  { href: "/download/", label: "下載印刷版" },
   { href: "/maps/", label: "思想地圖" },
   { href: "/figures/", label: "人物" },
   { href: "/terms/", label: "名詞" },

@@ -6,6 +6,9 @@
  *   npm run ebook:md
  *   npm run ebook:epub   # 需安裝 pandoc
  *   npm run ebook:pdf    # 需安裝 pandoc + PDF engine
+ *
+ * 印刷成冊（封面／前文／緒論／目錄／裝訂邊 HTML）請用：
+ *   npm run ebook:print
  */
 import fs from "fs";
 import path from "path";

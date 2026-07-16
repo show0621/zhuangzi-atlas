@@ -108,6 +108,12 @@ export function ImmersiveGate({ chapters }: { chapters: ChapterOption[] }) {
               全書目錄
             </Link>
             <Link
+              href="/download/"
+              className="rounded-full border border-white/35 bg-white/15 px-5 py-2.5 text-sm text-[#2a332e] backdrop-blur-md hover:bg-white/30 transition"
+            >
+              下載印刷版
+            </Link>
+            <Link
               href="/"
               className="rounded-full border border-white/35 bg-white/15 px-5 py-2.5 text-sm text-[#2a332e] backdrop-blur-md hover:bg-white/30 transition"
             >

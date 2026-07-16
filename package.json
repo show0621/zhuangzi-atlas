@@ -14,6 +14,8 @@
     "ebook:md": "tsx scripts/generate-ebook.ts",
     "ebook:epub": "tsx scripts/generate-ebook.ts --format epub",
     "ebook:pdf": "tsx scripts/generate-ebook.ts --format pdf",
+    "ebook:print": "tsx scripts/generate-print-book.ts",
+    "ebook:print:check": "tsx scripts/generate-print-book.ts && npm run content:validate",
     "rag:build": "tsx scripts/build-rag-index.ts",
     "indexes:build": "tsx scripts/build-indexes.ts && npm run rag:build",
     "ai:serve": "tsx scripts/local-ai-server.ts",

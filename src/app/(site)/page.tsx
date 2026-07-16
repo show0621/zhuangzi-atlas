@@ -45,6 +45,12 @@ export default function HomePage() {
               >
                 全書目錄
               </Link>
+              <Link
+                href="/download/"
+                className="rounded-full border border-line/80 bg-white/35 px-5 py-3 text-sm text-muted hover:text-ink transition"
+              >
+                下載印刷版
+              </Link>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -116,6 +122,7 @@ export default function HomePage() {
             ["/themes/", "主題閱讀", "焦慮、死亡、工作…"],
             ["/ai/", "莊子 AI", "檢索本庫內容並附上來源"],
             ["/search/", "搜尋", "全文檢索"],
+            ["/download/", "下載印刷版", "HTML／Markdown 成冊稿，影印裝訂"],
           ].map(([href, title, desc]) => (
             <Link
               key={href}
