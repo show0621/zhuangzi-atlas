@@ -3,7 +3,7 @@ import { ImmersiveGate } from "@/components/immersive/ImmersiveGate";
 
 export const metadata = {
   title: "山上讀書",
-  description: "透明清水、微風拂過的沉浸式《莊子》閱讀體驗。",
+  description: "純文字・沉浸・繪圖三版可切換；一男一女分單元對答導讀的《莊子》閱讀體驗。",
 };
 
 export default function ImmersiveHomePage() {

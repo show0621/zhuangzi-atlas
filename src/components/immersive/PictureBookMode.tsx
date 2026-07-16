@@ -3,14 +3,17 @@
 import { useEffect, useMemo, useState } from "react";
 import { assetPath } from "@/lib/assetPath";
 import { getPictureScenes } from "@/lib/pictureBook";
-import { NarrationPlayer } from "./NarrationPlayer";
 
 export function PictureBookMode({
   slug,
   title,
+  unitIndex,
+  onUnitChange,
 }: {
   slug: string;
   title: string;
+  unitIndex?: number;
+  onUnitChange?: (index: number) => void;
 }) {
   const scenes = useMemo(() => getPictureScenes(slug, title), [slug, title]);
   const [idx, setIdx] = useState(0);
@@ -18,6 +21,20 @@ export function PictureBookMode({
   useEffect(() => {
     setIdx(0);
   }, [slug]);
+
+  useEffect(() => {
+    if (typeof unitIndex === "number") {
+      // Map podcast unit → nearest picture scene (cover aligns with unit 0)
+      const mapped = Math.min(unitIndex, scenes.length - 1);
+      setIdx(mapped);
+    }
+  }, [unitIndex, scenes.length]);
+
+  function go(next: number) {
+    const clamped = Math.min(Math.max(0, next), scenes.length - 1);
+    setIdx(clamped);
+    onUnitChange?.(clamped);
+  }
 
   const scene = scenes[Math.min(idx, scenes.length - 1)]!;
   const imgSrc = assetPath(scene.image);
@@ -40,14 +57,12 @@ export function PictureBookMode({
         </div>
       </div>
 
-      <NarrationPlayer text={scene.narration} label="繪本導讀" />
-
       <div className="flex items-center justify-between gap-3">
         <button
           type="button"
           disabled={idx <= 0}
-          onClick={() => setIdx((v) => Math.max(0, v - 1))}
-          className="rounded-full border border-white/35 bg-white/20 px-4 py-2 text-sm backdrop-blur-md disabled:opacity-35 hover:bg-white/35 transition"
+          onClick={() => go(idx - 1)}
+          className="rounded-full border border-white/35 bg-white/20 px-4 py-2 text-sm backdrop-blur-md transition hover:bg-white/35 disabled:opacity-35"
         >
           上一幅
         </button>
@@ -57,8 +72,8 @@ export function PictureBookMode({
         <button
           type="button"
           disabled={idx >= scenes.length - 1}
-          onClick={() => setIdx((v) => Math.min(scenes.length - 1, v + 1))}
-          className="rounded-full border border-white/35 bg-white/20 px-4 py-2 text-sm backdrop-blur-md disabled:opacity-35 hover:bg-white/35 transition"
+          onClick={() => go(idx + 1)}
+          className="rounded-full border border-white/35 bg-white/20 px-4 py-2 text-sm backdrop-blur-md transition hover:bg-white/35 disabled:opacity-35"
         >
           下一幅
         </button>

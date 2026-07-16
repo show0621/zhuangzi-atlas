@@ -24,7 +24,7 @@ export default function HomePage() {
             </p>
             <p className="text-lg text-muted">{SITE.subtitle}</p>
             <p className="text-base leading-relaxed text-ink/85 max-w-xl">
-              打開山上讀書：繪本與純文字可切換，磁性男聲／溫柔女聲慢慢導讀。知識庫仍在，但入口先留給舒服的停留。
+              打開山上讀書：純文字、沉浸、繪圖三版可切換；一男一女分單元對答導讀。知識庫仍在，入口先留給舒服的停留。
             </p>
             <div className="flex flex-wrap gap-3 pt-1">
               <Link
@@ -37,7 +37,7 @@ export default function HomePage() {
                 href="/immersive/逍遙遊/"
                 className="rounded-full border border-line bg-white/55 px-5 py-3 text-sm hover:border-accent/50 transition"
               >
-                〈逍遙遊〉繪本
+                〈逍遙遊〉三版閱讀
               </Link>
               <Link
                 href="/toc/"
@@ -50,7 +50,7 @@ export default function HomePage() {
           <div className="grid grid-cols-2 gap-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={assetPath("/immersive/mood/ref-traveler.png")}
+              src={assetPath("/immersive/pict/mood-traveler-lofi.png")}
               alt=""
               className="aspect-[4/3] w-full rounded-2xl object-cover shadow-md"
             />

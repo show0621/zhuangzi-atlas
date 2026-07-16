@@ -59,19 +59,19 @@ export function ImmersiveGate({ chapters }: { chapters: ChapterOption[] }) {
         </h1>
 
         <p className="mx-auto mt-6 max-w-xl text-center text-base leading-relaxed text-[#3d4f48]/90 sm:text-lg">
-          輕鬆、柔和、明亮。可選純文字或繪本，也可用磁性男聲／溫柔女聲慢慢導讀——像坐在樹下聽風。
+          三種版本可切換：純文字、沉浸、繪圖。一男一女對答導讀，分單元說故事再講意思——像坐在樹下聽播客。
         </p>
 
         <div className="mx-auto mt-8 grid w-full max-w-lg grid-cols-2 gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={assetPath("/immersive/mood/ref-traveler.png")}
+            src={assetPath("/immersive/pict/mood-traveler-lofi.png")}
             alt=""
             className="aspect-[4/3] w-full rounded-2xl object-cover opacity-95 shadow-[0_12px_30px_rgba(60,90,80,0.18)]"
           />
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={assetPath("/immersive/mood/ref-listening.png")}
+            src={assetPath("/immersive/pict/mood-listening-lofi.png")}
             alt=""
             className="aspect-[4/3] w-full rounded-2xl object-cover opacity-95 shadow-[0_12px_30px_rgba(60,90,80,0.18)]"
           />
@@ -99,7 +99,7 @@ export function ImmersiveGate({ chapters }: { chapters: ChapterOption[] }) {
               href="/immersive/逍遙遊/"
               className="rounded-full bg-[#3d5c4f] px-5 py-2.5 text-sm text-[#f3faf7] hover:opacity-90 transition"
             >
-              從〈逍遙遊〉繪本開始
+              從〈逍遙遊〉開始
             </Link>
             <Link
               href="/toc/"

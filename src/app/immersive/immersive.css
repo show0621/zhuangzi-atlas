@@ -20,6 +20,18 @@
   -webkit-backdrop-filter: blur(18px) saturate(1.15);
 }
 
+.immersive-glass--deep {
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.38) 0%,
+    rgba(230, 242, 236, 0.22) 50%,
+    rgba(200, 220, 210, 0.18) 100%
+  );
+  box-shadow:
+    0 14px 48px rgba(45, 70, 60, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
 .immersive-prose {
   line-height: 1.9;
   font-size: 1.05rem;

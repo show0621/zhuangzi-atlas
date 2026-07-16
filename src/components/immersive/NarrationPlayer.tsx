@@ -1,103 +1,181 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { splitNarrationChunks } from "@/lib/pictureBook";
-
-export type VoiceGender = "male" | "female";
+import type { PodcastEpisode, PodcastLine, PodcastShow, Speaker } from "@/lib/podcastScript";
+import { plainForSpeech } from "@/lib/pictureBook";
 
 type Props = {
-  text: string;
+  show: PodcastShow;
+  /** Sync external unit index (e.g. picture-book page). */
+  unitIndex?: number;
+  onUnitChange?: (index: number) => void;
   label?: string;
 };
 
-function pickVoice(gender: VoiceGender): SpeechSynthesisVoice | null {
-  if (typeof window === "undefined" || !window.speechSynthesis) return null;
+type VoiceChoice = {
+  maleURI: string;
+  femaleURI: string;
+};
+
+function listZhVoices(): SpeechSynthesisVoice[] {
+  if (typeof window === "undefined" || !window.speechSynthesis) return [];
   const voices = window.speechSynthesis.getVoices();
   const zh = voices.filter(
     (v) =>
       v.lang.toLowerCase().startsWith("zh") ||
       v.lang.toLowerCase().includes("chinese") ||
-      /中文|國語|普通话|粵/.test(v.name),
+      /中文|國語|普通话|粵|Taiwan|Hong Kong/i.test(`${v.name} ${v.lang}`),
   );
-  const pool = zh.length ? zh : voices;
-  if (!pool.length) return null;
-
-  const maleHints = /male|男|男声|男聲|daniel|yunyang|yunjian|kangkang|eric|david|george|matthew/i;
-  const femaleHints =
-    /female|女|女声|女聲|xiaoxiao|xiaoyi|xiaomo|huihui|yaoyao|jenny|zira|susan|tingting|meijia|hanhan/i;
-
-  if (gender === "male") {
-    return (
-      pool.find((v) => maleHints.test(v.name) && !femaleHints.test(v.name)) ||
-      pool.find((v) => /yunyang|yunjian|kangkang/i.test(v.name)) ||
-      pool[Math.min(1, pool.length - 1)] ||
-      pool[0]
-    );
-  }
-  return (
-    pool.find((v) => femaleHints.test(v.name)) ||
-    pool.find((v) => /xiaoxiao|xiaoyi|meijia|hanhan/i.test(v.name)) ||
-    pool[0]
-  );
+  return zh.length ? zh : voices;
 }
 
-export function NarrationPlayer({ text, label = "導讀" }: Props) {
-  const [gender, setGender] = useState<VoiceGender>("female");
+function scoreVoice(v: SpeechSynthesisVoice, gender: Speaker): number {
+  const name = v.name;
+  const maleHints =
+    /male|男|男声|男聲|daniel|yunyang|yunjian|kangkang|eric|david|george|matthew|yunxi|yunxia|cloud|hanhan男/i;
+  const femaleHints =
+    /female|女|女声|女聲|xiaoxiao|xiaoyi|xiaomo|huihui|yaoyao|jenny|zira|susan|tingting|meijia|hanhan|xiaorou|xiaochen/i;
+  let score = 0;
+  if (v.lang.toLowerCase().includes("zh-tw") || /taiwan|國語|台/i.test(name)) score += 4;
+  if (v.lang.toLowerCase().includes("zh-cn") || /普通话|大陆/i.test(name)) score += 2;
+  if (gender === "male") {
+    if (maleHints.test(name) && !femaleHints.test(name)) score += 8;
+    if (/yunyang|yunjian|kangkang|yunxi/i.test(name)) score += 6;
+  } else {
+    if (femaleHints.test(name)) score += 8;
+    if (/xiaoxiao|xiaoyi|meijia|tingting|hanhan/i.test(name)) score += 6;
+  }
+  if (v.localService) score += 1;
+  return score;
+}
+
+function pickBestVoice(gender: Speaker, preferredURI?: string): SpeechSynthesisVoice | null {
+  const pool = listZhVoices();
+  if (!pool.length) return null;
+  if (preferredURI) {
+    const found = pool.find((v) => v.voiceURI === preferredURI);
+    if (found) return found;
+  }
+  return [...pool].sort((a, b) => scoreVoice(b, gender) - scoreVoice(a, gender))[0] ?? null;
+}
+
+function sleep(ms: number) {
+  return new Promise<void>((r) => setTimeout(r, ms));
+}
+
+export function NarrationPlayer({
+  show,
+  unitIndex,
+  onUnitChange,
+  label = "雙人導讀・分單元",
+}: Props) {
+  const [episodeIdx, setEpisodeIdx] = useState(0);
   const [playing, setPlaying] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const [lineIdx, setLineIdx] = useState(-1);
   const [progress, setProgress] = useState(0);
   const [supported, setSupported] = useState(true);
-  const [voicesReady, setVoicesReady] = useState(false);
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [voiceChoice, setVoiceChoice] = useState<VoiceChoice>({ maleURI: "", femaleURI: "" });
+  const [showVoicePick, setShowVoicePick] = useState(false);
+
   const cancelRef = useRef(false);
-  const utterRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const pauseGateRef = useRef<Promise<void> | null>(null);
+  const resumePauseRef = useRef<(() => void) | null>(null);
   const bars = useMemo(() => Array.from({ length: 28 }, (_, i) => i), []);
 
-  const chunks = useMemo(() => splitNarrationChunks(text), [text]);
+  const episodes = show.episodes;
+  const safeIdx = Math.min(Math.max(0, unitIndex ?? episodeIdx), Math.max(0, episodes.length - 1));
+  const episode: PodcastEpisode | undefined = episodes[safeIdx];
+
+  useEffect(() => {
+    if (typeof unitIndex === "number") setEpisodeIdx(unitIndex);
+  }, [unitIndex]);
+
+  useEffect(() => {
+    setEpisodeIdx(0);
+    setLineIdx(-1);
+    setProgress(0);
+  }, [show.slug]);
 
   useEffect(() => {
     if (typeof window === "undefined" || !window.speechSynthesis) {
       setSupported(false);
       return;
     }
-    const ready = () => setVoicesReady(true);
-    ready();
-    window.speechSynthesis.addEventListener("voiceschanged", ready);
-    return () => window.speechSynthesis.removeEventListener("voiceschanged", ready);
+    const refresh = () => {
+      const list = listZhVoices();
+      setVoices(list);
+      setVoiceChoice((prev) => {
+        const male = pickBestVoice("male", prev.maleURI);
+        const female = pickBestVoice("female", prev.femaleURI);
+        return {
+          maleURI: male?.voiceURI ?? prev.maleURI,
+          femaleURI: female?.voiceURI ?? prev.femaleURI,
+        };
+      });
+    };
+    refresh();
+    window.speechSynthesis.addEventListener("voiceschanged", refresh);
+    return () => window.speechSynthesis.removeEventListener("voiceschanged", refresh);
   }, []);
 
-  const stop = useCallback(() => {
+  const hardStop = useCallback(() => {
     cancelRef.current = true;
+    resumePauseRef.current?.();
+    resumePauseRef.current = null;
+    pauseGateRef.current = null;
     if (typeof window !== "undefined" && window.speechSynthesis) {
       window.speechSynthesis.cancel();
     }
-    utterRef.current = null;
     setPlaying(false);
+    setPaused(false);
+    setLineIdx(-1);
     setProgress(0);
   }, []);
 
-  useEffect(() => () => stop(), [stop]);
+  useEffect(() => () => hardStop(), [hardStop]);
 
   useEffect(() => {
-    // scene/text changed — stop current speech
-    stop();
-  }, [text, stop]);
+    hardStop();
+  }, [show.slug, safeIdx, hardStop]);
 
-  const speak = useCallback(async () => {
-    if (!supported || !chunks.length) return;
-    stop();
-    cancelRef.current = false;
-    setPlaying(true);
+  const changeUnit = useCallback(
+    (next: number) => {
+      const clamped = Math.min(Math.max(0, next), episodes.length - 1);
+      setEpisodeIdx(clamped);
+      onUnitChange?.(clamped);
+    },
+    [episodes.length, onUnitChange],
+  );
 
-    const voice = pickVoice(gender);
-    const rate = gender === "male" ? 0.88 : 0.86;
-    const pitch = gender === "male" ? 0.92 : 1.08;
+  const waitIfPaused = useCallback(async () => {
+    while (pauseGateRef.current) {
+      await pauseGateRef.current;
+    }
+  }, []);
 
-    for (let i = 0; i < chunks.length; i += 1) {
-      if (cancelRef.current) break;
-      setProgress((i + 0.15) / chunks.length);
+  /**
+   * Speak one host turn as a single continuous utterance.
+   * Avoid micro-chunking — that causes 頓來頓去 choppiness on Web Speech API.
+   */
+  const speakLine = useCallback(
+    async (line: PodcastLine) => {
+      const voice = pickBestVoice(
+        line.speaker,
+        line.speaker === "male" ? voiceChoice.maleURI : voiceChoice.femaleURI,
+      );
+      const text = plainForSpeech(line.text);
+      if (!text) return;
+
+      const rate = line.rate ?? (line.speaker === "male" ? 0.94 : 0.92);
+      const pitch = line.pitch ?? (line.speaker === "male" ? 0.92 : 1.1);
+
+      await waitIfPaused();
+      if (cancelRef.current) return;
 
       await new Promise<void>((resolve) => {
-        const u = new SpeechSynthesisUtterance(chunks[i]);
-        utterRef.current = u;
+        const u = new SpeechSynthesisUtterance(text);
         u.lang = voice?.lang || "zh-TW";
         if (voice) u.voice = voice;
         u.rate = rate;
@@ -107,67 +185,171 @@ export function NarrationPlayer({ text, label = "導讀" }: Props) {
         u.onerror = () => resolve();
         window.speechSynthesis.speak(u);
       });
+    },
+    [voiceChoice.femaleURI, voiceChoice.maleURI, waitIfPaused],
+  );
 
+  const speakEpisode = useCallback(async () => {
+    if (!supported || !episode?.lines.length) return;
+    hardStop();
+    cancelRef.current = false;
+    setPlaying(true);
+    setPaused(false);
+
+    const lines = episode.lines;
+    let i = 0;
+    while (i < lines.length) {
       if (cancelRef.current) break;
-      setProgress((i + 1) / chunks.length);
-      // leisurely pause between sentences
-      const last = chunks[i];
-      const longPause = /[。！？…]$/.test(last);
-      await new Promise((r) => setTimeout(r, longPause ? 520 : 280));
+
+      // Merge consecutive same-speaker lines into one continuous utterance
+      // (avoids restarting synthesis mid-thought)
+      let j = i;
+      const speaker = lines[i]!.speaker;
+      const parts: string[] = [lines[i]!.text];
+      while (j + 1 < lines.length && lines[j + 1]!.speaker === speaker) {
+        j += 1;
+        parts.push(lines[j]!.text);
+      }
+
+      setLineIdx(i);
+      setProgress((i + 0.15) / lines.length);
+
+      const merged: PodcastLine = {
+        speaker,
+        text: parts.join(""),
+        rate: lines[i]!.rate,
+        pitch: lines[i]!.pitch,
+      };
+      await speakLine(merged);
+      if (cancelRef.current) break;
+
+      // Keep last line of the group highlighted briefly
+      setLineIdx(j);
+      setProgress((j + 1) / lines.length);
+
+      i = j + 1;
+      if (i >= lines.length) break;
+
+      // Only meaningful pause: speaker just changed (or about to)
+      const gap = Math.min(Math.max(lines[j]!.pauseMs ?? 440, 300), 520);
+      await sleep(gap);
+      await waitIfPaused();
     }
 
     if (!cancelRef.current) {
       setProgress(1);
       setPlaying(false);
+      setPaused(false);
+      setLineIdx(-1);
     }
-  }, [chunks, gender, stop, supported]);
+  }, [episode, hardStop, speakLine, supported, waitIfPaused]);
 
-  function toggle() {
-    if (playing) stop();
-    else void speak();
+  function togglePlay() {
+    if (!playing) {
+      void speakEpisode();
+      return;
+    }
+    if (paused) {
+      // resume
+      resumePauseRef.current?.();
+      resumePauseRef.current = null;
+      pauseGateRef.current = null;
+      setPaused(false);
+      if (typeof window !== "undefined" && window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+      return;
+    }
+    // soft pause
+    setPaused(true);
+    pauseGateRef.current = new Promise<void>((resolve) => {
+      resumePauseRef.current = resolve;
+    });
+    if (typeof window !== "undefined") {
+      window.speechSynthesis.pause();
+    }
   }
+
+  const maleVoices = voices.filter((v) => scoreVoice(v, "male") >= scoreVoice(v, "female"));
+  const femaleVoices = voices.filter((v) => scoreVoice(v, "female") > scoreVoice(v, "male"));
+  const malePool = maleVoices.length ? maleVoices : voices;
+  const femalePool = femaleVoices.length ? femaleVoices : voices;
+
+  if (!episode) return null;
 
   return (
     <div className="immersive-glass rounded-2xl px-4 py-3 sm:px-5 sm:py-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-xs tracking-[0.18em] text-[#5a6e66]">{label}</p>
-        <div className="flex items-center gap-1 rounded-full border border-white/30 bg-white/20 p-0.5 text-xs">
-          <button
-            type="button"
-            onClick={() => {
-              stop();
-              setGender("male");
-            }}
-            className={`rounded-full px-2.5 py-1 transition ${
-              gender === "male" ? "bg-[#3d5c4f] text-[#f3faf7]" : "text-[#2a332e]/80"
-            }`}
-          >
-            磁性男聲
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              stop();
-              setGender("female");
-            }}
-            className={`rounded-full px-2.5 py-1 transition ${
-              gender === "female" ? "bg-[#3d5c4f] text-[#f3faf7]" : "text-[#2a332e]/80"
-            }`}
-          >
-            溫柔女聲
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setShowVoicePick((v) => !v)}
+          className="rounded-full border border-white/30 bg-white/20 px-2.5 py-1 text-[11px] text-[#2a332e]/85 backdrop-blur-md hover:bg-white/35 transition"
+        >
+          {showVoicePick ? "收合聲線" : "選擇聲線"}
+        </button>
       </div>
+
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        <select
+          aria-label="選擇單元"
+          value={safeIdx}
+          onChange={(e) => changeUnit(Number(e.target.value))}
+          className="max-w-full rounded-full border border-white/35 bg-white/25 px-3 py-1.5 text-xs text-[#24302b] backdrop-blur-md outline-none"
+        >
+          {episodes.map((ep, i) => (
+            <option key={ep.id} value={i}>
+              {ep.title}
+            </option>
+          ))}
+        </select>
+        <span className="text-[11px] text-[#5a6e66]">
+          {safeIdx + 1} / {episodes.length} 單元
+        </span>
+      </div>
+
+      {showVoicePick && (
+        <div className="mt-3 grid gap-2 sm:grid-cols-2">
+          <label className="text-[11px] text-[#5a6e66]">
+            男聲
+            <select
+              className="mt-1 w-full rounded-xl border border-white/35 bg-white/30 px-2 py-1.5 text-xs text-[#24302b]"
+              value={voiceChoice.maleURI}
+              onChange={(e) => setVoiceChoice((c) => ({ ...c, maleURI: e.target.value }))}
+            >
+              {malePool.map((v) => (
+                <option key={v.voiceURI} value={v.voiceURI}>
+                  {v.name} ({v.lang})
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="text-[11px] text-[#5a6e66]">
+            女聲
+            <select
+              className="mt-1 w-full rounded-xl border border-white/35 bg-white/30 px-2 py-1.5 text-xs text-[#24302b]"
+              value={voiceChoice.femaleURI}
+              onChange={(e) => setVoiceChoice((c) => ({ ...c, femaleURI: e.target.value }))}
+            >
+              {femalePool.map((v) => (
+                <option key={v.voiceURI} value={v.voiceURI}>
+                  {v.name} ({v.lang})
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+      )}
 
       <div className="mt-3 flex items-center gap-3">
         <button
           type="button"
-          onClick={toggle}
+          onClick={togglePlay}
           disabled={!supported}
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#3d5c4f] text-[#f3faf7] shadow-[0_6px_20px_rgba(61,92,79,0.28)] transition hover:opacity-90 disabled:opacity-40"
-          aria-label={playing ? "暫停導讀" : "播放導讀"}
+          aria-label={playing && !paused ? "暫停" : "播放"}
         >
-          {playing ? (
+          {playing && !paused ? (
             <span className="flex gap-1">
               <span className="h-3.5 w-1 rounded-sm bg-current" />
               <span className="h-3.5 w-1 rounded-sm bg-current" />
@@ -177,24 +359,36 @@ export function NarrationPlayer({ text, label = "導讀" }: Props) {
           )}
         </button>
 
+        <button
+          type="button"
+          disabled={safeIdx >= episodes.length - 1}
+          onClick={() => changeUnit(safeIdx + 1)}
+          className="shrink-0 rounded-full border border-white/35 bg-white/20 px-2.5 py-2 text-[11px] text-[#2a332e] backdrop-blur-md transition hover:bg-white/35 disabled:opacity-35"
+          aria-label="下一單元"
+          title="下一單元"
+        >
+          下單元
+        </button>
+
         <div className="min-w-0 flex-1">
-          <div
-            className="flex h-8 items-end justify-between gap-[2px]"
-            aria-hidden
-          >
+          <div className="flex h-8 items-end justify-between gap-[2px]" aria-hidden>
             {bars.map((i) => {
               const mid = Math.abs(i - bars.length / 2) / (bars.length / 2);
               const base = 0.25 + (1 - mid) * 0.55;
-              const active = playing && progress > i / bars.length;
+              const active = playing && !paused && progress > i / bars.length;
               return (
                 <span
                   key={i}
-                  className="w-full rounded-full bg-[#3d5c4f]/35 origin-bottom"
+                  className="w-full origin-bottom rounded-full bg-[#3d5c4f]/35"
                   style={{
                     height: `${Math.round(base * 100)}%`,
                     opacity: active ? 0.95 : 0.35,
-                    transform: playing && active ? `scaleY(${0.75 + (i % 5) * 0.12})` : "scaleY(1)",
-                    animation: playing && active ? `immWave 0.9s ease-in-out ${i * 0.04}s infinite alternate` : undefined,
+                    transform:
+                      playing && active ? `scaleY(${0.75 + (i % 5) * 0.12})` : "scaleY(1)",
+                    animation:
+                      playing && active
+                        ? `immWave 0.9s ease-in-out ${i * 0.04}s infinite alternate`
+                        : undefined,
                   }}
                 />
               );
@@ -210,19 +404,49 @@ export function NarrationPlayer({ text, label = "導讀" }: Props) {
 
         <div
           className={`h-9 w-9 shrink-0 rounded-full border border-white/40 bg-gradient-to-br from-[#f6efe2] to-[#c9d9cf] shadow-inner ${
-            playing ? "animate-[immSpin_8s_linear_infinite]" : ""
+            playing && !paused ? "animate-[immSpin_8s_linear_infinite]" : ""
           }`}
           aria-hidden
           title="悠閒轉盤"
         />
       </div>
 
+      {/* Script lines with highlight */}
+      <ul className="mt-3 max-h-44 space-y-2 overflow-y-auto pr-1 text-sm leading-relaxed">
+        {episode.lines.map((line, i) => {
+          const active = i === lineIdx;
+          const isMale = line.speaker === "male";
+          return (
+            <li
+              key={`${episode.id}-${i}`}
+              className={`rounded-xl px-3 py-2 transition ${
+                active
+                  ? "bg-[#3d5c4f]/18 ring-1 ring-[#3d5c4f]/25"
+                  : "bg-white/10"
+              }`}
+            >
+              <span
+                className={`mr-2 inline-block rounded-full px-2 py-0.5 text-[10px] tracking-wide ${
+                  isMale
+                    ? "bg-[#3d5c4f]/85 text-[#f3faf7]"
+                    : "bg-[#c4a574]/85 text-[#2a2418]"
+                }`}
+              >
+                {isMale ? "男聲" : "女聲"}
+              </span>
+              <span className={active ? "text-[#1a2822]" : "text-[#3d4f48]/90"}>{line.text}</span>
+            </li>
+          );
+        })}
+      </ul>
+
       {!supported && (
         <p className="mt-2 text-xs text-[#7a6a55]">此瀏覽器不支援語音導讀，請改用 Chrome／Edge。</p>
       )}
-      {supported && voicesReady && (
+      {supported && (
         <p className="mt-2 text-[11px] leading-relaxed text-[#5a6e66]/90">
-          節奏偏慢、句末會稍停；聲線依本機中文語音引擎，聽感會因裝置略有不同。
+          一男一女對答・說故事再講意思。每句整段連續播放，只在換人時稍停。聲線來自本機 Web Speech（Chrome／Edge 較穩），無法像錄音室級 TTS
+          那樣細調抑揚；請選本機較自然的中文男女聲，聽感會好很多。
         </p>
       )}
     </div>
