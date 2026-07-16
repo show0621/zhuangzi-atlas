@@ -2,7 +2,7 @@ name: Deploy site
 
 on:
   push:
-    branches: [main]
+    branches: [master, main]
   workflow_dispatch:
 
 permissions:
@@ -17,6 +17,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      GITHUB_PAGES: "true"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -24,7 +26,6 @@ jobs:
           node-version: "22"
           cache: npm
       - run: npm ci
-      - run: npx tsx scripts/scaffold-content.ts
       - run: npm run content:validate
       - run: npm run indexes:build
       - run: npm run ebook:md
