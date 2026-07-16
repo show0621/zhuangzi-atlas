@@ -93,10 +93,29 @@
   transform: translateY(-1px);
 }
 
+@keyframes immWave {
+  from {
+    transform: scaleY(0.55);
+  }
+  to {
+    transform: scaleY(1.15);
+  }
+}
+
+@keyframes immSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .immersive-prose p,
   .immersive-prose li,
   .immersive-prose blockquote {
     transition: none;
+  }
+
+  .immersive-root * {
+    animation: none !important;
   }
 }

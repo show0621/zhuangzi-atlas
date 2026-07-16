@@ -2,7 +2,6 @@ import Link from "next/link";
 import { SITE } from "@/lib/catalog";
 
 const nav = [
-  { href: "/", label: "首頁" },
   { href: "/immersive/", label: "山上讀書" },
   { href: "/toc/", label: "目錄" },
   { href: "/maps/", label: "思想地圖" },
@@ -16,9 +15,9 @@ const nav = [
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen">
-      <header className="border-b border-line/80 bg-paper/80 backdrop-blur sticky top-0 z-40">
+      <header className="sticky top-0 z-40 border-b border-line/60 bg-[#f7faf8]/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
-          <Link href="/" className="font-serif text-lg tracking-wide text-ink">
+          <Link href="/immersive/" className="font-serif text-lg tracking-wide text-ink">
             {SITE.title}
             <span className="ml-2 text-sm font-sans font-normal text-muted">
               {SITE.englishTitle}
@@ -34,18 +33,21 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
                 {item.label}
               </Link>
             ))}
+            <Link href="/" className="hover:text-accent transition-colors">
+              知識庫
+            </Link>
           </nav>
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-4 py-10">{children}</main>
-      <footer className="border-t border-line mt-16">
-        <div className="mx-auto max-w-6xl px-4 py-8 text-sm text-muted flex flex-col gap-2 sm:flex-row sm:justify-between">
+      <footer className="mt-16 border-t border-line/70">
+        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-8 text-sm text-muted sm:flex-row sm:justify-between">
           <p>
             {SITE.title} v{SITE.version} — {SITE.subtitle}
           </p>
           <p>
-            <Link href="/immersive/" className="hover:text-accent">
-              進入山上沉浸閱讀
+            <Link href="/immersive/" className="text-accent hover:underline">
+              回到山上沉浸閱讀
             </Link>
           </p>
         </div>

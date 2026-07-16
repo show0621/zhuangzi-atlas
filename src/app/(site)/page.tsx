@@ -1,107 +1,98 @@
 import Link from "next/link";
 import { CHAPTERS, SITE, chaptersByPart, PART_ORDER } from "@/lib/catalog";
+import { assetPath } from "@/lib/assetPath";
 
 export default function HomePage() {
   const inner = chaptersByPart("內篇");
-  const publishedish = CHAPTERS.filter((c) => c.status !== "skeleton").length;
+  const drafted = CHAPTERS.filter((c) => c.status !== "skeleton").length;
 
   return (
-    <div className="space-y-16">
-      <section className="relative overflow-hidden rounded-2xl border border-line bg-gradient-to-br from-[#fbf8f1] via-[#f3ebe0] to-[#e4efe9] px-6 py-14 sm:px-12">
+    <div className="space-y-14">
+      <section className="relative overflow-hidden rounded-[1.75rem] border border-line/70 bg-gradient-to-br from-[#f8fbf9] via-[#eef5f1] to-[#e4ebe4] px-6 py-12 sm:px-12">
         <div
-          className="pointer-events-none absolute inset-0 opacity-[0.35]"
+          className="pointer-events-none absolute inset-0 opacity-50"
           style={{
             backgroundImage:
-              "radial-gradient(circle at 20% 20%, rgba(47,93,80,0.12), transparent 40%), radial-gradient(circle at 80% 0%, rgba(139,69,19,0.1), transparent 35%)",
+              "radial-gradient(circle at 18% 15%, rgba(255,244,220,0.7), transparent 42%), radial-gradient(circle at 88% 10%, rgba(61,92,79,0.1), transparent 40%)",
           }}
         />
-        <div className="relative max-w-2xl space-y-5">
-          <p className="font-serif text-4xl sm:text-5xl tracking-wide text-ink">
-            {SITE.title}
-          </p>
-          <p className="text-lg text-muted">{SITE.subtitle}</p>
-          <p className="text-base leading-relaxed text-ink/90">
-            一本書 × 一個網站 × 一套 AI 知識庫。目標不是再出一本導讀，而是建立可檢索、可交叉引用、可出版的《莊子》數位知識庫。
-          </p>
-          <div className="flex flex-wrap gap-3 pt-2">
-            <Link
-              href="/immersive/"
-              className="rounded-md bg-accent px-5 py-2.5 text-sm text-white hover:opacity-90 transition"
-            >
-              山上讀書（沉浸式）
-            </Link>
-            <Link
-              href="/chapters/逍遙遊/"
-              className="rounded-md border border-line bg-paper/70 px-5 py-2.5 text-sm hover:border-accent transition"
-            >
-              普通閱讀〈逍遙遊〉
-            </Link>
-            <Link
-              href="/toc/"
-              className="rounded-md border border-line bg-paper/70 px-5 py-2.5 text-sm hover:border-accent transition"
-            >
-              全書目錄
-            </Link>
-            <Link
-              href="/search/"
-              className="rounded-md border border-line bg-paper/70 px-5 py-2.5 text-sm hover:border-accent transition"
-            >
-              搜尋
-            </Link>
-            <Link
-              href="/ai/"
-              className="rounded-md border border-line bg-paper/70 px-5 py-2.5 text-sm hover:border-accent transition"
-            >
-              莊子 AI
-            </Link>
+        <div className="relative grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+          <div className="space-y-5">
+            <p className="text-xs tracking-[0.28em] text-muted">時光靜好・沉浸閱讀</p>
+            <p className="font-serif text-4xl sm:text-5xl tracking-wide text-ink">
+              {SITE.title}
+            </p>
+            <p className="text-lg text-muted">{SITE.subtitle}</p>
+            <p className="text-base leading-relaxed text-ink/85 max-w-xl">
+              打開山上讀書：繪本與純文字可切換，磁性男聲／溫柔女聲慢慢導讀。知識庫仍在，但入口先留給舒服的停留。
+            </p>
+            <div className="flex flex-wrap gap-3 pt-1">
+              <Link
+                href="/immersive/"
+                className="rounded-full bg-accent px-6 py-3 text-sm text-white shadow-[0_10px_28px_rgba(61,92,79,0.22)] hover:opacity-90 transition"
+              >
+                進入山上讀書
+              </Link>
+              <Link
+                href="/immersive/逍遙遊/"
+                className="rounded-full border border-line bg-white/55 px-5 py-3 text-sm hover:border-accent/50 transition"
+              >
+                〈逍遙遊〉繪本
+              </Link>
+              <Link
+                href="/toc/"
+                className="rounded-full border border-line/80 bg-white/35 px-5 py-3 text-sm text-muted hover:text-ink transition"
+              >
+                全書目錄
+              </Link>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={assetPath("/immersive/mood/ref-traveler.png")}
+              alt=""
+              className="aspect-[4/3] w-full rounded-2xl object-cover shadow-md"
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={assetPath("/immersive/pict/pict-kunpeng-lofi.png")}
+              alt=""
+              className="mt-6 aspect-[4/3] w-full rounded-2xl object-cover shadow-md"
+            />
           </div>
         </div>
       </section>
 
-      <section className="grid gap-6 sm:grid-cols-3">
+      <section className="grid gap-4 sm:grid-cols-3">
         {[
-          { label: "篇章骨架", value: `${CHAPTERS.length}` },
-          { label: "目前版本", value: `v${SITE.version}` },
-          { label: "已脫離骨架", value: `${publishedish}` },
+          { label: "篇章", value: `${CHAPTERS.length}` },
+          { label: "版本", value: `v${SITE.version}` },
+          { label: "正文狀態", value: `${drafted} 篇 draft` },
         ].map((stat) => (
-          <div key={stat.label} className="border border-line rounded-xl px-5 py-4 bg-paper/50">
+          <div
+            key={stat.label}
+            className="rounded-2xl border border-line/70 bg-white/40 px-5 py-4 backdrop-blur-sm"
+          >
             <p className="text-sm text-muted">{stat.label}</p>
-            <p className="mt-1 font-serif text-3xl">{stat.value}</p>
+            <p className="mt-1 font-serif text-3xl text-ink/90">{stat.value}</p>
           </div>
         ))}
       </section>
 
       <section className="space-y-4">
-        <h2 className="font-serif text-2xl">版本路線</h2>
-        <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5 text-sm">
-          {[
-            ["V0.1", "骨架：網站、電子書、33 篇範本"],
-            ["V0.2", "導論 + 內篇 7 篇"],
-            ["V0.3", "外篇 15 篇"],
-            ["V0.4", "雜篇 11 篇"],
-            ["V1.0", "出版版：索引、地圖、百科齊備"],
-          ].map(([ver, desc]) => (
-            <li key={ver} className="rounded-xl border border-line bg-paper/40 px-4 py-3">
-              <p className="font-medium text-accent">{ver}</p>
-              <p className="mt-1 text-muted">{desc}</p>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      <section className="space-y-4">
         <div className="flex items-end justify-between gap-4">
-          <h2 className="font-serif text-2xl">內篇速覽</h2>
-          <Link href="/toc/" className="text-sm text-accent hover:underline">
-            看全部 →
+          <h2 className="font-serif text-2xl text-ink/90">內篇速覽</h2>
+          <Link href="/immersive/" className="text-sm text-accent hover:underline">
+            山上讀 →
           </Link>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           {inner.map((ch) => (
             <Link
               key={ch.id}
-              href={`/chapters/${ch.slug}/`}
-              className="group rounded-xl border border-line bg-paper/50 px-5 py-4 hover:border-accent transition"
+              href={`/immersive/${ch.slug}/`}
+              className="group rounded-2xl border border-line/70 bg-white/35 px-5 py-4 hover:border-accent/40 transition"
             >
               <p className="text-xs text-muted">
                 {ch.part} · {ch.id}
@@ -116,7 +107,7 @@ export default function HomePage() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="font-serif text-2xl">知識庫板塊</h2>
+        <h2 className="font-serif text-2xl text-ink/90">知識庫板塊</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {[
             ["/maps/", "思想地圖", "概念節點互相連結"],
@@ -124,11 +115,12 @@ export default function HomePage() {
             ["/terms/", "名詞百科", "無待、心齋、坐忘…"],
             ["/themes/", "主題閱讀", "焦慮、死亡、工作…"],
             ["/ai/", "莊子 AI", "檢索本庫內容並附上來源"],
+            ["/search/", "搜尋", "全文檢索"],
           ].map(([href, title, desc]) => (
             <Link
               key={href}
               href={href}
-              className="rounded-xl border border-line px-4 py-4 bg-paper/40 hover:border-accent transition"
+              className="rounded-2xl border border-line/70 px-4 py-4 bg-white/30 hover:border-accent/40 transition"
             >
               <p className="font-medium">{title}</p>
               <p className="mt-1 text-sm text-muted">{desc}</p>
@@ -137,16 +129,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="rounded-xl border border-dashed border-line px-5 py-4 text-sm text-muted">
+      <section className="rounded-2xl border border-dashed border-line px-5 py-4 text-sm text-muted">
         <p>
-          目前為 <strong className="text-ink">V0.2</strong>：〈逍遙遊〉已有出版級 draft；
-          「莊子 AI」可依知識庫檢索回答。內容撰寫請依{" "}
-          <code className="text-ink">AGENTS.md</code> 與{" "}
-          <code className="text-ink">prompts/chapter-template.md</code>
-          ；完成一篇後將 frontmatter 的 <code className="text-ink">status</code>{" "}
-          更新為 draft／review／published。
+          內容現況：全書 {CHAPTERS.length} 篇皆為{" "}
+          <strong className="text-ink">draft</strong>
+          （架構正文已齊，尚未達出版級 review／published）。版本路線仍依{" "}
+          {PART_ORDER.filter((p) => p !== "附錄").join(" → ")}。
         </p>
-        <p className="mt-2">全書結構板塊：{PART_ORDER.filter((p) => p !== "附錄").join(" → ")}</p>
       </section>
     </div>
   );

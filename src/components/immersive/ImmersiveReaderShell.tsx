@@ -26,9 +26,10 @@ export function ImmersiveReaderShell({
         className="pointer-events-none fixed inset-0 z-0"
         style={{
           background: `
-            radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,255,255,0.45), transparent 55%),
-            radial-gradient(ellipse 70% 55% at 15% 90%, rgba(110, 145, 130, 0.25), transparent 50%),
-            linear-gradient(180deg, #eaf3ef 0%, #d2e3dc 45%, #a9c2b6 100%)
+            radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,248,230,0.55), transparent 55%),
+            radial-gradient(ellipse 70% 55% at 15% 90%, rgba(110, 145, 130, 0.2), transparent 50%),
+            radial-gradient(ellipse 50% 40% at 90% 80%, rgba(200, 170, 120, 0.12), transparent 45%),
+            linear-gradient(180deg, #f3f8f5 0%, #ddece5 45%, #b7cfc4 100%)
           `,
         }}
       />

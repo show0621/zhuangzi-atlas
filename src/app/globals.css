@@ -1,13 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --ink: #1c1917;
-  --paper: #f7f3eb;
-  --paper-2: #efe8dc;
-  --accent: #2f5d50;
-  --accent-2: #8b4513;
-  --muted: #6b6560;
-  --line: #d9d0c3;
+  /* 柔和明亮・時光靜好：玉綠霧氣 + 暖光，避免紫調與高對比 */
+  --ink: #2a332e;
+  --paper: #f4f8f5;
+  --paper-2: #e8f0eb;
+  --accent: #3d5c4f;
+  --accent-2: #b08968;
+  --muted: #6a756f;
+  --line: #d5e0da;
+  --glow: rgba(255, 244, 220, 0.55);
 }
 
 @theme inline {
@@ -28,20 +30,22 @@ html {
 
 body {
   background:
-    radial-gradient(ellipse at top, rgba(47, 93, 80, 0.06), transparent 50%),
-    linear-gradient(180deg, var(--paper) 0%, var(--paper-2) 100%);
+    radial-gradient(ellipse 90% 55% at 50% -10%, var(--glow), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 100% 20%, rgba(61, 92, 79, 0.07), transparent 50%),
+    radial-gradient(ellipse 50% 35% at 0% 80%, rgba(176, 137, 104, 0.08), transparent 45%),
+    linear-gradient(180deg, #f7faf8 0%, var(--paper) 40%, var(--paper-2) 100%);
   color: var(--ink);
   font-family: var(--font-sans);
   min-height: 100vh;
 }
 
 ::selection {
-  background: color-mix(in oklab, var(--accent) 28%, white);
+  background: color-mix(in oklab, var(--accent) 22%, white);
 }
 
 .prose-zhuangzi {
   max-width: 48rem;
-  line-height: 1.85;
+  line-height: 1.9;
 }
 
 .prose-zhuangzi h1,
@@ -52,6 +56,7 @@ body {
   letter-spacing: 0.02em;
   margin-top: 2rem;
   margin-bottom: 0.75rem;
+  color: #24302b;
 }
 
 .prose-zhuangzi h1 {
@@ -60,16 +65,16 @@ body {
 
 .prose-zhuangzi h2 {
   font-size: 1.375rem;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid color-mix(in oklab, var(--line) 80%, white);
   padding-bottom: 0.35rem;
 }
 
 .prose-zhuangzi p {
-  margin: 0.9rem 0;
+  margin: 0.95rem 0;
 }
 
 .prose-zhuangzi blockquote {
-  border-left: 3px solid var(--accent);
+  border-left: 2px solid color-mix(in oklab, var(--accent) 55%, white);
   padding-left: 1rem;
   color: var(--muted);
   margin: 1.25rem 0;
@@ -91,17 +96,17 @@ body {
 
 .prose-zhuangzi code {
   font-size: 0.9em;
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(61, 92, 79, 0.06);
   padding: 0.1em 0.35em;
-  border-radius: 0.25rem;
+  border-radius: 0.35rem;
 }
 
 .prose-zhuangzi pre {
-  background: #1f1c19;
-  color: #f5f0e8;
+  background: #2a332e;
+  color: #eef5f2;
   padding: 1rem;
   overflow-x: auto;
-  border-radius: 0.5rem;
+  border-radius: 0.85rem;
   font-size: 0.85rem;
 }
 
