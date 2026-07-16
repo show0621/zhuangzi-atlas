@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "generatedAt": "2026-07-16T04:57:19.001Z",
+  "generatedAt": "2026-07-16T05:19:09.109Z",
   "chapterCount": 34,
   "chapters": [
     {
@@ -36,8 +36,8 @@
       "slug": "逍遙遊",
       "title": "逍遙遊",
       "part": "內篇",
-      "summary": "由鯤鵬至無待：大小之辯、有待／無待，與逍遙的真正條件。",
-      "status": "skeleton",
+      "summary": "由鯤鵬至無待：小大之辯、有待／無待、至人無己，以及惠子「無用之用」。",
+      "status": "draft",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -57,7 +57,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 897
+      "wordCountApprox": 7085
     },
     {
       "id": "02",

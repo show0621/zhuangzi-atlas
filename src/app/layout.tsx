@@ -34,6 +34,7 @@ const nav = [
   { href: "/terms/", label: "名詞" },
   { href: "/themes/", label: "主題" },
   { href: "/search/", label: "搜尋" },
+  { href: "/ai/", label: "莊子 AI" },
 ];
 
 export default function RootLayout({

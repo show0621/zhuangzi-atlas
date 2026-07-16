@@ -42,6 +42,12 @@ export default function HomePage() {
             >
               搜尋
             </Link>
+            <Link
+              href="/ai/"
+              className="rounded-md border border-line bg-paper/70 px-5 py-2.5 text-sm hover:border-accent transition"
+            >
+              莊子 AI：從本庫提問
+            </Link>
           </div>
         </div>
       </section>
@@ -111,6 +117,7 @@ export default function HomePage() {
             ["/figures/", "人物百科", "惠子、列子、庖丁…"],
             ["/terms/", "名詞百科", "無待、心齋、坐忘…"],
             ["/themes/", "主題閱讀", "焦慮、死亡、工作…"],
+            ["/ai/", "莊子 AI", "檢索本庫內容並附上來源"],
           ].map(([href, title, desc]) => (
             <Link
               key={href}
@@ -126,7 +133,8 @@ export default function HomePage() {
 
       <section className="rounded-xl border border-dashed border-line px-5 py-4 text-sm text-muted">
         <p>
-          目前為 <strong className="text-ink">V0.1 骨架</strong>。內容撰寫請依{" "}
+          目前為 <strong className="text-ink">V0.2</strong>：〈逍遙遊〉已有出版級 draft；
+          「莊子 AI」可依知識庫檢索回答。內容撰寫請依{" "}
           <code className="text-ink">AGENTS.md</code> 與{" "}
           <code className="text-ink">prompts/chapter-template.md</code>
           ；完成一篇後將 frontmatter 的 <code className="text-ink">status</code>{" "}

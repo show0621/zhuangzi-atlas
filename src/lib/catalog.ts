@@ -21,7 +21,7 @@ export const SITE = {
   englishTitle: "Zhuangzi Atlas",
   description:
     "中文世界最完整的《莊子》數位知識庫：原典、白話、歷代注家、哲學分析、現代應用與思想地圖。",
-  version: "0.1.0",
+  version: "0.2.0",
   author: "莊子全解專案",
 } as const;
 
@@ -42,8 +42,8 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "逍遙遊",
     part: "內篇",
     order: 1,
-    status: "skeleton",
-    summary: "由鯤鵬至無待：大小之辯、有待／無待，與逍遙的真正條件。",
+    status: "draft",
+    summary: "由鯤鵬至無待：小大之辯、有待／無待、至人無己，以及惠子「無用之用」。",
   },
   {
     id: "02",

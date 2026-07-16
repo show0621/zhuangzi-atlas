@@ -1,10 +1,11 @@
 {
   "name": "zhuangzi-atlas",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "莊子全解（Zhuangzi Atlas）— 原典・白話・哲學・人生智慧",
   "scripts": {
     "dev": "next dev --turbopack",
+    "prebuild": "npm run indexes:build",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -13,7 +14,8 @@
     "ebook:md": "tsx scripts/generate-ebook.ts",
     "ebook:epub": "tsx scripts/generate-ebook.ts --format epub",
     "ebook:pdf": "tsx scripts/generate-ebook.ts --format pdf",
-    "indexes:build": "tsx scripts/build-indexes.ts"
+    "rag:build": "tsx scripts/build-rag-index.ts",
+    "indexes:build": "tsx scripts/build-indexes.ts && npm run rag:build"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",
