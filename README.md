@@ -15,15 +15,20 @@
 - `AGENTS.md` 與寫作提示詞
 - GitHub Actions：建置網站並部署 GitHub Pages
 
-## 快速開始
+## Streamlit 手機版（建議日常閱讀）
+
+內容與 Next 網站共用 `content/`。Streamlit 較適合手機瀏覽與本機互動。
 
 ```bash
-npm install
-npx tsx scripts/scaffold-content.ts   # 若篇章尚未生成
-npm run dev
+pip install -r requirements-streamlit.txt
+streamlit run streamlit_app/Home.py
 ```
 
-開啟 [http://localhost:3000](http://localhost:3000)。
+手機同一區網可開：終端會顯示 `Network URL`（例如 `http://192.168.x.x:8501`）。  
+手機瀏覽器打開該網址即可；點左上角 **≡** 切換頁面。
+
+頁面包含：首頁、目錄、閱讀（分段摺疊）、搜尋、莊子 AI、地圖／百科。
+
 
 ## 常用指令
 

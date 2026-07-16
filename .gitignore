@@ -23,6 +23,13 @@
 .DS_Store
 *.pem
 Thumbs.db
+.streamlit/secrets.toml
+
+# python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
 
 # debug
 npm-debug.log*
