@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-07-16T05:19:08.321Z",
+  "generatedAt": "2026-07-16T05:38:58.920Z",
   "chapters": [
     {
       "id": "00",
       "slug": "導論",
       "title": "導論：如何閱讀《莊子》",
       "part": "導論",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "成書、版本、讀法、全書地圖與本專案體例說明。",
       "path": "content/chapters/00-導論/00-導論.md"
     },
@@ -24,7 +24,7 @@
       "slug": "齊物論",
       "title": "齊物論",
       "part": "內篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "是非相對、物我一體，以及「莊周夢蝶」的認識論與存在論。",
       "path": "content/chapters/01-內篇/02-齊物論.md"
     },
@@ -33,7 +33,7 @@
       "slug": "養生主",
       "title": "養生主",
       "part": "內篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "庖丁解牛與養生之道：緣督以為經，安時而處順。",
       "path": "content/chapters/01-內篇/03-養生主.md"
     },
@@ -42,7 +42,7 @@
       "slug": "人間世",
       "title": "人間世",
       "part": "內篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "亂世處世、心齋、無用之用，與在人際政治中的保全之道。",
       "path": "content/chapters/01-內篇/04-人間世.md"
     },
@@ -51,7 +51,7 @@
       "slug": "德充符",
       "title": "德充符",
       "part": "內篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "形殘德全：外形與內德的辯證，以及「才全而德不形」。",
       "path": "content/chapters/01-內篇/05-德充符.md"
     },
@@ -60,7 +60,7 @@
       "slug": "大宗師",
       "title": "大宗師",
       "part": "內篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "真人、坐忘、死生一體，與以道為宗師的生命態度。",
       "path": "content/chapters/01-內篇/06-大宗師.md"
     },
@@ -69,7 +69,7 @@
       "slug": "應帝王",
       "title": "應帝王",
       "part": "內篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "無為而治與渾沌之死：政治哲學中的「應」而不強為。",
       "path": "content/chapters/01-內篇/07-應帝王.md"
     },
@@ -78,7 +78,7 @@
       "slug": "駢拇",
       "title": "駢拇",
       "part": "外篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "批判矯飾仁義，主張回歸性命之情。",
       "path": "content/chapters/02-外篇/08-駢拇.md"
     },
@@ -87,7 +87,7 @@
       "slug": "馬蹄",
       "title": "馬蹄",
       "part": "外篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "伯樂治馬之喻：文明規範與自然本性的衝突。",
       "path": "content/chapters/02-外篇/09-馬蹄.md"
     },
@@ -96,7 +96,7 @@
       "slug": "胠篋",
       "title": "胠篋",
       "part": "外篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "聖知與盜跖：知識、制度如何反過來被盜用。",
       "path": "content/chapters/02-外篇/10-胠篋.md"
     },
@@ -105,7 +105,7 @@
       "slug": "在宥",
       "title": "在宥",
       "part": "外篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "在之宥之：寬容、自在與治天下的限度。",
       "path": "content/chapters/02-外篇/11-在宥.md"
     },
@@ -114,7 +114,7 @@
       "slug": "天地",
       "title": "天地",
       "part": "外篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "天地之德、帝王之道與「無為」的宇宙論基礎。",
       "path": "content/chapters/02-外篇/12-天地.md"
     },
@@ -123,7 +123,7 @@
       "slug": "天道",
       "title": "天道",
       "part": "外篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "天道運轉與人事相應：虛靜恬淡與治國修身。",
       "path": "content/chapters/02-外篇/13-天道.md"
     },
@@ -132,7 +132,7 @@
       "slug": "天運",
       "title": "天運",
       "part": "外篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "天運無常與禮樂興廢：時變中的適應與超脫。",
       "path": "content/chapters/02-外篇/14-天運.md"
     },
@@ -141,7 +141,7 @@
       "slug": "刻意",
       "title": "刻意",
       "part": "外篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "刻意尚行諸流品之批評，與養神之道。",
       "path": "content/chapters/02-外篇/15-刻意.md"
     },
@@ -150,7 +150,7 @@
       "slug": "繕性",
       "title": "繕性",
       "part": "外篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "繕性於俗學之失：復初與自得。",
       "path": "content/chapters/02-外篇/16-繕性.md"
     },
@@ -159,7 +159,7 @@
       "slug": "秋水",
       "title": "秋水",
       "part": "外篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "河伯與海若：大小相對、貴賤相對，與「無以人滅天」。",
       "path": "content/chapters/02-外篇/17-秋水.md"
     },
@@ -168,7 +168,7 @@
       "slug": "至樂",
       "title": "至樂",
       "part": "外篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "何為至樂？死生觀與「鼓盆而歌」。",
       "path": "content/chapters/02-外篇/18-至樂.md"
     },
@@ -177,7 +177,7 @@
       "slug": "達生",
       "title": "達生",
       "part": "外篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "達生之情：忘形、養神與技進乎道。",
       "path": "content/chapters/02-外篇/19-達生.md"
     },
@@ -186,7 +186,7 @@
       "slug": "山木",
       "title": "山木",
       "part": "外篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "山木以不材得終其天年：處乎材與不材之間。",
       "path": "content/chapters/02-外篇/20-山木.md"
     },
@@ -195,7 +195,7 @@
       "slug": "田子方",
       "title": "田子方",
       "part": "外篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "真畫者、溫伯雪子等寓言：真與偽、貌與神。",
       "path": "content/chapters/02-外篇/21-田子方.md"
     },
@@ -204,7 +204,7 @@
       "slug": "知北遊",
       "title": "知北遊",
       "part": "外篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "道不可言、知不知：關於「道」的否定進路。",
       "path": "content/chapters/02-外篇/22-知北遊.md"
     },
@@ -213,7 +213,7 @@
       "slug": "庚桑楚",
       "title": "庚桑楚",
       "part": "雜篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "衛生之經與南榮趎問道：小成與大成。",
       "path": "content/chapters/03-雜篇/23-庚桑楚.md"
     },
@@ -222,7 +222,7 @@
       "slug": "徐無鬼",
       "title": "徐無鬼",
       "part": "雜篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "徐無鬼見魏武侯：真知、真賞與政治批判。",
       "path": "content/chapters/03-雜篇/24-徐無鬼.md"
     },
@@ -231,7 +231,7 @@
       "slug": "則陽",
       "title": "則陽",
       "part": "雜篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "則陽遊楚與蝸角之爭：大小、名實再論。",
       "path": "content/chapters/03-雜篇/25-則陽.md"
     },
@@ -240,7 +240,7 @@
       "slug": "外物",
       "title": "外物",
       "part": "雜篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "外物不可必：任公子釣魚與得魚忘筌。",
       "path": "content/chapters/03-雜篇/26-外物.md"
     },
@@ -249,7 +249,7 @@
       "slug": "寓言",
       "title": "寓言",
       "part": "雜篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "寓言十九：莊子自我揭示敘事策略與「卮言」。",
       "path": "content/chapters/03-雜篇/27-寓言.md"
     },
@@ -258,7 +258,7 @@
       "slug": "讓王",
       "title": "讓王",
       "part": "雜篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "讓王諸故事：貴生輕位與隱逸倫理（真偽莊問題另辨）。",
       "path": "content/chapters/03-雜篇/28-讓王.md"
     },
@@ -267,7 +267,7 @@
       "slug": "盜跖",
       "title": "盜跖",
       "part": "雜篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "盜跖斥孔子：對禮教價值的激烈反詰。",
       "path": "content/chapters/03-雜篇/29-盜跖.md"
     },
@@ -276,7 +276,7 @@
       "slug": "說劍",
       "title": "說劍",
       "part": "雜篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "天子之劍與庶人之劍：以道論劍的政治寓言。",
       "path": "content/chapters/03-雜篇/30-說劍.md"
     },
@@ -285,7 +285,7 @@
       "slug": "漁父",
       "title": "漁父",
       "part": "雜篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "漁父訓孔子：真與禮、法天貴真。",
       "path": "content/chapters/03-雜篇/31-漁父.md"
     },
@@ -294,7 +294,7 @@
       "slug": "列御寇",
       "title": "列御寇",
       "part": "雜篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "列子、伯昏無人與莊子臨終：虛己遊世。",
       "path": "content/chapters/03-雜篇/32-列御寇.md"
     },
@@ -303,7 +303,7 @@
       "slug": "天下",
       "title": "天下",
       "part": "雜篇",
-      "status": "skeleton",
+      "status": "draft",
       "summary": "先秦學術總論：道術為天下裂，與莊子學派自述。",
       "path": "content/chapters/03-雜篇/33-天下.md"
     }

@@ -3,17 +3,15 @@
 > 原典・白話・哲學・人生智慧  
 > 目標：中文世界可出版、可檢索、可擴充的《莊子》數位知識庫。
 
-## 目前版本：V0.2（內篇進行中）
+## 目前版本：V0.3（全書篇章 draft 齊備）
 
 已具備：
 
-- Next.js 靜態網站（首頁／目錄／篇章／搜尋／地圖／百科／莊子 AI）
-- 33 篇 + 導論 Markdown 範本（出版級 17 節結構）
-- 〈逍遙遊〉第一篇實質 draft
-- 電子書合併腳本（Pandoc → EPUB／PDF）
-- 靜態 RAG「莊子 AI」（引用本庫內容回答）
-- `AGENTS.md` 與寫作提示詞
-- GitHub Actions：建置網站並部署 GitHub Pages
+- 導論 + 內／外／雜篇 **34 篇完整 17 節 draft**
+- 思想地圖、人物／名詞／主題百科
+- Next.js 網站 + **Streamlit 手機版**
+- 電子書合併、靜態 RAG、本機 Ollama 接口
+- GitHub Actions → GitHub Pages
 
 ## Streamlit 手機版（建議日常閱讀）
 

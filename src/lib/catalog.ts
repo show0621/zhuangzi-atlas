@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 莊子全解 — 全書篇章目錄（單一真相來源）
  * 新增／調整篇章順序時，請只改這裡。
  */
@@ -21,7 +21,7 @@ export const SITE = {
   englishTitle: "Zhuangzi Atlas",
   description:
     "中文世界最完整的《莊子》數位知識庫：原典、白話、歷代注家、哲學分析、現代應用與思想地圖。",
-  version: "0.2.0",
+  version: "0.3.0",
   author: "莊子全解專案",
 } as const;
 
@@ -32,7 +32,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "導論：如何閱讀《莊子》",
     part: "導論",
     order: 0,
-    status: "skeleton",
+    status: "draft",
     summary: "成書、版本、讀法、全書地圖與本專案體例說明。",
   },
   // 內篇
@@ -51,7 +51,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "齊物論",
     part: "內篇",
     order: 2,
-    status: "skeleton",
+    status: "draft",
     summary: "是非相對、物我一體，以及「莊周夢蝶」的認識論與存在論。",
   },
   {
@@ -60,7 +60,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "養生主",
     part: "內篇",
     order: 3,
-    status: "skeleton",
+    status: "draft",
     summary: "庖丁解牛與養生之道：緣督以為經，安時而處順。",
   },
   {
@@ -69,7 +69,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "人間世",
     part: "內篇",
     order: 4,
-    status: "skeleton",
+    status: "draft",
     summary: "亂世處世、心齋、無用之用，與在人際政治中的保全之道。",
   },
   {
@@ -78,7 +78,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "德充符",
     part: "內篇",
     order: 5,
-    status: "skeleton",
+    status: "draft",
     summary: "形殘德全：外形與內德的辯證，以及「才全而德不形」。",
   },
   {
@@ -87,7 +87,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "大宗師",
     part: "內篇",
     order: 6,
-    status: "skeleton",
+    status: "draft",
     summary: "真人、坐忘、死生一體，與以道為宗師的生命態度。",
   },
   {
@@ -96,7 +96,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "應帝王",
     part: "內篇",
     order: 7,
-    status: "skeleton",
+    status: "draft",
     summary: "無為而治與渾沌之死：政治哲學中的「應」而不強為。",
   },
   // 外篇
@@ -106,7 +106,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "駢拇",
     part: "外篇",
     order: 8,
-    status: "skeleton",
+    status: "draft",
     summary: "批判矯飾仁義，主張回歸性命之情。",
   },
   {
@@ -115,7 +115,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "馬蹄",
     part: "外篇",
     order: 9,
-    status: "skeleton",
+    status: "draft",
     summary: "伯樂治馬之喻：文明規範與自然本性的衝突。",
   },
   {
@@ -124,7 +124,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "胠篋",
     part: "外篇",
     order: 10,
-    status: "skeleton",
+    status: "draft",
     summary: "聖知與盜跖：知識、制度如何反過來被盜用。",
   },
   {
@@ -133,7 +133,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "在宥",
     part: "外篇",
     order: 11,
-    status: "skeleton",
+    status: "draft",
     summary: "在之宥之：寬容、自在與治天下的限度。",
   },
   {
@@ -142,7 +142,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "天地",
     part: "外篇",
     order: 12,
-    status: "skeleton",
+    status: "draft",
     summary: "天地之德、帝王之道與「無為」的宇宙論基礎。",
   },
   {
@@ -151,7 +151,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "天道",
     part: "外篇",
     order: 13,
-    status: "skeleton",
+    status: "draft",
     summary: "天道運轉與人事相應：虛靜恬淡與治國修身。",
   },
   {
@@ -160,7 +160,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "天運",
     part: "外篇",
     order: 14,
-    status: "skeleton",
+    status: "draft",
     summary: "天運無常與禮樂興廢：時變中的適應與超脫。",
   },
   {
@@ -169,7 +169,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "刻意",
     part: "外篇",
     order: 15,
-    status: "skeleton",
+    status: "draft",
     summary: "刻意尚行諸流品之批評，與養神之道。",
   },
   {
@@ -178,7 +178,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "繕性",
     part: "外篇",
     order: 16,
-    status: "skeleton",
+    status: "draft",
     summary: "繕性於俗學之失：復初與自得。",
   },
   {
@@ -187,7 +187,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "秋水",
     part: "外篇",
     order: 17,
-    status: "skeleton",
+    status: "draft",
     summary: "河伯與海若：大小相對、貴賤相對，與「無以人滅天」。",
   },
   {
@@ -196,7 +196,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "至樂",
     part: "外篇",
     order: 18,
-    status: "skeleton",
+    status: "draft",
     summary: "何為至樂？死生觀與「鼓盆而歌」。",
   },
   {
@@ -205,7 +205,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "達生",
     part: "外篇",
     order: 19,
-    status: "skeleton",
+    status: "draft",
     summary: "達生之情：忘形、養神與技進乎道。",
   },
   {
@@ -214,7 +214,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "山木",
     part: "外篇",
     order: 20,
-    status: "skeleton",
+    status: "draft",
     summary: "山木以不材得終其天年：處乎材與不材之間。",
   },
   {
@@ -223,7 +223,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "田子方",
     part: "外篇",
     order: 21,
-    status: "skeleton",
+    status: "draft",
     summary: "真畫者、溫伯雪子等寓言：真與偽、貌與神。",
   },
   {
@@ -232,7 +232,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "知北遊",
     part: "外篇",
     order: 22,
-    status: "skeleton",
+    status: "draft",
     summary: "道不可言、知不知：關於「道」的否定進路。",
   },
   // 雜篇
@@ -242,7 +242,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "庚桑楚",
     part: "雜篇",
     order: 23,
-    status: "skeleton",
+    status: "draft",
     summary: "衛生之經與南榮趎問道：小成與大成。",
   },
   {
@@ -251,7 +251,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "徐無鬼",
     part: "雜篇",
     order: 24,
-    status: "skeleton",
+    status: "draft",
     summary: "徐無鬼見魏武侯：真知、真賞與政治批判。",
   },
   {
@@ -260,7 +260,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "則陽",
     part: "雜篇",
     order: 25,
-    status: "skeleton",
+    status: "draft",
     summary: "則陽遊楚與蝸角之爭：大小、名實再論。",
   },
   {
@@ -269,7 +269,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "外物",
     part: "雜篇",
     order: 26,
-    status: "skeleton",
+    status: "draft",
     summary: "外物不可必：任公子釣魚與得魚忘筌。",
   },
   {
@@ -278,7 +278,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "寓言",
     part: "雜篇",
     order: 27,
-    status: "skeleton",
+    status: "draft",
     summary: "寓言十九：莊子自我揭示敘事策略與「卮言」。",
   },
   {
@@ -287,7 +287,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "讓王",
     part: "雜篇",
     order: 28,
-    status: "skeleton",
+    status: "draft",
     summary: "讓王諸故事：貴生輕位與隱逸倫理（真偽莊問題另辨）。",
   },
   {
@@ -296,7 +296,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "盜跖",
     part: "雜篇",
     order: 29,
-    status: "skeleton",
+    status: "draft",
     summary: "盜跖斥孔子：對禮教價值的激烈反詰。",
   },
   {
@@ -305,7 +305,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "說劍",
     part: "雜篇",
     order: 30,
-    status: "skeleton",
+    status: "draft",
     summary: "天子之劍與庶人之劍：以道論劍的政治寓言。",
   },
   {
@@ -314,7 +314,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "漁父",
     part: "雜篇",
     order: 31,
-    status: "skeleton",
+    status: "draft",
     summary: "漁父訓孔子：真與禮、法天貴真。",
   },
   {
@@ -323,7 +323,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "列御寇",
     part: "雜篇",
     order: 32,
-    status: "skeleton",
+    status: "draft",
     summary: "列子、伯昏無人與莊子臨終：虛己遊世。",
   },
   {
@@ -332,7 +332,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "天下",
     part: "雜篇",
     order: 33,
-    status: "skeleton",
+    status: "draft",
     summary: "先秦學術總論：道術為天下裂，與莊子學派自述。",
   },
 ];
