@@ -5,8 +5,18 @@ import { ImmersiveReaderShell } from "@/components/immersive/ImmersiveReaderShel
 
 type Props = { params: Promise<{ slug: string }> };
 
+export const dynamic = "force-static";
+export const dynamicParams = false;
+
 export function generateStaticParams() {
-  return CHAPTERS.map((c) => ({ slug: c.slug }));
+  // Include both raw CJK and URI-encoded forms for export + Turbopack quirks.
+  const params: { slug: string }[] = [];
+  for (const c of CHAPTERS) {
+    params.push({ slug: c.slug });
+    const encoded = encodeURIComponent(c.slug);
+    if (encoded !== c.slug) params.push({ slug: encoded });
+  }
+  return params;
 }
 
 export async function generateMetadata({ params }: Props) {

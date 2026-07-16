@@ -105,11 +105,24 @@ async function tryPuppeteer(htmlPath: string): Promise<string | null> {
     try {
       const page = await browser.newPage();
       const fileUrl = pathToFileURL(htmlPath).href;
-      await page.goto(fileUrl, { waitUntil: "networkidle0", timeout: 120_000 });
+      await page.goto(fileUrl, { waitUntil: "networkidle0", timeout: 180_000 });
 
-      // 等網頁字型／版面穩定
-      await page.evaluate(() => document.fonts?.ready ?? Promise.resolve());
-      await new Promise((r) => setTimeout(r, 500));
+      // 等網頁字型（草書）／封面圖穩定
+      await page.evaluate(async () => {
+        await (document.fonts?.ready ?? Promise.resolve());
+        const imgs = Array.from(document.images);
+        await Promise.all(
+          imgs.map((img) =>
+            img.complete
+              ? Promise.resolve()
+              : new Promise<void>((resolve) => {
+                  img.addEventListener("load", () => resolve(), { once: true });
+                  img.addEventListener("error", () => resolve(), { once: true });
+                }),
+          ),
+        );
+      });
+      await new Promise((r) => setTimeout(r, 1200));
 
       const pdf = await page.pdf({
         format: "A4",

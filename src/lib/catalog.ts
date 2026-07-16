@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 莊子全解 — 全書篇章目錄（單一真相來源）
  * 新增／調整篇章順序時，請只改這裡。
  */
@@ -22,7 +22,7 @@ export const SITE = {
   description:
     "中文世界最完整的《莊子》數位知識庫：原典、白話、歷代注家、哲學分析、現代應用與思想地圖。",
   version: "0.3.0",
-  author: "莊子全解專案",
+  author: "李孟霖編集",
 } as const;
 
 export const CHAPTERS: ChapterMeta[] = [

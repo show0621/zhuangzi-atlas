@@ -3,7 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>莊子全解 — 印刷成冊稿</title>
+  <title>莊子全解 — 李孟霖編集</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Liu+Jian+Mao+Cao&family=Zhi+Mang+Xing&display=swap" rel="stylesheet" />
   <style>
     :root {
       --ink: #1a1a1a;
@@ -13,6 +16,9 @@
       --bind: 28mm;
       --outer: 16mm;
       --vert: 18mm;
+      --cover-deep: #0b1220;
+      --cover-gold: #f0c36a;
+      --cover-ember: #ff7a3d;
     }
     * { box-sizing: border-box; }
     html { font-size: 11pt; }
@@ -122,10 +128,226 @@
       margin: 0 auto;
     }
 
+    /* —— 封面 —— */
+    .cover-page {
+      margin: calc(var(--vert) * -1) calc(var(--outer) * -1) 0 calc(var(--bind) * -1);
+      min-height: calc(297mm - 2 * var(--vert));
+      display: flex;
+      flex-direction: column;
+      background:
+        radial-gradient(ellipse at 70% 18%, rgba(255, 180, 60, 0.35), transparent 45%),
+        radial-gradient(ellipse at 20% 80%, rgba(80, 40, 160, 0.4), transparent 50%),
+        linear-gradient(165deg, #070b16 0%, #1a1030 42%, #0d1a28 100%);
+      color: #f7f1e6;
+      overflow: hidden;
+      page-break-inside: avoid;
+    }
+    .cover-spine-band {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.7rem 1.1rem;
+      background: linear-gradient(90deg, #1a0f08, #3a2412 40%, #6b3a14 70%, #1a0f08);
+      border-bottom: 2px solid var(--cover-gold);
+      font-family: "Noto Serif TC", "Source Han Serif TC", serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.12em;
+      color: var(--cover-gold);
+    }
+    .cover-art-wrap {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1rem 0;
+    }
+    .cover-art {
+      width: 100%;
+      max-height: 155mm;
+      object-fit: cover;
+      object-position: center 35%;
+      border: 1px solid rgba(240, 195, 106, 0.35);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+    }
+    .cover-titles {
+      padding: 1.1rem 1.4rem 1.6rem;
+      text-align: center;
+    }
+    .cover-english {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      color: rgba(247, 241, 230, 0.7);
+    }
+    .cover-title {
+      margin: 0.35rem 0 0.15rem;
+      font-size: 2.6rem;
+      letter-spacing: 0.28em;
+      color: #fff8ea;
+      text-shadow: 0 2px 18px rgba(255, 122, 61, 0.35);
+      break-before: avoid !important;
+      page-break-before: avoid !important;
+    }
+    .cover-tagline {
+      margin: 0.2rem 0 0.55rem;
+      font-size: 1.35rem;
+      letter-spacing: 0.35em;
+      color: var(--cover-ember);
+      font-weight: 600;
+    }
+    .cover-subtitle {
+      margin: 0.2rem 0;
+      color: rgba(247, 241, 230, 0.82);
+      letter-spacing: 0.08em;
+    }
+    .cover-author {
+      margin: 0.85rem 0 0.2rem;
+      font-size: 1.15rem;
+      letter-spacing: 0.16em;
+      color: var(--cover-gold);
+      font-weight: 600;
+    }
+    .cover-meta {
+      margin: 0;
+      font-size: 0.85rem;
+      color: rgba(247, 241, 230, 0.55);
+    }
+
+    /* —— 書面折頁｜作者介紹 —— */
+    .author-flap-page {
+      min-height: calc(297mm - 2 * var(--vert) - 10mm);
+      max-width: 118mm;
+      margin-left: auto;
+      padding: 14mm 8mm 16mm 10mm;
+      border-left: 1px solid #d8c9a8;
+      background:
+        linear-gradient(90deg, rgba(248, 244, 236, 0.2), rgba(248, 244, 236, 0.95) 18%, #faf6ef);
+      page-break-inside: avoid;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .author-flap-label {
+      margin: 0 0 1.6rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.22em;
+      color: #8a7350;
+      font-family: system-ui, sans-serif;
+    }
+    .author-flap-name {
+      margin: 0 0 0.35rem;
+      font-size: 1.85rem;
+      letter-spacing: 0.2em;
+      color: #2a2118;
+      break-before: avoid !important;
+      page-break-before: avoid !important;
+    }
+    .author-flap-role {
+      margin: 0 0 1.6rem;
+      color: #7a6248;
+      letter-spacing: 0.08em;
+      font-size: 0.95rem;
+    }
+    .author-flap-body {
+      margin: 0 0 1.1rem;
+      font-size: 1.02rem;
+      line-height: 1.9;
+      color: #2f281f;
+      text-align: justify;
+    }
+    .author-flap-body:last-child { margin-bottom: 0; }
+
+    /* —— 草寫狂放書法 —— */
+    .calligraphy {
+      font-family: "Liu Jian Mao Cao", "Zhi Mang Xing", "Segoe Print", "KaiTi", cursive;
+      font-weight: 400;
+      line-height: 1.55;
+      letter-spacing: 0.06em;
+      color: #1c1410;
+    }
+    .epigraph-page {
+      min-height: calc(297mm - 2 * var(--vert) - 10mm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18mm 12mm;
+      page-break-inside: avoid;
+    }
+    .epigraph-text {
+      margin: 0;
+      max-width: 18em;
+      font-size: 2.05rem;
+      text-align: center;
+      transform: rotate(-1.5deg);
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.04);
+    }
+    .afterword-calligraphy-wrap {
+      margin-top: 4.5rem;
+      min-height: 42mm;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 0.5rem;
+    }
+    .afterword-calligraphy {
+      margin: 0;
+      font-size: 1.85rem;
+      text-align: center;
+      transform: rotate(-1.2deg);
+    }
+
+    /* —— 書脊橫條面 —— */
+    .spine-page {
+      min-height: calc(297mm - 2 * var(--vert) - 10mm);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      page-break-inside: avoid;
+    }
+    .spine-strip {
+      width: 14mm;
+      min-height: 210mm;
+      padding: 10mm 2mm;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(180deg, #1a0f08, #4a2a12 45%, #1a0f08);
+      border: 1px solid #c9a24a;
+      color: #f0c36a;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      letter-spacing: 0.22em;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    }
+    .spine-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+    .spine-author {
+      font-size: 0.95rem;
+    }
+    .spine-hint {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-family: system-ui, sans-serif;
+    }
+
     @page {
       size: A4;
       /* 左側稍寬：單面影印後左側裝訂成冊 */
       margin: 18mm 16mm 20mm 26mm;
+    }
+
+    @page cover {
+      margin: 0;
     }
 
     @media print {
@@ -147,26 +369,69 @@
       .pagebreak::after { display: none; }
       a { color: inherit; text-decoration: none; }
       h1 { break-before: page; page-break-before: always; }
-      .sheet > h1:first-child { break-before: avoid; page-break-before: avoid; }
+      .sheet > h1:first-child,
+      .cover-page .cover-title { break-before: avoid; page-break-before: avoid; }
+      .cover-page {
+        margin: 0;
+        min-height: 100vh;
+        page: cover;
+        break-after: page;
+        page-break-after: always;
+      }
+      .epigraph-page,
+      .spine-page,
+      .author-flap-page {
+        min-height: 100vh;
+      }
+      .author-flap-page {
+        max-width: none;
+        width: 42%;
+        margin-left: auto;
+        margin-right: 0;
+      }
       blockquote, pre.code, li { break-inside: avoid; page-break-inside: avoid; }
     }
   </style>
 </head>
 <body>
   <div class="toolbar no-print">
-    <strong>莊子全解｜印刷成冊</strong>
+    <strong>莊子全解｜李孟霖編集</strong>
     <button type="button" onclick="window.print()">列印／另存 PDF</button>
     <a class="btn" href="./zhuangzi-atlas-print.md">下載 Markdown</a>
     <span class="hint">建議：瀏覽器 → 列印 → 另存為 PDF → A4 → 邊界「預設」即可（頁面已含裝訂邊）</span>
   </div>
   <article class="sheet">
-<h1 id="莊子全解">莊子全解</h1>
-<p><strong>原典・白話・哲學・人生智慧</strong></p>
-<p>Zhuangzi Atlas</p>
-<p>莊子全解專案</p>
-<p>版本 0.3.0（draft）・2026</p>
-<hr />
-<p>印刷成冊稿｜供影印裝訂使用</p>
+<section class="cover-page">
+  <div class="cover-spine-band">
+    <span>莊子全解 -人生玩家</span>
+    <span>李孟霖編集</span>
+  </div>
+  <div class="cover-art-wrap">
+    <img class="cover-art" src="assets/print-cover-minecraft.png" alt="Minecraft 風格勇者立於山巔面向太陽與浩瀚宇宙" />
+  </div>
+  <div class="cover-titles">
+    <p class="cover-english">Zhuangzi Atlas</p>
+    <h1 class="cover-title">莊子全解</h1>
+    <p class="cover-tagline">人生玩家</p>
+    <p class="cover-subtitle">原典・白話・哲學・人生智慧</p>
+    <p class="cover-author">李孟霖編集</p>
+    <p class="cover-meta">版本 0.3.0・2026</p>
+  </div>
+</section>
+<div class="pagebreak"></div>
+
+<section class="author-flap-page" id="作者介紹">
+  <p class="author-flap-label">書面折頁｜作者介紹</p>
+  <h1 class="author-flap-name">李孟霖</h1>
+  <p class="author-flap-role">編集・《莊子全解》</p>
+  <p class="author-flap-body">出生於台灣。年少時不學無術，母親說以後應該是放牛吃草長大、撿牛屎賺錢。這幾年在人世中載浮載沉，見證過人性純粹的惡，也感受過美好。是個迷途的小書僮。</p>
+  <p class="author-flap-body">未來打算寫一本結合 OECD 指引與各國判決的移轉訂價與預先訂價實務指南。（有時間的話。）</p>
+</section>
+<div class="pagebreak"></div>
+
+<section class="epigraph-page">
+  <p class="calligraphy epigraph-text">人生不過短短三萬天，要放膽體驗，要勇敢冒險與嘗試，不要把自己困在方寸之間。</p>
+</section>
 <div class="pagebreak"></div>
 
 <h1 id="出版資訊">出版資訊</h1>
@@ -175,7 +440,7 @@
 <li><strong>中文書名</strong>：莊子全解</li>
 <li><strong>英文書名</strong>：Zhuangzi Atlas</li>
 <li><strong>副標題</strong>：原典・白話・哲學・人生智慧</li>
-<li><strong>編著者</strong>：莊子全解專案</li>
+<li><strong>編著者</strong>：李孟霖編集</li>
 <li><strong>版本</strong>：0.3.0（draft，尚未達出版級 review／published）</li>
 <li><strong>年份</strong>：2026</li>
 </ul>
@@ -197,17 +462,22 @@
 </ul>
 <div class="pagebreak"></div>
 
-<h1 id="前文">前文</h1>
-<p>這本《莊子全解》想做的事很單純：讓讀者在一本可翻、可影印、可裝訂的書裡，依原典順序讀完三十三篇，而不是只撿幾句「人生金句」。</p>
-<p>《莊子》難讀，往往不是因為文字古奧，而是因為它用寓言、重言、卮言說話，又被後世注家與現代勵志語層層覆蓋。因此本書堅持三層分讀：</p>
-<ul>
+<h1 id="莊子全解自序">《莊子全解》自序</h1>
+<p>台灣人的平均壽命約為 80 歲，這意味著 40 歲的我，已經站在了人生折返點。</p>
+<p>回首這幾年，迎接女兒的新生，目睹父母的逐漸老化，經歷了自己的一場大病，再到送走阿公——生、老、病、死，彷彿在短時間內將人生「全餐」吃了一遍。記得那年躺在病床上，我曾發誓絕不再為了工作透支生命，可康復後，卻又下意識地加班到深夜才離去。也記得大伯與阿公臨終時，那瘦骨嶙峋、與往昔判若兩人的模樣，那種視覺上的衝擊，曾讓我陷入巨大的虛無：我們窮盡一生，到底在追求什麼？</p>
+<p>當女兒出生，看著那個小生命努力睜開眼，第一次探索這個世界，我對她說：「嗨，歡迎來到這個世界。」那一刻，生命顯得無比神奇；但當阿公離世，站在棺木前，看著他因脫水而變得陌生，甚至難以辨識的容顏，我才驚覺，原來死亡並非電影裡的平靜安詳，而是如此赤裸且殘酷。</p>
+<p>生命之於此，似乎就是這樣。走的時候，煙消雲散；走過一遭，連曾經穿過的衣物、蓋過的棉被，最終都將被捨棄。彷彿來過，卻沒帶走什麼，也沒留下什麼。在那一剎那，我隱約觸摸到了人生的底色。喔，原來這就是人生！</p>
+<p>在職場浮沉多年，歷經挫折，我也見識了人性中純粹的惡，但也慶幸遇到了許多良善之人。面對情感與工作的磨難，我心中有過許多執著。為了尋找答案，我讀過《被討厭的勇氣》、《蛤蟆先生去看心理師》，也讀過《金剛經》。我不知道怎麼「課題分離」，也不確定如何「應無所住，而生其心」。直到遇見了《莊子》，我才在那些艱澀或平實的字句中，感受到靈魂的些許釋放與解惑。</p>
+<p>然而，外人的詮釋終究隔了一層。與其一味汲取他人的觀點，不如由我親自記錄——記錄莊子的精神，如何真實地應用於現實的生活與工作。</p>
+<p>這本《莊子全解》想做的事很單純：讓讀者在這一本書裡，依原典順序讀完三十三篇，而不是只撿幾句「人生金句」。</p>
+<p>《莊子》難讀，往往不是因為文字古奧，而是因為它用寓言、重言、卮言說話，又被後世注家與現代勵志語層層覆蓋。因此，本書堅持三層分讀：</p>
+<ol>
 <li>先看<strong>原典</strong>寫了什麼；</li>
 <li>再看<strong>注家</strong>怎麼解；</li>
 <li>最後才讀本書的<strong>現代詮釋</strong>——後者是編者的哲學整理與人生應用，不是「莊子親口說」。</li>
-</ul>
-<p>若你是第一次讀莊子，建議先讀緒論與內篇七篇，再依興趣進入外篇、雜篇。若你要拿去影印店成冊，建議用本專案產出的 HTML「另存為 PDF」（A4），或直接列印 Markdown／PDF；裝訂時左側留較寬裝訂邊即可。</p>
-<p>願這冊書能陪你把《莊子》從螢幕帶回紙上，慢慢讀。</p>
-<p>—— 莊子全解專案，2026</p>
+</ol>
+<p>若你是第一次讀莊子，建議先讀緒論與內篇七篇，再依興趣進入外篇、雜篇。願這冊書能陪你把《莊子》，慢慢讀。這不僅是前人的智慧，更是指引我在人生折返點後，走得更從容的引路燈。</p>
+<p>—— 莊子全解．李孟霖．2026 仲夏</p>
 <div class="pagebreak"></div>
 
 <h1 id="緒論">緒論：如何閱讀《莊子》</h1>
@@ -326,8 +596,9 @@
 <h1 id="目錄">目錄</h1>
 <ul>
 <li><a href="#莊子全解">封面</a></li>
+<li><a href="#作者介紹">作者介紹</a></li>
 <li><a href="#出版資訊">出版資訊</a></li>
-<li><a href="#前文">前文</a></li>
+<li><a href="#莊子全解自序">自序</a></li>
 <li><a href="#緒論如何閱讀莊子">緒論</a></li>
 </ul>
 <h2 id="內篇">內篇</h2>
@@ -375,6 +646,7 @@
 <ul>
 <li><a href="#後記">後記</a></li>
 <li><a href="#版權頁">版權頁</a></li>
+<li><a href="#書脊橫條">書脊橫條</a></li>
 </ul>
 <div class="pagebreak"></div>
 
@@ -4938,19 +5210,31 @@
 <p>這份印刷稿由「莊子全解」網站內容自動匯出，方便讀者帶到影印店列印、裝訂成冊。內容狀態隨專案推進會更新；目前版本為 <strong>0.3.0（draft）</strong>。</p>
 <p>若你在線上閱讀，歡迎回到網站使用「山上讀書」沉浸模式、思想地圖與名詞／人物百科。成冊與數位版互補：紙本利於通讀與劃線，網站利於交叉引用與檢索。</p>
 <p>感謝每一位願意把莊子帶回紙上的讀者。</p>
+<div class="afterword-calligraphy-wrap">
+  <p class="calligraphy afterword-calligraphy">人生如逆旅，我亦是行人。</p>
+</div>
 <div class="pagebreak"></div>
 
 <h1 id="版權頁">版權頁</h1>
 <p><strong>莊子全解</strong>（Zhuangzi Atlas）  <br />
 原典・白話・哲學・人生智慧</p>
-<p>編著：莊子全解專案  <br />
+<p>編著：李孟霖編集  <br />
 版本：0.3.0（draft）  <br />
 年份：2026</p>
 <p>原典引文依據通行本系統（郭慶藩《莊子集釋》為主）。  <br />
 歷代注解屬各注家文獻；現代詮釋屬本專案編寫。</p>
 <p>本成冊稿僅供個人學習、教學參考與非商業影印裝訂。  <br />
 商業出版或大規模重製前，請另行確認權利與最新版本。</p>
-<p>© 2026 莊子全解專案</p>
+<p>© 2026 李孟霖編集</p>
+<div class="pagebreak"></div>
+
+<section class="spine-page">
+  <div class="spine-strip" aria-label="書脊橫條">
+    <span class="spine-title">莊子全解 -人生玩家</span>
+    <span class="spine-author">李孟霖編集</span>
+  </div>
+  <p class="spine-hint">書脊橫條面｜裝訂成冊時可貼於書脊</p>
+</section>
   </article>
 </body>
 </html>

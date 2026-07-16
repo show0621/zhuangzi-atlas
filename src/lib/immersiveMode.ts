@@ -6,14 +6,14 @@ export type ViewMode = (typeof VIEW_MODES)[number];
 export const VIEW_MODE_LABELS: Record<ViewMode, string> = {
   text: "純文字",
   immersive: "沉浸",
-  pict: "繪圖",
+  pict: "繪本",
   podcast: "播客",
 };
 
 export const VIEW_MODE_SUBTITLES: Record<ViewMode, string> = {
   text: "清水卷・純文字版",
   immersive: "山上微風・沉浸版",
-  pict: "時光靜好・繪圖版",
+  pict: "時光靜好・繪本版",
   podcast: "樹下對談・播客版",
 };
 

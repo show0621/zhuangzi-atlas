@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import { ImmersiveBook } from "@/components/immersive/ImmersiveBook";
 import { GlowCursor } from "@/components/immersive/GlowCursor";
 import { WindField } from "@/components/immersive/WindField";
@@ -12,17 +13,12 @@ import {
 
 type ChapterOption = { slug: string; title: string; part: string };
 
-function readInitialMode(): ViewMode {
-  if (typeof window === "undefined") return "immersive";
-  const fromUrl = parseViewMode(new URLSearchParams(window.location.search).get("mode"));
-  if (fromUrl) return fromUrl;
+function readStoredMode(): ViewMode | null {
   try {
-    const fromStore = parseViewMode(localStorage.getItem(IMMERSIVE_MODE_STORAGE_KEY));
-    if (fromStore) return fromStore;
+    return parseViewMode(localStorage.getItem(IMMERSIVE_MODE_STORAGE_KEY));
   } catch {
-    /* ignore */
+    return null;
   }
-  return "immersive";
 }
 
 function persistMode(mode: ViewMode) {
@@ -33,11 +29,16 @@ function persistMode(mode: ViewMode) {
   }
   if (typeof window === "undefined") return;
   const url = new URL(window.location.href);
+  if (url.searchParams.get("mode") === mode) return;
   url.searchParams.set("mode", mode);
   window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
 }
 
-export function ImmersiveReaderShell({
+function resolveMode(raw: string | null): ViewMode {
+  return parseViewMode(raw) ?? readStoredMode() ?? "immersive";
+}
+
+function ImmersiveReaderShellInner({
   slug,
   title,
   part,
@@ -50,28 +51,44 @@ export function ImmersiveReaderShell({
   content: string;
   chapters: ChapterOption[];
 }) {
-  const [mode, setModeState] = useState<ViewMode>("immersive");
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const urlMode = searchParams.get("mode");
 
+  const [mode, setModeState] = useState<ViewMode>(() =>
+    typeof window === "undefined" ? "immersive" : resolveMode(urlMode),
+  );
+
+  // Deep-link + soft-nav: when ?mode= changes (or chapter path), adopt it.
   useEffect(() => {
-    const next = readInitialMode();
+    const next = resolveMode(urlMode);
     setModeState(next);
     persistMode(next);
-  }, [slug]);
+  }, [slug, pathname, urlMode]);
+
+  // Browser back/forward (replaceState alone may not update useSearchParams).
+  useEffect(() => {
+    const onPopState = () => {
+      const fromUrl = new URLSearchParams(window.location.search).get("mode");
+      const next = resolveMode(fromUrl);
+      setModeState(next);
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
 
   const setMode = useCallback((next: ViewMode) => {
     setModeState(next);
     persistMode(next);
   }, []);
 
-  const showWind = mode === "immersive" || mode === "text" || mode === "podcast";
+  // Distinct atmospheres: wind particles only in 沉浸.
+  const showWind = mode === "immersive";
+  const showMountain = mode === "immersive" || mode === "podcast";
 
   return (
-    <div className="immersive-root relative min-h-screen overflow-x-hidden">
-      {mode === "immersive" || mode === "podcast" ? (
-        <MountainBackdrop />
-      ) : (
-        <SoftBackdrop soft={mode === "text"} />
-      )}
+    <div className="immersive-root relative min-h-screen overflow-x-hidden" data-mode={mode}>
+      {showMountain ? <MountainBackdrop /> : <SoftBackdrop soft={mode === "text"} pict={mode === "pict"} />}
       {showWind && <WindField />}
       <GlowCursor />
       <ImmersiveBook
@@ -87,18 +104,44 @@ export function ImmersiveReaderShell({
   );
 }
 
-function SoftBackdrop({ soft }: { soft?: boolean }) {
+export function ImmersiveReaderShell(props: {
+  slug: string;
+  title: string;
+  part: string;
+  content: string;
+  chapters: ChapterOption[];
+}) {
+  return (
+    <Suspense
+      fallback={
+        <div className="immersive-root flex min-h-screen items-center justify-center text-[#4a5c55]">
+          開啟山上書頁…
+        </div>
+      }
+    >
+      <ImmersiveReaderShellInner {...props} />
+    </Suspense>
+  );
+}
+
+function SoftBackdrop({ soft, pict }: { soft?: boolean; pict?: boolean }) {
   return (
     <div
       aria-hidden
       className="pointer-events-none fixed inset-0 z-0"
       style={{
-        background: soft
+        background: pict
           ? `
+            radial-gradient(ellipse 70% 45% at 50% 0%, rgba(255,236,210,0.65), transparent 55%),
+            radial-gradient(ellipse 50% 40% at 80% 80%, rgba(180,150,110,0.18), transparent 50%),
+            linear-gradient(180deg, #fff8ef 0%, #f0e8d8 45%, #d9cbb4 100%)
+          `
+          : soft
+            ? `
             radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,252,245,0.7), transparent 55%),
             linear-gradient(180deg, #f7faf8 0%, #e8f1ec 50%, #d5e4dc 100%)
           `
-          : `
+            : `
             radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,248,230,0.55), transparent 55%),
             radial-gradient(ellipse 70% 55% at 15% 90%, rgba(110, 145, 130, 0.2), transparent 50%),
             radial-gradient(ellipse 50% 40% at 90% 80%, rgba(200, 170, 120, 0.12), transparent 45%),

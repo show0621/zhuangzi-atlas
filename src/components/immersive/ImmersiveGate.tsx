@@ -7,6 +7,7 @@ import { assetPath } from "@/lib/assetPath";
 import { AmbientWind } from "./AmbientWind";
 import { GlowCursor } from "./GlowCursor";
 import { WindField } from "./WindField";
+import { immersiveChapterHref } from "@/lib/immersiveMode";
 
 type ChapterOption = { slug: string; title: string; part: string };
 
@@ -59,7 +60,7 @@ export function ImmersiveGate({ chapters }: { chapters: ChapterOption[] }) {
         </h1>
 
         <p className="mx-auto mt-6 max-w-xl text-center text-base leading-relaxed text-[#3d4f48]/90 sm:text-lg">
-          四種版本一鍵切換：純文字、沉浸、繪圖、播客。頁內即可換版，重整後仍記住你的選擇。
+          四種版本一鍵切換：純文字、沉浸、繪本、播客。點下方按鈕進入〈逍遙遊〉對應版面；頁內頂部亦可隨時換版。
         </p>
 
         <div className="mx-auto mt-6 flex w-full max-w-lg flex-wrap justify-center gap-2">
@@ -67,13 +68,13 @@ export function ImmersiveGate({ chapters }: { chapters: ChapterOption[] }) {
             [
               ["text", "純文字"],
               ["immersive", "沉浸"],
-              ["pict", "繪圖"],
+              ["pict", "繪本"],
               ["podcast", "播客"],
             ] as const
           ).map(([mode, label]) => (
             <Link
               key={mode}
-              href={`/immersive/逍遙遊/?mode=${mode}`}
+              href={immersiveChapterHref("逍遙遊", mode)}
               className={`rounded-full px-4 py-2 text-sm transition ${
                 mode === "immersive"
                   ? "bg-[#3d5c4f] text-[#f3faf7] hover:opacity-90"
@@ -106,7 +107,7 @@ export function ImmersiveGate({ chapters }: { chapters: ChapterOption[] }) {
             {featured.map((c) => (
               <Link
                 key={c.slug}
-                href={`/immersive/${c.slug}/?mode=immersive`}
+                href={immersiveChapterHref(c.slug, "immersive")}
                 className="group rounded-2xl border border-white/25 bg-white/20 px-4 py-4 backdrop-blur-md transition hover:bg-white/40 hover:shadow-[0_0_30px_rgba(190,220,210,0.35)]"
               >
                 <span className="text-xs text-[#5a6e66]">{c.part}</span>
@@ -119,7 +120,7 @@ export function ImmersiveGate({ chapters }: { chapters: ChapterOption[] }) {
 
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              href="/immersive/逍遙遊/?mode=immersive"
+              href={immersiveChapterHref("逍遙遊", "immersive")}
               className="rounded-full bg-[#3d5c4f] px-5 py-2.5 text-sm text-[#f3faf7] hover:opacity-90 transition"
             >
               從〈逍遙遊〉開始
@@ -134,7 +135,7 @@ export function ImmersiveGate({ chapters }: { chapters: ChapterOption[] }) {
               href="/download/"
               className="rounded-full bg-[#3d5c4f] px-5 py-2.5 text-sm font-medium text-[#f3faf7] hover:opacity-90 transition"
             >
-              下載完整書 PDF
+              下載完整書 PDF／Word
             </Link>
             <Link
               href="/"

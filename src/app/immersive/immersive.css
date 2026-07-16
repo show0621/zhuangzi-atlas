@@ -32,6 +32,21 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
+.immersive-glass--text {
+  background: linear-gradient(
+    165deg,
+    rgba(255, 255, 255, 0.82) 0%,
+    rgba(252, 252, 248, 0.72) 50%,
+    rgba(245, 248, 246, 0.65) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    0 8px 28px rgba(60, 90, 80, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px) saturate(1.05);
+  -webkit-backdrop-filter: blur(10px) saturate(1.05);
+}
+
 .immersive-prose {
   line-height: 1.9;
   font-size: 1.05rem;

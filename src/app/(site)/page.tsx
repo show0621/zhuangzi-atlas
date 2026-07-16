@@ -37,7 +37,7 @@ export default function HomePage() {
             </p>
             <p className="text-lg text-muted">{SITE.subtitle}</p>
             <p className="text-base leading-relaxed text-ink/85 max-w-xl">
-              山上讀書一鍵四版：純文字、沉浸、繪圖、播客。頁內即可切換，重整後仍記住你的選擇。
+              山上讀書一鍵四版：純文字、沉浸、繪本、播客。點擊即進入〈逍遙遊〉對應版面；頁內頂欄可隨時切換。
             </p>
             <div className="grid gap-2 sm:grid-cols-2 pt-1">
               {VIEW_MODES.map((mode) => (
@@ -66,7 +66,7 @@ export default function HomePage() {
                 href="/download/"
                 className="rounded-full bg-accent px-6 py-3 text-sm font-medium text-white shadow-[0_10px_28px_rgba(61,92,79,0.22)] transition hover:opacity-90"
               >
-                下載完整書 PDF
+                下載完整書 PDF／Word
               </Link>
               <Link
                 href="/immersive/"
@@ -151,7 +151,7 @@ export default function HomePage() {
             ["/themes/", "主題閱讀", "焦慮、死亡、工作…"],
             ["/ai/", "莊子 AI", "檢索本庫內容並附上來源"],
             ["/search/", "搜尋", "全文檢索"],
-            ["/download/", "下載完整書 PDF", "A4 印刷版全書，可直接帶到影印店"],
+            ["/download/", "下載完整書", "PDF／Word 印刷版，可帶到影印店"],
           ].map(([href, title, desc]) => (
             <Link
               key={href}

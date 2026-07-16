@@ -12,6 +12,8 @@ type Props = {
   label?: string;
   /** Featured layout when user picks 播客 mode. */
   featured?: boolean;
+  /** Focus the play control when mounted (播客 mode). */
+  autoFocusPlay?: boolean;
 };
 
 type VoiceChoice = {
@@ -71,7 +73,9 @@ export function NarrationPlayer({
   onUnitChange,
   label = "雙人導讀・分單元",
   featured = false,
+  autoFocusPlay = false,
 }: Props) {
+  const playBtnRef = useRef<HTMLButtonElement>(null);
   const [episodeIdx, setEpisodeIdx] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [paused, setPaused] = useState(false);
@@ -100,6 +104,14 @@ export function NarrationPlayer({
     setLineIdx(-1);
     setProgress(0);
   }, [show.slug]);
+
+  useEffect(() => {
+    if (!autoFocusPlay || !featured) return;
+    const t = window.setTimeout(() => {
+      playBtnRef.current?.focus({ preventScroll: true });
+    }, 120);
+    return () => window.clearTimeout(t);
+  }, [autoFocusPlay, featured, show.slug]);
 
   useEffect(() => {
     if (typeof window === "undefined" || !window.speechSynthesis) {
@@ -369,10 +381,12 @@ export function NarrationPlayer({
 
       <div className={`flex items-center gap-3 ${featured ? "mt-5" : "mt-3"}`}>
         <button
+          ref={playBtnRef}
           type="button"
           onClick={togglePlay}
           disabled={!supported}
-          className={`flex ${playSize} shrink-0 items-center justify-center rounded-full bg-[#3d5c4f] text-[#f3faf7] shadow-[0_6px_20px_rgba(61,92,79,0.28)] transition hover:opacity-90 disabled:opacity-40`}
+          data-podcast-play="true"
+          className={`flex ${playSize} shrink-0 items-center justify-center rounded-full bg-[#3d5c4f] text-[#f3faf7] shadow-[0_6px_20px_rgba(61,92,79,0.28)] transition hover:opacity-90 disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3d5c4f]`}
           aria-label={playing && !paused ? "暫停" : "播放"}
         >
           {playing && !paused ? (

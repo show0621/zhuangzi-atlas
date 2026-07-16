@@ -21,6 +21,13 @@ export type { ViewMode };
 
 type ChapterOption = { slug: string; title: string; part: string };
 
+const MODE_BANNER: Record<ViewMode, string> = {
+  text: "清水卷・純文字：玻璃書頁，專心細讀",
+  immersive: "山上微風・沉浸：落葉光塵與山影玻璃",
+  pict: "時光靜好・繪本：翻頁看圖，配雙人導讀",
+  podcast: "樹下對談・播客：一男一女分單元導讀",
+};
+
 export function ImmersiveBook({
   slug,
   title,
@@ -39,6 +46,7 @@ export function ImmersiveBook({
   onModeChange: (mode: ViewMode) => void;
 }) {
   const panelRef = useRef<HTMLElement>(null);
+  const podcastAnchorRef = useRef<HTMLDivElement>(null);
   const [sectionIndex, setSectionIndex] = useState(0);
   const [podcastUnit, setPodcastUnit] = useState(0);
 
@@ -73,12 +81,29 @@ export function ImmersiveBook({
   useEffect(() => {
     const el = panelRef.current;
     if (!el || mode === "pict" || mode === "podcast") return;
+    gsap.killTweensOf(el);
     gsap.fromTo(
       el,
       { opacity: 0, y: 18, filter: "blur(8px)" },
       { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.85, ease: "power2.out" },
     );
+    return () => {
+      gsap.killTweensOf(el);
+    };
   }, [slug, idx, mode]);
+
+  // 播客：捲到播放器並聚焦播放鍵
+  useEffect(() => {
+    if (mode !== "podcast") return;
+    const node = podcastAnchorRef.current;
+    if (!node) return;
+    const timer = window.setTimeout(() => {
+      node.scrollIntoView({ behavior: "smooth", block: "start" });
+      const playBtn = node.querySelector<HTMLButtonElement>('[data-podcast-play="true"]');
+      playBtn?.focus({ preventScroll: true });
+    }, 80);
+    return () => window.clearTimeout(timer);
+  }, [mode, slug]);
 
   function goSection(nextIdx: number) {
     const el = panelRef.current;
@@ -86,6 +111,7 @@ export function ImmersiveBook({
       setSectionIndex(nextIdx);
       return;
     }
+    gsap.killTweensOf(el);
     gsap.to(el, {
       opacity: 0,
       y: -10,
@@ -97,10 +123,13 @@ export function ImmersiveBook({
   }
 
   const modeLabel = VIEW_MODE_SUBTITLES[mode];
-  const showAmbient = mode === "immersive" || mode === "text" || mode === "podcast";
+  const showAmbient = mode === "immersive";
 
   return (
-    <div className="relative z-[2] mx-auto flex min-h-screen max-w-3xl flex-col px-4 pb-16 pt-6 sm:px-6">
+    <div
+      className="relative z-[2] mx-auto flex min-h-screen max-w-3xl flex-col px-4 pb-16 pt-6 sm:px-6"
+      data-immersive-mode={mode}
+    >
       <div className="sticky top-3 z-30 mb-5">
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/35 bg-white/45 px-3 py-2.5 shadow-[0_10px_30px_rgba(60,90,80,0.1)] backdrop-blur-md sm:px-4">
           <Link
@@ -120,6 +149,7 @@ export function ImmersiveBook({
                 type="button"
                 role="tab"
                 aria-selected={mode === id}
+                aria-controls={`mode-panel-${id}`}
                 onClick={() => onModeChange(id)}
                 className={`rounded-full px-3 py-2 text-xs font-medium transition sm:text-sm ${
                   mode === id
@@ -143,89 +173,95 @@ export function ImmersiveBook({
         </div>
       </div>
 
-      <header className="mb-6 text-center">
+      <header className="mb-4 text-center">
         <p className="text-xs tracking-[0.25em] text-[#4a5c55]/80">{part}</p>
         <h1 className="mt-2 font-serif text-3xl tracking-wide text-[#24302b] sm:text-4xl">
           〈{title}〉
         </h1>
-        <p className="mt-2 text-sm text-[#4a5c55]/85">{modeLabel}</p>
+        <p className="mt-2 text-sm font-medium text-[#2f5d50]">{modeLabel}</p>
+        <p
+          className="mx-auto mt-2 max-w-md rounded-full border border-white/40 bg-white/35 px-3 py-1.5 text-[11px] leading-relaxed text-[#4a5c55] backdrop-blur-md"
+          role="status"
+          aria-live="polite"
+        >
+          {MODE_BANNER[mode]}
+        </p>
       </header>
 
-      {mode === "podcast" ? (
-        <div className="mb-2">
-          <NarrationPlayer
-            show={show}
-            unitIndex={podcastUnit}
-            onUnitChange={setPodcastUnit}
-            label="樹下雙人導讀・播客"
-            featured
-          />
-        </div>
-      ) : (
-        <>
-          <div className="mb-4">
+      <div id={`mode-panel-${mode}`} role="tabpanel" className="flex flex-1 flex-col">
+        {mode === "podcast" ? (
+          <div ref={podcastAnchorRef} className="mb-2 scroll-mt-28">
             <NarrationPlayer
               show={show}
               unitIndex={podcastUnit}
               onUnitChange={setPodcastUnit}
-              label={
-                mode === "pict"
-                  ? "繪本雙人導讀"
-                  : mode === "immersive"
-                    ? "山風雙人導讀"
-                    : "文字雙人導讀"
-              }
+              label="樹下雙人導讀・播客"
+              featured
+              autoFocusPlay
             />
           </div>
-
-          {mode === "pict" ? (
-            <PictureBookMode
-              slug={slug}
-              title={title}
-              unitIndex={podcastUnit}
-              onUnitChange={setPodcastUnit}
-            />
-          ) : (
-            <>
-              <article
-                ref={panelRef}
-                className={`immersive-prose flex-1 rounded-3xl px-5 py-7 sm:px-9 sm:py-10 ${
-                  mode === "immersive"
-                    ? "immersive-glass immersive-glass--deep"
-                    : "immersive-glass"
-                }`}
-              >
-                <h2 className="font-serif text-xl text-[#24302b] sm:text-2xl">{current.title}</h2>
-                <div className="mt-5">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{current.body}</ReactMarkdown>
-                </div>
-              </article>
-
-              <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <button
-                  type="button"
-                  disabled={idx <= 0}
-                  onClick={() => goSection(idx - 1)}
-                  className="rounded-full border border-white/35 bg-white/20 px-4 py-2 text-sm backdrop-blur-md transition hover:bg-white/35 disabled:opacity-35"
-                >
-                  上一節
-                </button>
-                <p className="text-center text-xs text-[#4a5c55]">
-                  {idx + 1} / {sections.length}
-                </p>
-                <button
-                  type="button"
-                  disabled={idx >= sections.length - 1}
-                  onClick={() => goSection(idx + 1)}
-                  className="rounded-full border border-white/35 bg-white/20 px-4 py-2 text-sm backdrop-blur-md transition hover:bg-white/35 disabled:opacity-35"
-                >
-                  下一節
-                </button>
+        ) : (
+          <>
+            {(mode === "pict" || mode === "immersive") && (
+              <div className="mb-4">
+                <NarrationPlayer
+                  show={show}
+                  unitIndex={podcastUnit}
+                  onUnitChange={setPodcastUnit}
+                  label={mode === "pict" ? "繪本雙人導讀" : "山風雙人導讀"}
+                />
               </div>
-            </>
-          )}
-        </>
-      )}
+            )}
+
+            {mode === "pict" ? (
+              <PictureBookMode
+                slug={slug}
+                title={title}
+                unitIndex={podcastUnit}
+                onUnitChange={setPodcastUnit}
+              />
+            ) : (
+              <>
+                <article
+                  ref={panelRef}
+                  className={`immersive-prose flex-1 rounded-3xl px-5 py-7 sm:px-9 sm:py-10 ${
+                    mode === "immersive"
+                      ? "immersive-glass immersive-glass--deep"
+                      : "immersive-glass immersive-glass--text"
+                  }`}
+                >
+                  <h2 className="font-serif text-xl text-[#24302b] sm:text-2xl">{current.title}</h2>
+                  <div className="mt-5">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{current.body}</ReactMarkdown>
+                  </div>
+                </article>
+
+                <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <button
+                    type="button"
+                    disabled={idx <= 0}
+                    onClick={() => goSection(idx - 1)}
+                    className="rounded-full border border-white/35 bg-white/20 px-4 py-2 text-sm backdrop-blur-md transition hover:bg-white/35 disabled:opacity-35"
+                  >
+                    上一節
+                  </button>
+                  <p className="text-center text-xs text-[#4a5c55]">
+                    {idx + 1} / {sections.length}
+                  </p>
+                  <button
+                    type="button"
+                    disabled={idx >= sections.length - 1}
+                    onClick={() => goSection(idx + 1)}
+                    className="rounded-full border border-white/35 bg-white/20 px-4 py-2 text-sm backdrop-blur-md transition hover:bg-white/35 disabled:opacity-35"
+                  >
+                    下一節
+                  </button>
+                </div>
+              </>
+            )}
+          </>
+        )}
+      </div>
 
       <nav className="mt-8 flex flex-col gap-2 text-sm sm:flex-row sm:justify-between">
         {prev ? (

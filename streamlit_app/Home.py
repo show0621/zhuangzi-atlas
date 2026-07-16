@@ -32,11 +32,11 @@ NEXT_IMMERSIVE = f"{NEXT_BASE}/immersive/逍遙遊/"
 MODE_LINKS = [
     ("純文字", "text"),
     ("沉浸", "immersive"),
-    ("繪圖", "pict"),
+    ("繪本", "pict"),
     ("播客", "podcast"),
 ]
 
-st.subheader("下載完整書 PDF")
+st.subheader("下載完整書 PDF／Word")
 st.caption(
     "Streamlit 版不含檔案下載。請開啟 Next 網站下載頁（本機需 `npm run dev`，或用 GitHub Pages）。"
 )
@@ -56,11 +56,17 @@ with dl2:
     )
 st.markdown(
     f"[直接 PDF（線上）]({PAGES_BASE}/downloads/zhuangzi-atlas-print.pdf) · "
-    f"[中文檔名]({PAGES_BASE}/downloads/莊子全解-印刷版.pdf)"
+    f"[PDF 中文檔名]({PAGES_BASE}/downloads/莊子全解-印刷版.pdf) · "
+    f"[直接 Word（線上）]({PAGES_BASE}/downloads/zhuangzi-atlas-print.docx) · "
+    f"[Word 中文檔名]({PAGES_BASE}/downloads/莊子全解-印刷版.docx)"
 )
 
-st.subheader("山上讀書（Next 四版一鍵）")
-st.caption("需先在本機執行 `npm run dev`。點擊即開啟對應版本（`?mode=`）。")
+st.subheader("山上讀書（僅限 Next 網站）")
+st.warning(
+    "四版切換（純文字／沉浸／繪本／播客）**不會**出現在 Streamlit 內。"
+    "請先執行 `npm run dev`，再點下方按鈕開啟 Next 的 `/immersive/`。"
+)
+st.caption("點擊會在瀏覽器開啟對應 `?mode=` 版面。")
 mode_cols = st.columns(4)
 for col, (label, mode) in zip(mode_cols, MODE_LINKS):
     with col:
@@ -70,7 +76,10 @@ for col, (label, mode) in zip(mode_cols, MODE_LINKS):
             use_container_width=True,
             type="primary" if mode == "immersive" else "secondary",
         )
-st.markdown(f"[山上總覽 →]({NEXT_BASE}/immersive/)")
+st.markdown(
+    f"[山上總覽 →]({NEXT_BASE}/immersive/)　·　"
+    f"[GitHub Pages]({PAGES_BASE}/immersive/逍遙遊/?mode=immersive)"
+)
 
 chapters = load_chapter_index()
 drafts = [c for c in chapters if c.get("status") in {"draft", "review", "published"}]
