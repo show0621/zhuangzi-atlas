@@ -605,7 +605,21 @@ async function main() {
         ],
       }),
     );
-    children.push(imageParagraph(spineImg, 160, 520));
+    children.push(imageParagraph(spineImg, 220, 700));
+    children.push(
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        spacing: { before: 120 },
+        children: [
+          new TextRun({
+            text: `${BOOK_SPINE}　｜　李孟霖 編集`,
+            size: 18,
+            color: "666666",
+            font: "Microsoft JhengHei",
+          }),
+        ],
+      }),
+    );
   }
 
   const doc = new Document({

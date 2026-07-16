@@ -114,9 +114,9 @@ function spineMarkdown(): string {
   return `%%RAW%%
 <section class="spine-page">
   <div class="spine-strip" aria-label="書脊橫條">
-    <img class="spine-calligraphy" src="${img}" alt="${escapeHtml(BOOK_SPINE_TITLE)}" />
+    <img class="spine-calligraphy" src="${img}" alt="${escapeHtml(BOOK_SPINE_TITLE)}　李孟霖 編集" />
   </div>
-  <p class="spine-hint">書脊｜白底黑字｜${escapeHtml(BOOK_SPINE_TITLE)}</p>
+  <p class="spine-hint">書脊｜白底黑字｜${escapeHtml(BOOK_SPINE_TITLE)}｜李孟霖 編集</p>
 </section>
 %%/RAW%%
 `;
@@ -1028,9 +1028,9 @@ function buildPrintHtml(bodyHtml: string): string {
       background: #fff;
     }
     .spine-strip {
-      width: 28mm;
-      min-height: 220mm;
-      padding: 8mm 3mm;
+      width: 36mm;
+      min-height: 240mm;
+      padding: 6mm 2mm;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1043,7 +1043,7 @@ function buildPrintHtml(bodyHtml: string): string {
       display: block;
       width: 100%;
       height: auto;
-      max-height: 210mm;
+      max-height: 230mm;
       object-fit: contain;
     }
     .spine-hint {
