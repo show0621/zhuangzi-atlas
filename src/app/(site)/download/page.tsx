@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { SITE } from "@/lib/catalog";
-import { assetPath } from "@/lib/assetPath";
+import { assetPath, assetPathWithVersion } from "@/lib/assetPath";
 
 export const metadata = {
   title: "下載印刷版",
@@ -54,10 +54,10 @@ const STREAMLIT_HINT =
   "若你目前在 Streamlit 手機版閱讀，PDF 下載請改到本頁（Next 網站）。";
 
 export default function DownloadPage() {
-  const pdfHref = assetPath(`/downloads/${PDF_PRIMARY.name}`);
-  const pdfAliasHref = assetPath(`/downloads/${FILES[0].name}`);
-  const wordHref = assetPath(`/downloads/${WORD_PRIMARY.name}`);
-  const wordAliasHref = assetPath(`/downloads/${WORD_PRIMARY.alias}`);
+  const pdfHref = assetPathWithVersion(`/downloads/${PDF_PRIMARY.name}`);
+  const pdfAliasHref = assetPathWithVersion(`/downloads/${FILES[0].name}`);
+  const wordHref = assetPathWithVersion(`/downloads/${WORD_PRIMARY.name}`);
+  const wordAliasHref = assetPathWithVersion(`/downloads/${WORD_PRIMARY.alias}`);
 
   return (
     <div className="space-y-10">
@@ -161,7 +161,7 @@ export default function DownloadPage() {
           {FILES.map((f) => (
             <li key={f.name}>
               <a
-                href={assetPath(`/downloads/${f.name}`)}
+                href={assetPathWithVersion(`/downloads/${f.name}`)}
                 className="flex flex-col gap-1 px-4 py-4 hover:bg-paper-2/60 transition sm:flex-row sm:items-center sm:gap-4"
                 download={f.name}
               >
