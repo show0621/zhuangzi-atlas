@@ -186,30 +186,59 @@ function prefaceMarkdown(): string {
 }
 
 function tocMarkdown(): string {
-  const lines: string[] = ["# 目錄", ""];
-  lines.push("- [封面](#莊子全解)");
-  lines.push("- [作者介紹](#作者介紹)");
-  lines.push("- [出版資訊](#出版資訊)");
-  lines.push("- [自序](#莊子全解自序)");
-  lines.push("- [緒論](#緒論如何閱讀莊子)");
+  type TocItem = { label: string; target: string; indent?: boolean };
+  const items: TocItem[] = [
+    { label: "封面", target: "cover" },
+    { label: "作者介紹", target: "作者介紹" },
+    { label: "出版資訊", target: "出版資訊" },
+    { label: "自序", target: "莊子全解自序" },
+    { label: "緒論：如何閱讀《莊子》", target: "緒論" },
+  ];
 
   const parts = PART_ORDER.filter((p) => p !== "附錄" && p !== "導論") as ChapterPart[];
+  const partBlocks: string[] = [];
   for (const part of parts) {
-    lines.push("");
-    lines.push(`## ${part}`);
-    lines.push("");
+    partBlocks.push(`<h2 class="toc-part">${escapeHtml(part)}</h2>`);
+    partBlocks.push('<ul class="toc-list">');
     for (const ch of CHAPTERS.filter((c) => c.part === part)) {
       const anchor = slugifyHeading(ch.title);
-      lines.push(`- ${ch.id}　[〈${ch.title}〉](#${anchor})`);
+      partBlocks.push(
+        `<li class="toc-row" data-target="${escapeHtml(anchor)}"><a href="#${escapeHtml(anchor)}">${escapeHtml(ch.id)}　〈${escapeHtml(ch.title)}〉</a><span class="toc-dots" aria-hidden="true"></span><span class="toc-page"></span></li>`,
+      );
     }
+    partBlocks.push("</ul>");
   }
 
-  lines.push("");
-  lines.push("- [後記](#後記)");
-  lines.push("- [版權頁](#版權頁)");
-  lines.push("- [書脊橫條](#書脊橫條)");
-  lines.push("");
-  return lines.join("\n");
+  const front = items
+    .map(
+      (it) =>
+        `<li class="toc-row" data-target="${escapeHtml(it.target)}"><a href="#${escapeHtml(it.target)}">${escapeHtml(it.label)}</a><span class="toc-dots" aria-hidden="true"></span><span class="toc-page"></span></li>`,
+    )
+    .join("\n");
+
+  const back = [
+    { label: "後記", target: "後記" },
+    { label: "版權頁", target: "版權頁" },
+  ]
+    .map(
+      (it) =>
+        `<li class="toc-row" data-target="${escapeHtml(it.target)}"><a href="#${escapeHtml(it.target)}">${escapeHtml(it.label)}</a><span class="toc-dots" aria-hidden="true"></span><span class="toc-page"></span></li>`,
+    )
+    .join("\n");
+
+  return `%%RAW%%
+<nav class="toc" id="目錄-wrap">
+<h1 id="目錄">目錄</h1>
+<ul class="toc-list toc-front">
+${front}
+</ul>
+${partBlocks.join("\n")}
+<ul class="toc-list toc-back">
+${back}
+</ul>
+</nav>
+%%/RAW%%
+`;
 }
 
 /** Rough GitHub-/pandoc-like heading slug for TOC links in Markdown viewers. */
@@ -319,8 +348,7 @@ lang: zh-Hant
   parts.push(afterwordMarkdown());
   parts.push(PAGE_BREAK_MD);
   parts.push(copyrightMarkdown());
-  parts.push(PAGE_BREAK_MD);
-  parts.push(spineMarkdown());
+  // 書脊僅出現在 Word，不進 HTML／PDF
 
   return { md: parts.join(""), chapterCount, missing };
 }
@@ -561,7 +589,7 @@ function mdToHtml(md: string): string {
 function illustratedCoverHtml(): string {
   const coverRel = resolvePublicAsset(COVER_IMAGE, COVER_IMAGE_FALLBACK);
   const coverSrc = assetDataUri(coverRel);
-  return `<section class="cover-page">
+  return `<section class="cover-page" id="cover">
   <div class="cover-spine-band">
     <span>${escapeHtml(BOOK_SPINE_TITLE)}</span>
   </div>
@@ -759,6 +787,47 @@ function buildPrintHtml(bodyHtml: string): string {
       background: var(--paper);
       width: 4em;
       margin: 0 auto;
+    }
+
+    /* 目錄＋頁碼導線 */
+    nav.toc { margin: 0 0 1rem; }
+    .toc-list {
+      list-style: none;
+      margin: 0.4rem 0 1.1rem;
+      padding: 0;
+    }
+    .toc-part {
+      margin: 1.1rem 0 0.35rem;
+      font-size: 1.15rem;
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .toc-row {
+      display: flex;
+      align-items: baseline;
+      gap: 0.25rem;
+      margin: 0.28rem 0;
+      line-height: 1.55;
+    }
+    .toc-row a {
+      color: inherit;
+      text-decoration: none;
+      flex: 0 1 auto;
+    }
+    .toc-dots {
+      flex: 1 1 auto;
+      border-bottom: 1px dotted #9a9a9a;
+      min-width: 1.5rem;
+      height: 0.85em;
+      margin: 0 0.35rem;
+      transform: translateY(-0.15em);
+    }
+    .toc-page {
+      flex: 0 0 auto;
+      min-width: 1.6em;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      color: #333;
     }
 
     /* —— 封面 —— */
@@ -1017,8 +1086,13 @@ function buildPrintHtml(bodyHtml: string): string {
         border: none;
       }
       .pagebreak::after { display: none; }
+      /* 避免 pagebreak 後緊接 h1 再強制換頁 → 空白頁 */
+      .pagebreak + h1 {
+        break-before: avoid !important;
+        page-break-before: avoid !important;
+      }
       a { color: inherit; text-decoration: none; }
-      /* 正文 h1 換頁；封面／折頁內標題除外 */
+      /* 正文 h1 換頁；封面／折頁／目錄內標題除外 */
       h1 {
         break-before: page;
         page-break-before: always;
@@ -1026,7 +1100,8 @@ function buildPrintHtml(bodyHtml: string): string {
       .cover-page h1,
       .cover-page .cover-title,
       .author-flap-page h1,
-      .author-flap-name {
+      .author-flap-name,
+      nav.toc h1 {
         break-before: avoid !important;
         page-break-before: avoid !important;
       }

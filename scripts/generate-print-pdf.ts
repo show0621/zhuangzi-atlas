@@ -124,6 +124,62 @@ async function tryPuppeteer(htmlPath: string): Promise<string | null> {
       });
       await new Promise((r) => setTimeout(r, 1200));
 
+      // PDF：移除書脊頁（若仍殘留）；依分頁結構填入目錄頁碼
+      await page.evaluate(`(() => {
+        document.querySelectorAll(".spine-page").forEach((el) => {
+          let prev = el.previousElementSibling;
+          while (prev && prev.classList.contains("pagebreak")) {
+            const p = prev.previousElementSibling;
+            prev.remove();
+            prev = p;
+          }
+          el.remove();
+        });
+
+        const sheet = document.querySelector("article.sheet");
+        if (!sheet) return;
+
+        let pageNum = 1;
+        const idToPage = Object.create(null);
+
+        const assign = (id) => {
+          if (id && idToPage[id] == null) idToPage[id] = pageNum;
+        };
+
+        const children = Array.from(sheet.children);
+        for (let i = 0; i < children.length; i++) {
+          const el = children[i];
+          if (el.classList.contains("pagebreak")) {
+            pageNum += 1;
+            continue;
+          }
+
+          const prev = children[i - 1];
+          const prevIsBreak = !!(prev && prev.classList.contains("pagebreak"));
+          if (el.tagName === "H1" && i > 0 && !prevIsBreak) {
+            pageNum += 1;
+          }
+
+          if (el.classList.contains("cover-page")) assign("cover");
+          if (el.classList.contains("author-flap-page")) assign("作者介紹");
+          assign(el.id);
+          if (el.tagName === "H1") assign(el.id);
+
+          if (el.classList.contains("toc") || el.id === "目錄-wrap") {
+            assign("目錄");
+            el.querySelectorAll("[id]").forEach((n) => assign(n.id));
+          }
+        }
+
+        document.querySelectorAll(".toc-row[data-target]").forEach((row) => {
+          const target = row.getAttribute("data-target") || "";
+          const span = row.querySelector(".toc-page");
+          if (span && idToPage[target] != null) {
+            span.textContent = String(idToPage[target]);
+          }
+        });
+      })()`);
+
       const pdf = await page.pdf({
         format: "A4",
         printBackground: true,

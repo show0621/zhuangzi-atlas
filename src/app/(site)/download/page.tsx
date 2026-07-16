@@ -10,13 +10,13 @@ export const metadata = {
 const PDF_PRIMARY = {
   name: "zhuangzi-atlas-print.pdf",
   label: "下載完整書 PDF",
-  desc: "A4 印刷版全書（封面、折頁作者介紹、題辭、出版資訊、自序、緒論、目錄、篇章、後記、書脊）。編集：李孟霖。可直接下載帶到影印店。",
+  desc: "A4 印刷版全書（封面、折頁作者介紹、題辭、出版資訊、自序、緒論、目錄含頁碼、篇章、後記）。編集：李孟霖。可直接下載帶到影印店。",
 } as const;
 
 const WORD_PRIMARY = {
   name: "zhuangzi-atlas-print.docx",
   label: "下載完整書 Word",
-  desc: "與 PDF 相同成冊內容的 Word（.docx）版，可用 Microsoft Word／WPS／Google Docs 開啟編輯後再列印。",
+  desc: "與 PDF 相同成冊內容的 Word（.docx）版，另含書脊頁，可用 Microsoft Word／WPS／Google Docs 開啟編輯後再列印。",
   alias: "莊子全解-印刷版.docx",
 } as const;
 
@@ -151,7 +151,7 @@ export default function DownloadPage() {
           <li>目錄</li>
           <li>內篇 → 外篇 → 雜篇正文</li>
           <li>後記／版權頁</li>
-          <li>書脊（白底黑字草書：莊子全解．人生玩家）</li>
+          <li>書脊（僅 Word 版；PDF 不含）</li>
         </ol>
       </section>
 

@@ -25,7 +25,7 @@ import {
   WidthType,
   type FileChild,
 } from "docx";
-import { SITE } from "../src/lib/catalog";
+import { SITE, CHAPTERS, PART_ORDER, type ChapterPart } from "../src/lib/catalog";
 
 const OUT_DIR = path.join(process.cwd(), "dist", "ebook");
 const PUBLIC_DIR = path.join(process.cwd(), "public", "downloads");
@@ -357,17 +357,74 @@ function authorFlapChildren(): FileChild[] {
   ];
 }
 
+function wordTocChildren(): FileChild[] {
+  const out: FileChild[] = [
+    new Paragraph({
+      heading: HeadingLevel.HEADING_1,
+      spacing: { before: 200, after: 200 },
+      children: [
+        new TextRun({ text: "目錄", bold: true, font: "Microsoft JhengHei", size: 32 }),
+      ],
+    }),
+  ];
+
+  const pushItem = (label: string) => {
+    out.push(
+      new Paragraph({
+        spacing: { after: 80 },
+        children: [
+          new TextRun({ text: label, font: "Microsoft JhengHei", size: 22 }),
+        ],
+      }),
+    );
+  };
+
+  pushItem("封面");
+  pushItem("作者介紹");
+  pushItem("出版資訊");
+  pushItem("自序");
+  pushItem("緒論：如何閱讀《莊子》");
+
+  const parts = PART_ORDER.filter((p) => p !== "附錄" && p !== "導論") as ChapterPart[];
+  for (const part of parts) {
+    out.push(
+      new Paragraph({
+        heading: HeadingLevel.HEADING_2,
+        spacing: { before: 200, after: 100 },
+        children: [
+          new TextRun({ text: part, bold: true, font: "Microsoft JhengHei", size: 26 }),
+        ],
+      }),
+    );
+    for (const ch of CHAPTERS.filter((c) => c.part === part)) {
+      pushItem(`${ch.id}　〈${ch.title}〉`);
+    }
+  }
+  pushItem("後記");
+  pushItem("版權頁");
+  // 書脊不進目錄
+  return out;
+}
+
 function blocksToChildren(blocks: Block[], afterImg: string | null): FileChild[] {
   const out: FileChild[] = [];
   let skipNextPlainCover = true;
   let afterInserted = false;
+  let seenIntro = false;
+  let tocInserted = false;
 
   for (const b of blocks) {
     if (b.type === "pagebreak") {
       out.push(new Paragraph({ children: [new PageBreak()] }));
       continue;
     }
-    if (b.type === "raw-skip") continue;
+    if (b.type === "raw-skip") {
+      if (seenIntro && !tocInserted) {
+        out.push(...wordTocChildren());
+        tocInserted = true;
+      }
+      continue;
+    }
     if (b.type === "hr") continue;
 
     // Skip the plain markdown cover block (title/subtitle/author) — replaced by illustrated cover
@@ -378,7 +435,6 @@ function blocksToChildren(blocks: Block[], afterImg: string | null): FileChild[]
       b.text.includes(SITE.title) &&
       !b.text.includes("自序")
     ) {
-      // consume following short cover paras until next pagebreak-ish content already handled
       skipNextPlainCover = false;
       continue;
     }
@@ -396,6 +452,7 @@ function blocksToChildren(blocks: Block[], afterImg: string | null): FileChild[]
     }
 
     if (b.type === "heading") {
+      if (b.text.includes("緒論")) seenIntro = true;
       if (b.text.includes("版權") && afterImg && !afterInserted) {
         out.push(
           new Paragraph({
