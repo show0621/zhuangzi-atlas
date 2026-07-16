@@ -4,14 +4,25 @@ import { assetPath } from "@/lib/assetPath";
 
 export const metadata = {
   title: "下載印刷版",
-  description: `下載《${SITE.title}》印刷成冊稿（HTML／Markdown），方便影印店列印裝訂。`,
+  description: `下載《${SITE.title}》完整印刷 PDF 與成冊稿，方便影印店列印裝訂。`,
 };
+
+const PDF_PRIMARY = {
+  name: "zhuangzi-atlas-print.pdf",
+  label: "下載完整書 PDF",
+  desc: "A4 印刷版全書（封面、出版資訊、前文、緒論、目錄、篇章、後記）。可直接下載帶到影印店。",
+} as const;
 
 const FILES = [
   {
+    name: "莊子全解-印刷版.pdf",
+    label: "完整書 PDF（中文檔名）",
+    desc: "與上方 PDF 內容相同，檔名為中文。",
+  },
+  {
     name: "zhuangzi-atlas-print.html",
-    label: "印刷 HTML（推薦）",
-    desc: "用瀏覽器開啟後「列印 → 另存為 PDF」。已設 A4 與較寬裝訂邊。",
+    label: "印刷 HTML",
+    desc: "可用瀏覽器開啟後自行「列印 → 另存為 PDF」。已設 A4 與較寬裝訂邊。",
   },
   {
     name: "zhuangzi-atlas-print.md",
@@ -21,11 +32,13 @@ const FILES = [
   {
     name: "README-列印說明.md",
     label: "列印／裝訂說明",
-    desc: "影印店成冊步驟與可選 pandoc 指令。",
+    desc: "影印店成冊步驟與重新產生指令。",
   },
 ] as const;
 
 export default function DownloadPage() {
+  const pdfHref = assetPath(`/downloads/${PDF_PRIMARY.name}`);
+
   return (
     <div className="space-y-10">
       <header className="space-y-3">
@@ -35,6 +48,19 @@ export default function DownloadPage() {
           將《{SITE.title}》匯出為可影印、可膠裝的成冊稿：含封面、出版資訊、前文、緒論、目錄與全書篇章。適合帶到影印店列印裝訂。
         </p>
       </header>
+
+      <section className="rounded-2xl border border-accent/30 bg-accent/5 px-6 py-7 space-y-4">
+        <h2 className="font-serif text-xl text-ink">{PDF_PRIMARY.label}</h2>
+        <p className="text-sm text-muted leading-relaxed max-w-xl">{PDF_PRIMARY.desc}</p>
+        <a
+          href={pdfHref}
+          download={PDF_PRIMARY.name}
+          className="inline-flex items-center justify-center rounded-full bg-accent px-8 py-3.5 text-base font-medium text-white shadow-sm transition hover:opacity-92 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          下載完整書 PDF
+        </a>
+        <p className="text-xs text-muted font-mono break-all">{PDF_PRIMARY.name}</p>
+      </section>
 
       <section className="space-y-3">
         <h2 className="font-serif text-xl text-ink/90">成冊內容順序</h2>
@@ -50,7 +76,7 @@ export default function DownloadPage() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="font-serif text-xl text-ink/90">下載檔案</h2>
+        <h2 className="font-serif text-xl text-ink/90">其他格式</h2>
         <ul className="divide-y divide-line/70 border border-line rounded-xl overflow-hidden bg-paper/40">
           {FILES.map((f) => (
             <li key={f.name}>
@@ -72,18 +98,17 @@ export default function DownloadPage() {
         <h2 className="font-serif text-xl text-ink/90">如何列印成冊</h2>
         <ol className="list-decimal list-inside space-y-2 text-ink/85">
           <li>
-            下載並開啟 <strong className="text-ink">zhuangzi-atlas-print.html</strong>。
+            下載 <strong className="text-ink">完整書 PDF</strong>（上方按鈕），或開啟 HTML 自行另存。
           </li>
-          <li>
-            按 <kbd className="rounded border border-line px-1.5 py-0.5 text-xs">Ctrl</kbd>+
-            <kbd className="rounded border border-line px-1.5 py-0.5 text-xs">P</kbd>
-            ，或點頁頂「列印／另存 PDF」。
-          </li>
-          <li>目的地選「另存為 PDF」；紙張選 A4；直向。</li>
+          <li>紙張選 <strong className="text-ink">A4</strong>；版面直向；左側已預留裝訂邊。</li>
           <li>帶到影印店：單面或雙面列印後，請店員<strong className="text-ink">左側膠裝</strong>。</li>
         </ol>
         <p className="text-muted">
           目前版本 v{SITE.version}（draft）。內容仍可能修訂；正式出版級請待 review／published。
+        </p>
+        <p className="text-muted text-xs">
+          本機重新產生：<code className="font-mono">npm run ebook:print:all</code>
+          （HTML／Markdown）→ <code className="font-mono">npm run ebook:pdf</code>（PDF）。
         </p>
       </section>
 

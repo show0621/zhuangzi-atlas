@@ -3,15 +3,16 @@
  * 產生印刷成冊用檔案（影印店／自行列印 PDF）：
  *   - dist/ebook/zhuangzi-atlas-print.md
  *   - dist/ebook/zhuangzi-atlas-print.html
- *   - （若本機有 pandoc）dist/ebook/zhuangzi-atlas-print.pdf
  * 並複製到 public/downloads/ 供靜態站下載。
+ *
+ * PDF 請另執行：npm run ebook:pdf（puppeteer／Chrome headless）
  *
  * 用法：
  *   npm run ebook:print
+ *   npm run ebook:print:all   # print + pdf
  */
 import fs from "fs";
 import path from "path";
-import { spawnSync } from "child_process";
 import { CHAPTERS, SITE, PART_ORDER, type ChapterPart } from "../src/lib/catalog";
 import { getChapterPath, readChapter } from "../src/lib/content";
 
@@ -577,82 +578,27 @@ function printReadme(): string {
 
 | 檔案 | 用途 |
 |------|------|
-| \`${HTML_NAME}\` | **推薦**：用瀏覽器開啟 →「列印」→「另存為 PDF」→ 拿到影印店 |
+| \`${PDF_NAME}\` | **推薦**：A4 完整書 PDF，可直接下載帶到影印店 |
+| \`莊子全解-印刷版.pdf\` | 同上（中文檔名別名） |
+| \`${HTML_NAME}\` | 用瀏覽器開啟 →「列印」→「另存為 PDF」 |
 | \`${MD_NAME}\` | 完整 Markdown 原稿（可用 Typora／VS Code／pandoc 再開） |
-| \`${PDF_NAME}\` | 若本機有 pandoc + XeLaTeX 才會自動產生 |
 
 ## 影印店成冊建議
 
-1. 用 Chrome／Edge 開啟 \`${HTML_NAME}\`。
-2. \`Ctrl+P\`（或點頁頂「列印／另存 PDF」）。
-3. 目的地選「另存為 PDF」；紙張 **A4**；版面直向。
-4. 邊界選「預設」或「最小」均可（HTML 已內建較寬左側裝訂邊）。
-5. 帶到影印店：單面或雙面列印後膠裝／騎馬釘；若單面膠裝，請要求**左側裝訂**。
-
-## 本機用 pandoc 產 PDF（可選）
-
-\`\`\`bash
-pandoc public/downloads/${MD_NAME} -o public/downloads/${PDF_NAME} \\
-  --pdf-engine=xelatex \\
-  -V CJKmainfont="Noto Serif CJK TC" \\
-  -V geometry:margin=2cm \\
-  -V geometry:left=2.6cm \\
-  --toc --toc-depth=2
-\`\`\`
-
-若無 XeLaTeX，也可只帶 HTML／Markdown 去店裡請店員轉 PDF。
+1. 下載 \`${PDF_NAME}\`（或網站「下載完整書 PDF」）。
+2. 紙張 **A4**；版面直向；左側已預留裝訂邊。
+3. 帶到影印店：單面或雙面列印後膠裝／騎馬釘；若單面膠裝，請要求**左側裝訂**。
 
 ## 重新產生
 
 在專案根目錄執行：
 
 \`\`\`bash
-npm run ebook:print
+npm run ebook:print      # HTML + Markdown
+npm run ebook:pdf        # 從 HTML 產 A4 PDF（需 Chrome／Edge）
+npm run ebook:print:all  # 兩者一次做完
 \`\`\`
 `;
-}
-
-function tryPandocPdf(mdPath: string, pdfPath: string): boolean {
-  const engines = ["xelatex", "lualatex", "wkhtmltopdf", "weasyprint"];
-  for (const engine of engines) {
-    const args =
-      engine === "wkhtmltopdf" || engine === "weasyprint"
-        ? [mdPath, "-o", pdfPath, `--pdf-engine=${engine}`]
-        : [
-            mdPath,
-            "-o",
-            pdfPath,
-            `--pdf-engine=${engine}`,
-            "-V",
-            "geometry:margin=2cm",
-            "-V",
-            "geometry:left=2.6cm",
-            "--toc",
-            "--toc-depth=2",
-            "-f",
-            "markdown",
-            "-t",
-            "pdf",
-          ];
-
-    const result = spawnSync("pandoc", args, { encoding: "utf8" });
-    if (result.error) {
-      console.warn("Pandoc 未安裝或不在 PATH，略過 PDF。");
-      return false;
-    }
-    if (result.status === 0 && fs.existsSync(pdfPath)) {
-      console.log("wrote", pdfPath, `(engine: ${engine})`);
-      return true;
-    }
-    // engine missing — try next
-    const err = `${result.stderr || ""}${result.stdout || ""}`;
-    if (/pdf-engine|xelatex|lualatex|not found|not installed/i.test(err)) {
-      continue;
-    }
-    console.warn(`pandoc (${engine}) 失敗：`, err.slice(0, 400));
-  }
-  console.warn("未找到可用的 PDF engine（xelatex / lualatex / wkhtmltopdf）。請用 HTML 另存 PDF。");
-  return false;
 }
 
 function copyToPublic(files: string[]) {
@@ -686,28 +632,14 @@ function main() {
   const readmePath = path.join(OUT_DIR, README_NAME);
   fs.writeFileSync(readmePath, printReadme(), "utf8");
 
-  const pdfPath = path.join(OUT_DIR, PDF_NAME);
-  const hasPdf = tryPandocPdf(mdPath, pdfPath);
-
   const toCopy = [MD_NAME, HTML_NAME, README_NAME];
-  if (hasPdf) toCopy.push(PDF_NAME);
   copyToPublic(toCopy);
-
-  // 若舊 PDF 不應殘留錯誤檔，且這次沒產 PDF，移除 public 內過期 pdf
-  if (!hasPdf) {
-    const stale = path.join(PUBLIC_DIR, PDF_NAME);
-    if (fs.existsSync(stale)) {
-      fs.unlinkSync(stale);
-      console.log("removed stale", stale);
-    }
-  }
 
   console.log("\n印刷成冊檔已就緒：");
   console.log(`  Markdown : public/downloads/${MD_NAME}`);
   console.log(`  HTML     : public/downloads/${HTML_NAME}`);
   console.log(`  說明     : public/downloads/${README_NAME}`);
-  if (hasPdf) console.log(`  PDF      : public/downloads/${PDF_NAME}`);
-  else console.log("  PDF      : （略過 — 請用瀏覽器開啟 HTML 另存 PDF）");
+  console.log("  PDF      : 請執行 npm run ebook:pdf");
 }
 
 main();
