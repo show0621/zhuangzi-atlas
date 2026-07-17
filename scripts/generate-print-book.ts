@@ -17,6 +17,11 @@ import { CHAPTERS, SITE, PART_ORDER, type ChapterPart } from "../src/lib/catalog
 import { getChapterPath, readChapter } from "../src/lib/content";
 import { protectPrintBreaks } from "../src/lib/cjkLineBreak";
 import {
+  COVER_AUTHOR_IMAGE,
+  COVER_TITLE_IMAGE,
+  printCoverBodyHtml,
+} from "../src/lib/printCoverHtml";
+import {
   AFTERWORD_CALLIGRAPHY,
   AUTHOR_FLAP,
   EPIGRAPH_TEXT,
@@ -32,8 +37,6 @@ const PDF_NAME = "zhuangzi-atlas-print.pdf";
 const README_NAME = "README-列印說明.md";
 const COVER_IMAGE = "assets/print-cover-minimal.png";
 const COVER_IMAGE_FALLBACK = "assets/print-cover-minecraft.png";
-const COVER_TITLE_IMAGE = "assets/print-cover-title-cursive.png";
-const COVER_AUTHOR_IMAGE = "assets/cover-author-wenkai.png";
 const EPIGRAPH_IMAGE = "assets/epigraph-calligraphy.png";
 const AFTERWORD_IMAGE = "assets/afterword-calligraphy.png";
 const SPINE_IMAGE = "assets/spine-calligraphy.png";
@@ -592,27 +595,10 @@ function mdToHtml(md: string): string {
 }
 
 function illustratedCoverHtml(): string {
-  const titleImg = resolvePublicAsset(COVER_TITLE_IMAGE);
-  const authorImg = resolvePublicAsset(COVER_AUTHOR_IMAGE);
-  return `<section class="cover-page" id="cover">
-  <div class="cover-geo" aria-hidden="true">
-    <span class="cover-geo-panel"></span>
-    <span class="cover-geo-bar"></span>
-    <span class="cover-geo-gold"></span>
-  </div>
-  <div class="cover-titles">
-    <p class="cover-title">
-      <img class="cover-title-img" src="${titleImg}" alt="${escapeHtml(SITE.title)}" />
-    </p>
-    <p class="cover-subtitle">${escapeHtml(SITE.subtitle)}</p>
-    <p class="cover-english">${escapeHtml(SITE.englishTitle)}</p>
-    <p class="cover-tagline">人生玩家</p>
-  </div>
-  <p class="cover-author">
-    <img class="cover-author-img" src="${authorImg}" alt="${escapeHtml(SITE.author)}" />
-  </p>
-  <p class="cover-meta">版本 ${escapeHtml(SITE.version)}・${YEAR}</p>
-</section>`;
+  return printCoverBodyHtml(
+    resolvePublicAsset(COVER_TITLE_IMAGE),
+    resolvePublicAsset(COVER_AUTHOR_IMAGE),
+  );
 }
 
 /** Embed local asset images as data URIs so PDF print never loses cover/calligraphy. */
