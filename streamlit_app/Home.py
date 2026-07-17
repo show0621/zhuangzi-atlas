@@ -29,7 +29,7 @@ st.markdown(
 NEXT_BASE = "http://localhost:3000"
 PAGES_BASE = "https://show0621.github.io/zhuangzi-atlas"
 # 下載檔加版本參數，避免 GitHub Pages／瀏覽器快取舊 PDF
-_ASSET_V = "cover-fade-author"
+_ASSET_V = "cjk-line-break"
 PDF_URL = f"{PAGES_BASE}/downloads/zhuangzi-atlas-print.pdf?v={_ASSET_V}"
 PDF_ALIAS_URL = f"{PAGES_BASE}/downloads/莊子全解-印刷版.pdf?v={_ASSET_V}"
 DOCX_URL = f"{PAGES_BASE}/downloads/zhuangzi-atlas-print.docx?v={_ASSET_V}"
