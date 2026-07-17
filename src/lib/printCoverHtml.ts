@@ -6,7 +6,12 @@ import { SITE } from "./catalog";
 import { PRINT_COLORS, PRINT_YEAR } from "./printFrontMatter";
 import { BOOK_TRIM_MM } from "./printSpine";
 
-export const COVER_TITLE_IMAGE = "assets/print-cover-title-cursive.png";
+/**
+ * 封面燙金書名：不透明 JPEG（壓在封面紙色上）。
+ * 勿改回透明 PNG——Chrome／部分 PDF 預覽會對 soft-mask 先閃後消失。
+ * 原始筆刷：assets/print-cover-title-cursive.png
+ */
+export const COVER_TITLE_IMAGE = "assets/print-cover-title-cursive-opaque.jpg";
 export const COVER_AUTHOR_IMAGE = "assets/cover-author-wenkai.png";
 /** 折頁用「李孟霖」：思源宋體 Light，避免「霖」粗體糊死 */
 export const FLAP_AUTHOR_NAME_IMAGE = "assets/flap-author-name.png";
