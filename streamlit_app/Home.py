@@ -20,7 +20,7 @@ st.caption("原典・白話・哲學・人生智慧｜手機友善 Streamlit 版
 
 st.markdown(
     """
-**全書 34 篇架構正文已齊（draft）**：導論 + 內／外／雜篇皆依 17 節出版格式寫完。
+**全書 34 篇架構正文已齊（draft）**：導論 + 內／外／雜篇皆依 17 節出版格式寫完。閱讀頁已支援 **Mermaid 心智圖** 渲染（不再顯示 `flowchart TD` 原始碼）。
 
 手機請點左上角 **≡** 切換目錄、閱讀、搜尋、莊子 AI、地圖／百科。
 """
@@ -29,7 +29,7 @@ st.markdown(
 NEXT_BASE = "http://localhost:3000"
 PAGES_BASE = "https://show0621.github.io/zhuangzi-atlas"
 # 全套產檔版本戳：改這個可強制破除 GitHub Pages／瀏覽器舊快取
-_ASSET_V = "mindmap-print-v1"
+_ASSET_V = "release-v3-701c"
 _DL = f"{PAGES_BASE}/downloads"
 
 DOWNLOADS = [

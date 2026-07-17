@@ -10,6 +10,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from lib.content import load_chapter_index, read_chapter
+from lib.mermaid import render_markdown_with_mermaid
 from lib.ui import setup_page, sidebar_nav
 
 setup_page("閱讀篇章")
@@ -55,4 +56,8 @@ else:
     for i, sec in enumerate(sections):
         expanded = i < 2  # 前兩節預設展開，適合手機
         with st.expander(sec["title"], expanded=expanded):
-            st.markdown("\n".join(sec["lines"]) if sec["lines"] else "_（本節尚無內容）_")
+            content = "\n".join(sec["lines"]) if sec["lines"] else "_（本節尚無內容）_"
+            if "```mermaid" in content:
+                render_markdown_with_mermaid(content, key_prefix=f"{slug}-{i}")
+            else:
+                st.markdown(content)
