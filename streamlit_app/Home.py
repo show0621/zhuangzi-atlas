@@ -29,11 +29,13 @@ st.markdown(
 NEXT_BASE = "http://localhost:3000"
 PAGES_BASE = "https://show0621.github.io/zhuangzi-atlas"
 # 下載檔加版本參數，避免 GitHub Pages／瀏覽器快取舊 PDF
-_ASSET_V = "65fb9dd-spine2"
+_ASSET_V = "spine-sm"
 PDF_URL = f"{PAGES_BASE}/downloads/zhuangzi-atlas-print.pdf?v={_ASSET_V}"
 PDF_ALIAS_URL = f"{PAGES_BASE}/downloads/莊子全解-印刷版.pdf?v={_ASSET_V}"
 DOCX_URL = f"{PAGES_BASE}/downloads/zhuangzi-atlas-print.docx?v={_ASSET_V}"
 DOCX_ALIAS_URL = f"{PAGES_BASE}/downloads/莊子全解-印刷版.docx?v={_ASSET_V}"
+SPINE_PDF_URL = f"{PAGES_BASE}/downloads/zhuangzi-atlas-spine.pdf?v={_ASSET_V}"
+SPINE_DOCX_URL = f"{PAGES_BASE}/downloads/zhuangzi-atlas-spine.docx?v={_ASSET_V}"
 NEXT_IMMERSIVE = f"{NEXT_BASE}/immersive/逍遙遊/"
 MODE_LINKS = [
     ("純文字", "text"),
@@ -64,7 +66,9 @@ st.markdown(
     f"[直接 PDF（線上）]({PDF_URL}) · "
     f"[PDF 中文檔名]({PDF_ALIAS_URL}) · "
     f"[直接 Word（線上）]({DOCX_URL}) · "
-    f"[Word 中文檔名]({DOCX_ALIAS_URL})"
+    f"[Word 中文檔名]({DOCX_ALIAS_URL}) · "
+    f"[書脊 PDF]({SPINE_PDF_URL}) · "
+    f"[書脊 Word]({SPINE_DOCX_URL})"
 )
 
 st.subheader("山上讀書（僅限 Next 網站）")

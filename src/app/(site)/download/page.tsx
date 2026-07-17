@@ -20,6 +20,20 @@ const WORD_PRIMARY = {
   alias: "莊子全解-印刷版.docx",
 } as const;
 
+const SPINE_PDF = {
+  name: "zhuangzi-atlas-spine.pdf",
+  label: "下載書脊 PDF",
+  desc: "單獨一頁書脊橫條（莊子全解．人生玩家｜李孟霖 編集），裁切後可貼於膠裝書脊。",
+  alias: "莊子全解-書脊.pdf",
+} as const;
+
+const SPINE_WORD = {
+  name: "zhuangzi-atlas-spine.docx",
+  label: "下載書脊 Word",
+  desc: "與書脊 PDF 相同內容的 Word 版，方便微調尺寸後再列印。",
+  alias: "莊子全解-書脊.docx",
+} as const;
+
 const FILES = [
   {
     name: "莊子全解-印刷版.pdf",
@@ -30,6 +44,16 @@ const FILES = [
     name: WORD_PRIMARY.alias,
     label: "完整書 Word（中文檔名）",
     desc: "與上方 Word 內容相同，檔名為中文。",
+  },
+  {
+    name: SPINE_PDF.alias,
+    label: "書脊 PDF（中文檔名）",
+    desc: "單獨書脊橫條，檔名為中文。",
+  },
+  {
+    name: SPINE_WORD.alias,
+    label: "書脊 Word（中文檔名）",
+    desc: "單獨書脊 Word，檔名為中文。",
   },
   {
     name: "zhuangzi-atlas-print.html",
@@ -58,6 +82,8 @@ export default function DownloadPage() {
   const pdfAliasHref = assetPathWithVersion(`/downloads/${FILES[0].name}`);
   const wordHref = assetPathWithVersion(`/downloads/${WORD_PRIMARY.name}`);
   const wordAliasHref = assetPathWithVersion(`/downloads/${WORD_PRIMARY.alias}`);
+  const spinePdfHref = assetPathWithVersion(`/downloads/${SPINE_PDF.name}`);
+  const spineWordHref = assetPathWithVersion(`/downloads/${SPINE_WORD.name}`);
 
   return (
     <div className="space-y-10">
@@ -65,7 +91,7 @@ export default function DownloadPage() {
         <p className="text-xs tracking-[0.2em] text-muted">PRINT · BIND · WORD</p>
         <h1 className="font-serif text-3xl text-ink">下載印刷版</h1>
         <p className="max-w-2xl text-muted leading-relaxed">
-          將《{SITE.title}》匯出為可影印、可膠裝的成冊稿：含封面、題辭、出版資訊、自序、緒論、目錄與全書篇章。編集：{SITE.author}。提供 PDF 與 Word（.docx）兩種格式。
+          將《{SITE.title}》匯出為可影印、可膠裝的成冊稿：含封面、題辭、出版資訊、自序、緒論、目錄與全書篇章。編集：{SITE.author}。提供完整書與單獨書脊的 PDF／Word。
         </p>
       </header>
 
@@ -116,6 +142,32 @@ export default function DownloadPage() {
         <p className="text-xs text-muted font-mono break-all">{wordHref}</p>
       </section>
 
+      <section className="rounded-2xl border border-line/70 bg-white/45 px-6 py-7 space-y-4">
+        <p className="text-xs tracking-[0.18em] text-muted font-medium">SPINE</p>
+        <h2 className="font-serif text-2xl text-ink">書脊單獨下載</h2>
+        <p className="text-sm text-muted leading-relaxed max-w-xl">
+          {SPINE_PDF.desc}
+        </p>
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <a
+            href={spinePdfHref}
+            download={SPINE_PDF.name}
+            className="inline-flex items-center justify-center rounded-full border border-accent bg-accent/10 px-8 py-3 text-base font-medium text-accent transition hover:bg-accent/15"
+          >
+            下載書脊 PDF
+          </a>
+          <a
+            href={spineWordHref}
+            download={SPINE_WORD.name}
+            className="inline-flex items-center justify-center rounded-full border border-ink/25 bg-white px-8 py-3 text-base font-medium text-ink transition hover:bg-paper"
+          >
+            下載書脊 Word
+          </a>
+        </div>
+        <p className="text-xs text-muted font-mono break-all">{spinePdfHref}</p>
+        <p className="text-xs text-muted font-mono break-all">{spineWordHref}</p>
+      </section>
+
       <section className="rounded-2xl border border-line/70 bg-white/35 px-5 py-5 space-y-2 text-sm leading-relaxed">
         <h2 className="font-serif text-xl text-ink/90">如何使用這本書</h2>
         <p className="text-ink/85">
@@ -151,7 +203,7 @@ export default function DownloadPage() {
           <li>目錄</li>
           <li>內篇 → 外篇 → 雜篇正文</li>
           <li>後記／版權頁</li>
-          <li>書脊（僅 Word 版；PDF 不含）</li>
+          <li>書脊：請另下載「書脊 PDF／Word」（完整書 PDF 不含書脊；完整書 Word 末頁仍附）</li>
         </ol>
       </section>
 
@@ -189,7 +241,7 @@ export default function DownloadPage() {
         </p>
         <p className="text-muted text-xs">
           本機重新產生：<code className="font-mono">npm run ebook:print:all</code>
-          （HTML／Markdown → PDF → Word）。
+          （HTML／Markdown → PDF → Word → 書脊）。
         </p>
       </section>
 

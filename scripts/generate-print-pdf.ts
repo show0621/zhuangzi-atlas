@@ -7,6 +7,9 @@
  *   2. Chrome／Edge headless CLI --print-to-pdf
  *   3. pandoc（若已安裝且有 PDF engine）
  *
+ * 目錄頁碼：兩次輸出——先在各目標插入隱藏標記並產 PDF，
+ * 再用 pdf.js 讀出真實頁碼寫回目錄，最後輸出乾淨 PDF。
+ *
  * 用法：
  *   npm run ebook:pdf
  *
@@ -26,6 +29,20 @@ const HTML_NAME = "zhuangzi-atlas-print.html";
 const PDF_NAME = "zhuangzi-atlas-print.pdf";
 const PDF_ALIAS = "莊子全解-印刷版.pdf";
 
+const PDF_OPTS = {
+  format: "A4" as const,
+  printBackground: true,
+  preferCSSPageSize: true,
+  displayHeaderFooter: true,
+  headerTemplate: "<div></div>",
+  footerTemplate: `
+    <div style="width:100%;text-align:center;font-size:9px;color:#555;font-family:'Noto Serif TC',serif;padding-bottom:4px;">
+      <span class="pageNumber"></span>
+    </div>
+  `,
+  margin: { top: "16mm", right: "14mm", bottom: "18mm", left: "24mm" },
+};
+
 function resolveHtmlPath(): string {
   const candidates = [
     path.join(PUBLIC_DIR, HTML_NAME),
@@ -34,9 +51,7 @@ function resolveHtmlPath(): string {
   for (const p of candidates) {
     if (fs.existsSync(p)) return p;
   }
-  throw new Error(
-    `找不到 ${HTML_NAME}。請先執行：npm run ebook:print`,
-  );
+  throw new Error(`找不到 ${HTML_NAME}。請先執行：npm run ebook:print`);
 }
 
 function findBrowser(): string | null {
@@ -85,6 +100,32 @@ function writeOutputs(pdfBufferOrPath: string | Buffer): string {
   return publicPdf;
 }
 
+/** 從帶標記的 PDF 抽出各 TOC 目標的真實頁碼 */
+async function extractTocPagesFromPdf(
+  pdfBytes: Uint8Array,
+): Promise<Record<string, number>> {
+  const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
+  const loadingTask = pdfjs.getDocument({ data: pdfBytes });
+  const pdf = await loadingTask.promise;
+  const idToPage: Record<string, number> = Object.create(null);
+
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    const text = content.items
+      .map((it) => ("str" in it ? String(it.str) : ""))
+      .join("");
+    const re = /§§toc:([^§]+)§§/g;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(text)) !== null) {
+      const id = m[1];
+      if (idToPage[id] == null) idToPage[id] = i;
+    }
+  }
+
+  return idToPage;
+}
+
 async function tryPuppeteer(htmlPath: string): Promise<string | null> {
   const browserPath = findBrowser();
   if (!browserPath) {
@@ -107,7 +148,6 @@ async function tryPuppeteer(htmlPath: string): Promise<string | null> {
       const fileUrl = pathToFileURL(htmlPath).href;
       await page.goto(fileUrl, { waitUntil: "networkidle0", timeout: 180_000 });
 
-      // 等網頁字型（草書）／封面圖穩定
       await page.evaluate(async () => {
         await (document.fonts?.ready ?? Promise.resolve());
         const imgs = Array.from(document.images);
@@ -122,9 +162,9 @@ async function tryPuppeteer(htmlPath: string): Promise<string | null> {
           ),
         );
       });
-      await new Promise((r) => setTimeout(r, 1200));
+      await new Promise((r) => setTimeout(r, 800));
 
-      // PDF：移除書脊頁（若仍殘留）；依分頁結構填入目錄頁碼
+      // 移除書脊殘頁；為目錄目標插入可抽取標記
       await page.evaluate(`(() => {
         document.querySelectorAll(".spine-page").forEach((el) => {
           let prev = el.previousElementSibling;
@@ -136,41 +176,44 @@ async function tryPuppeteer(htmlPath: string): Promise<string | null> {
           el.remove();
         });
 
-        const sheet = document.querySelector("article.sheet");
-        if (!sheet) return;
+        document.querySelectorAll(".toc-pdf-marker").forEach((el) => el.remove());
 
-        let pageNum = 1;
-        const idToPage = Object.create(null);
-
-        const assign = (id) => {
-          if (id && idToPage[id] == null) idToPage[id] = pageNum;
+        const resolveTarget = (id) => {
+          if (id === "cover") return document.querySelector(".cover-page");
+          if (id === "作者介紹") return document.querySelector(".author-flap-page");
+          if (id === "目錄") {
+            return document.getElementById("目錄") || document.getElementById("目錄-wrap");
+          }
+          return document.getElementById(id);
         };
 
-        const children = Array.from(sheet.children);
-        for (let i = 0; i < children.length; i++) {
-          const el = children[i];
-          if (el.classList.contains("pagebreak")) {
-            pageNum += 1;
-            continue;
-          }
+        document.querySelectorAll(".toc-row[data-target]").forEach((row) => {
+          const id = row.getAttribute("data-target") || "";
+          if (!id) return;
+          const el = resolveTarget(id);
+          if (!el) return;
+          if (el.querySelector(".toc-pdf-marker")) return;
+          const marker = document.createElement("span");
+          marker.className = "toc-pdf-marker";
+          marker.setAttribute("aria-hidden", "true");
+          // 極小但可被 pdf.js 抽出的字元；最終 PDF 會移除
+          marker.textContent = "§§toc:" + id + "§§";
+          marker.style.cssText =
+            "position:absolute;left:0;top:0;font-size:6px;line-height:1;color:rgba(0,0,0,0.01);";
+          const cs = window.getComputedStyle(el);
+          if (cs.position === "static") el.style.position = "relative";
+          el.prepend(marker);
+        });
+      })()`);
 
-          const prev = children[i - 1];
-          const prevIsBreak = !!(prev && prev.classList.contains("pagebreak"));
-          if (el.tagName === "H1" && i > 0 && !prevIsBreak) {
-            pageNum += 1;
-          }
+      const probePdf = await page.pdf(PDF_OPTS);
+      const idToPage = await extractTocPagesFromPdf(new Uint8Array(probePdf));
+      console.log(`目錄頁碼對照：自 PDF 讀到 ${Object.keys(idToPage).length} 個目標`);
+      if (Object.keys(idToPage).length === 0) {
+        console.warn("警告：未能自 PDF 抽出目錄標記，目錄頁碼可能空白。");
+      }
 
-          if (el.classList.contains("cover-page")) assign("cover");
-          if (el.classList.contains("author-flap-page")) assign("作者介紹");
-          assign(el.id);
-          if (el.tagName === "H1") assign(el.id);
-
-          if (el.classList.contains("toc") || el.id === "目錄-wrap") {
-            assign("目錄");
-            el.querySelectorAll("[id]").forEach((n) => assign(n.id));
-          }
-        }
-
+      await page.evaluate(`((idToPage) => {
         document.querySelectorAll(".toc-row[data-target]").forEach((row) => {
           const target = row.getAttribute("data-target") || "";
           const span = row.querySelector(".toc-page");
@@ -178,23 +221,10 @@ async function tryPuppeteer(htmlPath: string): Promise<string | null> {
             span.textContent = String(idToPage[target]);
           }
         });
-      })()`);
+        document.querySelectorAll(".toc-pdf-marker").forEach((el) => el.remove());
+      })(${JSON.stringify(idToPage)})`);
 
-      const pdf = await page.pdf({
-        format: "A4",
-        printBackground: true,
-        preferCSSPageSize: true,
-        displayHeaderFooter: true,
-        headerTemplate: "<div></div>",
-        footerTemplate: `
-          <div style="width:100%;text-align:center;font-size:9px;color:#555;font-family:'Noto Serif TC',serif;padding-bottom:4px;">
-            <span class="pageNumber"></span>
-          </div>
-        `,
-        // 與 HTML @page 大致對齊；footer 需要底邊空間
-        margin: { top: "16mm", right: "14mm", bottom: "18mm", left: "24mm" },
-      });
-
+      const pdf = await page.pdf(PDF_OPTS);
       return writeOutputs(Buffer.from(pdf));
     } finally {
       await browser.close();
@@ -300,13 +330,13 @@ async function main() {
 
   const viaChrome = tryChromeHeadless(htmlPath);
   if (viaChrome) {
-    console.log("\nPDF 已就緒（Chrome／Edge headless）。");
+    console.log("\nPDF 已就緒（Chrome／Edge headless）。注意：此路徑無法填目錄頁碼。");
     return;
   }
 
   const viaPandoc = tryPandoc(htmlPath);
   if (viaPandoc) {
-    console.log("\nPDF 已就緒（pandoc）。");
+    console.log("\nPDF 已就緒（pandoc）。注意：此路徑無法填目錄頁碼。");
     return;
   }
 

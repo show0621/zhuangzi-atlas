@@ -34,8 +34,9 @@ const DOCX_NAME = "zhuangzi-atlas-print.docx";
 const DOCX_ALIAS = "莊子全解-印刷版.docx";
 
 const COVER_CANDIDATES = [
-  "assets/print-cover-minecraft.jpg",
+  "assets/print-cover-minimal.png",
   "assets/print-cover-minecraft.png",
+  "assets/print-cover-minecraft.jpg",
 ];
 const EPIGRAPH_IMAGE = "assets/epigraph-calligraphy.png";
 const AFTERWORD_IMAGE = "assets/afterword-calligraphy.png";
@@ -258,50 +259,40 @@ function imageParagraph(filePath: string, widthPx: number, heightPx: number): Pa
 
 function coverChildren(): FileChild[] {
   const out: FileChild[] = [];
-  out.push(
-    new Paragraph({
-      alignment: AlignmentType.CENTER,
-      spacing: { after: 120 },
-      children: [
-        new TextRun({
-          text: BOOK_SPINE,
-          bold: true,
-          font: "Microsoft JhengHei",
-          size: 22,
-          color: "111111",
-        }),
-      ],
-    }),
-  );
+  const left = AlignmentType.LEFT;
 
-  const coverPath = resolveAsset(...COVER_CANDIDATES);
-  if (coverPath) {
-    out.push(imageParagraph(coverPath, 480, 640));
-  }
-
-  const lines: Array<{ text: string; size: number; bold?: boolean; color?: string }> = [
-    { text: SITE.englishTitle, size: 18, color: "666666" },
-    { text: SITE.title, size: 48, bold: true },
-    { text: "人生玩家", size: 28, bold: true, color: "C45C26" },
-    { text: SITE.subtitle, size: 20, color: "555555" },
-    { text: SITE.author, size: 24, bold: true, color: "8A6A2A" },
+  // 左上角文字：對齊最初印刷封面排版（極簡燙金色）
+  const lines: Array<{ text: string; size: number; bold?: boolean; color?: string; before?: number; font?: string }> = [
+    { text: SITE.title, size: 56, bold: true, color: "B8923A", before: 200, font: "KaiTi" },
+    { text: SITE.subtitle, size: 20, color: "4A4A46", before: 160 },
+    { text: SITE.englishTitle, size: 16, color: "7A776E", before: 120, font: "Georgia" },
+    { text: "人生玩家", size: 28, bold: true, color: "2F3430", before: 240, font: "KaiTi" },
+    { text: SITE.author, size: 24, bold: true, color: "B8923A", before: 400 },
+    { text: `版本 ${SITE.version}・2026`, size: 16, color: "8A867C", before: 80 },
   ];
   for (const L of lines) {
     out.push(
       new Paragraph({
-        alignment: AlignmentType.CENTER,
-        spacing: { before: 80, after: 80 },
+        alignment: left,
+        spacing: { before: L.before ?? 80, after: 60 },
         children: [
           new TextRun({
             text: L.text,
             bold: L.bold,
             size: L.size,
             color: L.color,
-            font: "Microsoft JhengHei",
+            font: L.font ?? "Microsoft JhengHei",
           }),
         ],
       }),
     );
+  }
+
+  // 底部幾何色塊氣氛圖（縮小，避免搶過左上文字）
+  const coverPath = resolveAsset(...COVER_CANDIDATES);
+  if (coverPath) {
+    out.push(new Paragraph({ spacing: { before: 360 }, children: [] }));
+    out.push(imageParagraph(coverPath, 360, 200));
   }
   return out;
 }
@@ -605,7 +596,7 @@ async function main() {
         ],
       }),
     );
-    children.push(imageParagraph(spineImg, 220, 700));
+    children.push(imageParagraph(spineImg, 130, 580));
     children.push(
       new Paragraph({
         alignment: AlignmentType.CENTER,

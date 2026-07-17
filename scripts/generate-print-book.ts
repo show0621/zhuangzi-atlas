@@ -23,7 +23,7 @@ const MD_NAME = "zhuangzi-atlas-print.md";
 const HTML_NAME = "zhuangzi-atlas-print.html";
 const PDF_NAME = "zhuangzi-atlas-print.pdf";
 const README_NAME = "README-列印說明.md";
-const COVER_IMAGE = "assets/print-cover-minecraft.jpg";
+const COVER_IMAGE = "assets/print-cover-minimal.png";
 const COVER_IMAGE_FALLBACK = "assets/print-cover-minecraft.png";
 const EPIGRAPH_IMAGE = "assets/epigraph-calligraphy.png";
 const AFTERWORD_IMAGE = "assets/afterword-calligraphy.png";
@@ -73,9 +73,9 @@ function coverMarkdown(): string {
 
 **${SITE.subtitle}**
 
-${BOOK_SPINE_TITLE}
-
 ${SITE.englishTitle}
+
+人生玩家
 
 ${SITE.author}
 
@@ -595,20 +595,18 @@ function mdToHtml(md: string): string {
 }
 
 function illustratedCoverHtml(): string {
-  const coverRel = resolvePublicAsset(COVER_IMAGE, COVER_IMAGE_FALLBACK);
-  const coverSrc = assetDataUri(coverRel);
   return `<section class="cover-page" id="cover">
-  <div class="cover-spine-band">
-    <span>${escapeHtml(BOOK_SPINE_TITLE)}</span>
-  </div>
-  <div class="cover-art-wrap">
-    <img class="cover-art" src="${coverSrc}" alt="Minecraft 風格勇者立於山巔面向太陽與浩瀚宇宙" />
+  <div class="cover-geo" aria-hidden="true">
+    <span class="cover-geo-panel"></span>
+    <span class="cover-geo-bar"></span>
+    <span class="cover-geo-gold"></span>
+    <span class="cover-geo-rule"></span>
   </div>
   <div class="cover-titles">
-    <p class="cover-english">${escapeHtml(SITE.englishTitle)}</p>
     <p class="cover-title">${escapeHtml(SITE.title)}</p>
-    <p class="cover-tagline">人生玩家</p>
     <p class="cover-subtitle">${escapeHtml(SITE.subtitle)}</p>
+    <p class="cover-english">${escapeHtml(SITE.englishTitle)}</p>
+    <p class="cover-tagline">人生玩家</p>
     <p class="cover-author">${escapeHtml(SITE.author)}</p>
     <p class="cover-meta">版本 ${escapeHtml(SITE.version)}・${YEAR}</p>
   </div>
@@ -664,9 +662,12 @@ function buildPrintHtml(bodyHtml: string): string {
       --bind: 28mm;
       --outer: 16mm;
       --vert: 18mm;
-      --cover-deep: #0b1220;
-      --cover-gold: #f0c36a;
-      --cover-ember: #ff7a3d;
+      --cover-paper: #f7f5f0;
+      --cover-ink: #1c1c1c;
+      --cover-sage: #6d7f6e;
+      --cover-stone: #2f3430;
+      --cover-gold: #b8923a;
+      --cover-gold-soft: #d4bc7a;
     }
     * { box-sizing: border-box; }
     html { font-size: 11pt; }
@@ -838,100 +839,112 @@ function buildPrintHtml(bodyHtml: string): string {
       color: #333;
     }
 
-    /* —— 封面 —— */
+    /* —— 封面｜極簡現代：留白＋幾何色塊＋燙金書法字 —— */
     .cover-page {
+      position: relative;
       margin: calc(var(--vert) * -1) calc(var(--outer) * -1) 0 calc(var(--bind) * -1);
       min-height: calc(297mm - 2 * var(--vert));
-      display: flex;
-      flex-direction: column;
-      background-color: #0b1220;
-      background-image:
-        radial-gradient(ellipse at 70% 18%, rgba(255, 180, 60, 0.35), transparent 45%),
-        radial-gradient(ellipse at 20% 80%, rgba(80, 40, 160, 0.4), transparent 50%),
-        linear-gradient(165deg, #070b16 0%, #1a1030 42%, #0d1a28 100%);
-      color: #f7f1e6;
-      overflow: visible;
+      background: var(--cover-paper);
+      color: var(--cover-ink);
+      overflow: hidden;
       page-break-inside: avoid;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
-    .cover-spine-band {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 1rem;
-      padding: 0.7rem 1.1rem;
-      background: #fff;
-      border-bottom: 1px solid #ddd;
-      font-family: "Noto Serif TC", "Source Han Serif TC", serif;
-      font-size: 0.95rem;
-      letter-spacing: 0.12em;
-      color: #111;
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
+    .cover-geo {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
     }
-    .cover-art-wrap {
-      flex: 0 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.75rem 1rem 0;
+    .cover-geo-panel {
+      position: absolute;
+      top: 12%;
+      right: 0;
+      width: 34%;
+      height: 62%;
+      background: var(--cover-sage);
+      opacity: 0.88;
     }
-    .cover-art {
-      width: 100%;
-      max-height: 145mm;
-      height: auto;
-      object-fit: cover;
-      object-position: center 35%;
-      border: 1px solid rgba(240, 195, 106, 0.35);
-      display: block;
+    .cover-geo-bar {
+      position: absolute;
+      left: 0;
+      bottom: 18%;
+      width: 58%;
+      height: 7mm;
+      background: var(--cover-stone);
+    }
+    .cover-geo-gold {
+      position: absolute;
+      top: 8%;
+      right: 8%;
+      width: 14mm;
+      height: 14mm;
+      background: var(--cover-gold);
+    }
+    .cover-geo-rule {
+      position: absolute;
+      top: 42%;
+      left: 8%;
+      width: 28mm;
+      height: 1px;
+      background: var(--cover-gold-soft);
     }
     .cover-titles {
-      padding: 1.1rem 1.4rem 1.6rem;
-      text-align: center;
+      position: relative;
+      z-index: 2;
+      max-width: 58%;
+      padding: 22mm 12mm 24mm 14mm;
+      text-align: left;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
-    .cover-english {
-      margin: 0;
-      font-family: Georgia, "Times New Roman", serif;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      font-size: 0.78rem;
-      color: #d8cfc0;
-    }
     .cover-title {
-      margin: 0.35rem 0 0.15rem;
-      font-size: 2.6rem;
-      letter-spacing: 0.28em;
-      color: #fff8ea;
-      font-weight: 700;
+      margin: 0;
+      font-family: "Kaiti TC", "STKaiti", "KaiTi", "DFKai-SB", "Noto Serif TC", serif;
+      font-size: 2.85rem;
+      letter-spacing: 0.32em;
+      font-weight: 500;
+      color: var(--cover-gold);
+      line-height: 1.25;
       break-before: avoid !important;
       page-break-before: avoid !important;
     }
-    .cover-tagline {
-      margin: 0.2rem 0 0.55rem;
-      font-size: 1.35rem;
-      letter-spacing: 0.35em;
-      color: #ff7a3d;
-      font-weight: 600;
-    }
     .cover-subtitle {
-      margin: 0.2rem 0;
-      color: #e8dfd0;
-      letter-spacing: 0.08em;
+      margin: 1.1rem 0 0;
+      font-size: 0.98rem;
+      letter-spacing: 0.14em;
+      color: #4a4a46;
+      font-weight: 400;
+    }
+    .cover-english {
+      margin: 0.85rem 0 0;
+      font-family: Georgia, "Times New Roman", serif;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      color: #7a776e;
+    }
+    .cover-tagline {
+      margin: 1.35rem 0 0;
+      font-family: "Kaiti TC", "STKaiti", "KaiTi", "DFKai-SB", serif;
+      font-size: 1.25rem;
+      letter-spacing: 0.42em;
+      color: var(--cover-stone);
+      font-weight: 500;
     }
     .cover-author {
-      margin: 0.85rem 0 0.2rem;
-      font-size: 1.15rem;
-      letter-spacing: 0.16em;
-      color: #f0c36a;
+      margin: 2.4rem 0 0;
+      font-size: 1.05rem;
+      letter-spacing: 0.22em;
+      color: var(--cover-gold);
       font-weight: 600;
     }
     .cover-meta {
-      margin: 0;
-      font-size: 0.85rem;
-      color: #b8ae9e;
+      margin: 0.55rem 0 0;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      color: #8a867c;
     }
 
     /* —— 書面折頁｜作者介紹 —— */
@@ -1036,9 +1049,9 @@ function buildPrintHtml(bodyHtml: string): string {
       background: #fff;
     }
     .spine-strip {
-      width: 36mm;
+      width: 32mm;
       min-height: 240mm;
-      padding: 6mm 2mm;
+      padding: 8mm 3mm;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1049,10 +1062,11 @@ function buildPrintHtml(bodyHtml: string): string {
     }
     .spine-calligraphy {
       display: block;
-      width: 100%;
+      width: 62%;
       height: auto;
-      max-height: 230mm;
+      max-height: 220mm;
       object-fit: contain;
+      margin: 0 auto;
     }
     .spine-hint {
       margin: 0;
@@ -1116,7 +1130,7 @@ function buildPrintHtml(bodyHtml: string): string {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
-      .cover-art { max-height: 130mm; }
+      .cover-titles { padding-top: 18mm; }
       .epigraph-page,
       .spine-page {
         min-height: 0;
@@ -1210,11 +1224,6 @@ function ensureCoverAsset() {
     fs.mkdirSync(path.dirname(distAsset), { recursive: true });
     fs.copyFileSync(publicAsset, distAsset);
     console.log("asset", distAsset);
-  }
-  const coverOk = fs.existsSync(path.join(PUBLIC_DIR, COVER_IMAGE))
-    || fs.existsSync(path.join(PUBLIC_DIR, COVER_IMAGE_FALLBACK));
-  if (!coverOk) {
-    throw new Error(`找不到封面圖：${COVER_IMAGE} 或 ${COVER_IMAGE_FALLBACK}`);
   }
 }
 
