@@ -20,7 +20,7 @@ st.caption("原典・白話・哲學・人生智慧｜手機友善 Streamlit 版
 
 st.markdown(
     """
-**全書 34 篇架構正文已齊（draft）**：導論 + 內／外／雜篇皆依 17 節出版格式寫完。閱讀頁已支援 **Mermaid 心智圖** 渲染（不再顯示 `flowchart TD` 原始碼）。
+**全書 34 篇架構正文已齊（導論＋優先修訂篇為 review，其餘 draft）**：導論與外08–11、雜23–26 已加「走讀路線」；內篇 12 篇刪除重複學術贅段以控頁數。閱讀頁支援 **Mermaid 心智圖**。
 
 手機請點左上角 **≡** 切換目錄、閱讀、搜尋、莊子 AI、地圖／百科。
 """
@@ -29,12 +29,12 @@ st.markdown(
 NEXT_BASE = "http://localhost:3000"
 PAGES_BASE = "https://show0621.github.io/zhuangzi-atlas"
 # 全套產檔版本戳：改這個可強制破除 GitHub Pages／瀏覽器舊快取
-_ASSET_V = "print-full-v4-701c"
+_ASSET_V = "print-ready-v5-701c"
 _DL = f"{PAGES_BASE}/downloads"
 
 DOWNLOADS = [
     {
-        "group": "內文成冊（菊16開・約 376 頁）",
+        "group": "內文成冊（菊16開・約 357 頁）",
         "items": [
             ("完整書 PDF", f"{_DL}/zhuangzi-atlas-print.pdf?v={_ASSET_V}", True),
             ("完整書 PDF（中文檔名）", f"{_DL}/莊子全解-印刷版.pdf?v={_ASSET_V}", False),

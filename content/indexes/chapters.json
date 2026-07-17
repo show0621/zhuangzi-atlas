@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "generatedAt": "2026-07-17T06:54:07.709Z",
+  "generatedAt": "2026-07-17T07:10:19.573Z",
   "chapterCount": 34,
   "chapters": [
     {
@@ -9,7 +9,7 @@
       "title": "導論：如何閱讀《莊子》",
       "part": "導論",
       "summary": "成書、版本、讀法、全書地圖與本專案體例說明。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -29,7 +29,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3266
+      "wordCountApprox": 3672
     },
     {
       "id": "01",
@@ -85,7 +85,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4454
+      "wordCountApprox": 3460
     },
     {
       "id": "03",
@@ -113,7 +113,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4297
+      "wordCountApprox": 3298
     },
     {
       "id": "04",
@@ -141,7 +141,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4325
+      "wordCountApprox": 3314
     },
     {
       "id": "05",
@@ -169,7 +169,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4477
+      "wordCountApprox": 3336
     },
     {
       "id": "06",
@@ -197,7 +197,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4611
+      "wordCountApprox": 3430
     },
     {
       "id": "07",
@@ -225,7 +225,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4560
+      "wordCountApprox": 3465
     },
     {
       "id": "08",
@@ -233,7 +233,7 @@
       "title": "駢拇",
       "part": "外篇",
       "summary": "以駢拇枝指、附贅縣疣為喻，辨仁義外加與性命之情；伯夷、盜跖名號異而傷性同。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -253,7 +253,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3026
+      "wordCountApprox": 3093
     },
     {
       "id": "09",
@@ -261,7 +261,7 @@
       "title": "馬蹄",
       "part": "外篇",
       "summary": "馬之真性對照伯樂治馬、陶匠治埴木；治天下之過在於以規矩鉤繩強物就範，並以赫胥氏之民寫素樸。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -281,7 +281,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3241
+      "wordCountApprox": 3298
     },
     {
       "id": "10",
@@ -289,7 +289,7 @@
       "title": "胠篋",
       "part": "外篇",
       "summary": "由守篋反為大盜積，寫田成子盜齊並盜聖知之法；盜亦有道，聖人不死則大盜不止。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -309,7 +309,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3374
+      "wordCountApprox": 3430
     },
     {
       "id": "11",
@@ -317,7 +317,7 @@
       "title": "在宥",
       "part": "外篇",
       "summary": "聞在宥天下，不聞治天下；崔瞿問老聃、廣成子教黃帝、雲將遇鴻蒙，層層收束於無為而安性命之情。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -337,7 +337,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3520
+      "wordCountApprox": 3572
     },
     {
       "id": "12",
@@ -477,7 +477,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4421
+      "wordCountApprox": 3324
     },
     {
       "id": "17",
@@ -533,7 +533,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4614
+      "wordCountApprox": 3518
     },
     {
       "id": "19",
@@ -561,7 +561,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4299
+      "wordCountApprox": 3201
     },
     {
       "id": "20",
@@ -589,7 +589,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4508
+      "wordCountApprox": 3397
     },
     {
       "id": "21",
@@ -617,7 +617,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4325
+      "wordCountApprox": 3213
     },
     {
       "id": "22",
@@ -645,7 +645,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4880
+      "wordCountApprox": 3755
     },
     {
       "id": "23",
@@ -653,7 +653,7 @@
       "title": "庚桑楚",
       "part": "雜篇",
       "summary": "庚桑楚居畏壘、南榮趎問道；以衛生之經與「全汝形、抱汝生」論保全生命，並釐清道、德、形、名的層次。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -673,7 +673,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3771
+      "wordCountApprox": 3901
     },
     {
       "id": "24",
@@ -681,7 +681,7 @@
       "title": "徐無鬼",
       "part": "雜篇",
       "summary": "徐無鬼見魏武侯，以相狗相馬諷用人；匠石運斤見「質」之可貴；並以真人之過反省政治與真賞。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -701,7 +701,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3560
+      "wordCountApprox": 3618
     },
     {
       "id": "25",
@@ -709,7 +709,7 @@
       "title": "則陽",
       "part": "雜篇",
       "summary": "則陽遊楚、少知問太公調；戴晉人以蝸角蠻觸之爭，逼問名實與政治尺度。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -729,7 +729,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3630
+      "wordCountApprox": 3690
     },
     {
       "id": "26",
@@ -737,7 +737,7 @@
       "title": "外物",
       "part": "雜篇",
       "summary": "外物不可必；任公子大鉤釣魚；得魚忘筌、得意忘言——論外在條件與言意工具的關係。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -757,7 +757,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3793
+      "wordCountApprox": 3953
     },
     {
       "id": "27",

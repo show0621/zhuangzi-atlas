@@ -32,7 +32,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "導論：如何閱讀《莊子》",
     part: "導論",
     order: 0,
-    status: "draft",
+    status: "review",
     summary: "成書、版本、讀法、全書地圖與本專案體例說明。",
   },
   // 內篇
@@ -106,7 +106,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "駢拇",
     part: "外篇",
     order: 8,
-    status: "draft",
+    status: "review",
     summary: "以駢拇枝指、附贅縣疣為喻，辨仁義外加與性命之情；伯夷、盜跖名號異而傷性同。",
   },
   {
@@ -115,7 +115,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "馬蹄",
     part: "外篇",
     order: 9,
-    status: "draft",
+    status: "review",
     summary: "馬之真性對照伯樂治馬、陶匠治埴木；治天下之過在於以規矩鉤繩強物就範，並以赫胥氏之民寫素樸。",
   },
   {
@@ -124,7 +124,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "胠篋",
     part: "外篇",
     order: 10,
-    status: "draft",
+    status: "review",
     summary: "由守篋反為大盜積，寫田成子盜齊並盜聖知之法；盜亦有道，聖人不死則大盜不止。",
   },
   {
@@ -133,7 +133,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "在宥",
     part: "外篇",
     order: 11,
-    status: "draft",
+    status: "review",
     summary: "聞在宥天下，不聞治天下；崔瞿問老聃、廣成子教黃帝、雲將遇鴻蒙，層層收束於無為而安性命之情。",
   },
   {
@@ -242,7 +242,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "庚桑楚",
     part: "雜篇",
     order: 23,
-    status: "draft",
+    status: "review",
     summary: "庚桑楚居畏壘、南榮趎問道；以衛生之經與「全汝形、抱汝生」論保全生命，並釐清道、德、形、名的層次。",
   },
   {
@@ -251,7 +251,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "徐無鬼",
     part: "雜篇",
     order: 24,
-    status: "draft",
+    status: "review",
     summary: "徐無鬼見魏武侯，以相狗相馬諷用人；匠石運斤見「質」之可貴；並以真人之過反省政治與真賞。",
   },
   {
@@ -260,7 +260,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "則陽",
     part: "雜篇",
     order: 25,
-    status: "draft",
+    status: "review",
     summary: "則陽遊楚、少知問太公調；戴晉人以蝸角蠻觸之爭，逼問名實與政治尺度。",
   },
   {
@@ -269,7 +269,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "外物",
     part: "雜篇",
     order: 26,
-    status: "draft",
+    status: "review",
     summary: "外物不可必；任公子大鉤釣魚；得魚忘筌、得意忘言——論外在條件與言意工具的關係。",
   },
   {
