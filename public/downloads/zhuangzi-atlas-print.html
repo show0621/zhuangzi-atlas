@@ -445,23 +445,23 @@
       page-break-inside: avoid;
       break-inside: avoid;
     }
-    /* 收束段＋書法盡量同頁；勿把書法整塊踢到空白頁 */
+    /* 收束段＋書法同頁；書法略下移，落在下半頁空白重心 */
     .afterword-closing {
       margin-top: 0.85rem;
       break-inside: avoid;
       page-break-inside: avoid;
     }
     .afterword-closing > p {
-      margin: 0.65em 0 0.85rem;
+      margin: 0.65em 0 0.35rem;
     }
     .afterword-calligraphy-wrap {
-      margin-top: 0.35rem;
+      margin-top: 14mm;
       min-height: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-end;
-      padding-bottom: 0;
+      padding-bottom: 6mm;
       break-before: avoid;
       page-break-before: avoid;
       break-inside: avoid;
