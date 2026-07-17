@@ -36,7 +36,7 @@ const BINDING_PARTS = [
   {
     name: "zhuangzi-atlas-spine.pdf",
     label: "書脊 PDF",
-    desc: "書脊橫條（狂放草書：莊子全解．人生玩家｜李孟霖 編集），裁切後可貼於膠裝書脊。",
+    desc: "菊16開 1:1 書脊條（預設約 18×210 mm，241頁／80g米色輕質估）＋規格說明頁。列印請選實際大小。",
     alias: "莊子全解-書脊.pdf",
   },
   {
@@ -50,7 +50,7 @@ const BINDING_PARTS = [
 const SPINE_WORD = {
   name: "zhuangzi-atlas-spine.docx",
   label: "下載書脊 Word",
-  desc: "書脊 Word 版，方便微調尺寸後再列印。",
+  desc: "書脊 Word 示意版；正式裁切請用書脊 PDF 第 1 頁（1:1）。",
   alias: "莊子全解-書脊.docx",
 } as const;
 
@@ -165,7 +165,7 @@ export default function DownloadPage() {
         <p className="text-xs tracking-[0.18em] text-muted font-medium">BINDING</p>
         <h2 className="font-serif text-2xl text-ink">裝幀單頁單獨下載</h2>
         <p className="text-sm text-muted leading-relaxed max-w-xl">
-          封面、封底、書脊、作者折頁各為獨立 A4 PDF，方便分檔交給影印店或設計師。
+          封面、封底、作者折頁為獨立 PDF；書脊為菊16開 1:1 實寸條（另附規格頁），方便分檔交給影印店或設計師。
         </p>
         <ul className="grid gap-3 sm:grid-cols-2">
           {BINDING_PARTS.map((p) => {

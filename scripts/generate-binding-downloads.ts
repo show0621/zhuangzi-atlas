@@ -27,6 +27,7 @@ import {
   PRINT_COLORS as C,
   PRINT_YEAR,
 } from "../src/lib/printFrontMatter";
+import { BOOK_TRIM_MM, SPINE_DESIGN } from "../src/lib/printSpine";
 
 const PUBLIC_DIR = path.join(process.cwd(), "public", "downloads");
 const OUT_DIR = path.join(process.cwd(), "dist", "ebook");
@@ -235,52 +236,23 @@ function flapHtml(): string {
   return shellHtml(`${SITE.title} — 作者折頁`, body, css);
 }
 
+/** 簡備援書脊（正式請跑 npm run ebook:spine，含 1:1 頁＋規格頁） */
 function spineHtml(imgDataUri: string): string {
+  const w = SPINE_DESIGN.designMm;
+  const h = BOOK_TRIM_MM.height;
   const css = `
-    body { background: #fff; }
-    .page {
-      width: 210mm;
-      min-height: 297mm;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 14mm;
-      padding: 18mm;
-      background: #fff;
+    @page { size: ${w}mm ${h}mm; margin: 0; }
+    html, body { margin: 0; width: ${w}mm; height: ${h}mm; background: #fff; }
+    .strip {
+      width: ${w}mm; height: ${h}mm;
+      display: flex; align-items: center; justify-content: center;
+      padding: 8mm 1.2mm 10mm; background: #fff;
     }
-    .spine-strip {
-      width: 32mm;
-      min-height: 230mm;
-      padding: 8mm 3mm;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #fff;
-      border: 1px solid #ddd;
-    }
-    .spine-strip img {
-      display: block;
-      width: 62%;
-      height: auto;
-      max-height: 210mm;
-      object-fit: contain;
-    }
-    .hint {
-      margin: 0;
-      font-size: 11pt;
-      color: #666;
-      text-align: center;
-      line-height: 1.6;
-      font-family: system-ui, sans-serif;
-    }
+    .strip img { display: block; width: 86%; height: 100%; object-fit: contain; object-position: center 12%; }
   `;
   const body = `
-  <div class="page">
-    <div class="spine-strip" aria-label="書脊橫條">
-      <img src="${imgDataUri}" alt="${escapeHtml(BOOK_SPINE)}　李孟霖 編集" />
-    </div>
-    <p class="hint">書脊橫條｜裁切後可貼於膠裝書脊<br />${escapeHtml(BOOK_SPINE)}　｜　李孟霖 編集<br />（狂放草書圖）</p>
+  <div class="strip">
+    <img src="${imgDataUri}" alt="${escapeHtml(BOOK_SPINE)}　李孟霖 編集" />
   </div>`;
   return shellHtml(`${SITE.title} — 書脊`, body, css);
 }
@@ -308,8 +280,8 @@ async function htmlToPdf(html: string, outBase: string, zhAlias: string): Promis
       waitUntil: "networkidle0",
     });
     const pdf = await page.pdf({
-      format: "A4",
       printBackground: true,
+      preferCSSPageSize: true,
       margin: { top: "0", right: "0", bottom: "0", left: "0" },
     });
     const distPdf = path.join(OUT_DIR, `${outBase}.pdf`);
