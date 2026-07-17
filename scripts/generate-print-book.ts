@@ -29,6 +29,12 @@ import {
   PRINT_COLORS,
   PRINT_YEAR as YEAR,
 } from "../src/lib/printFrontMatter";
+import { BOOK_TRIM_MM } from "../src/lib/printSpine";
+import {
+  PRINT_SERIF_FONT_REL,
+  ensurePrintSerifFontCopied,
+  printSerifFontFaceCss,
+} from "../src/lib/printFont";
 
 const OUT_DIR = path.join(process.cwd(), "dist", "ebook");
 const PUBLIC_DIR = path.join(process.cwd(), "public", "downloads");
@@ -41,10 +47,9 @@ const COVER_IMAGE_FALLBACK = "assets/print-cover-minecraft.png";
 const EPIGRAPH_IMAGE = "assets/epigraph-calligraphy.png";
 const AFTERWORD_IMAGE = "assets/afterword-calligraphy.png";
 const SPINE_IMAGE = "assets/spine-calligraphy.png";
-/** 繁中襯線（標點置中於字框；勿讓系統後備成日文／西文基線標點） */
-const PRINT_SERIF_FONT = "assets/fonts/NotoSerifTC-VF.otf";
-const PRINT_SERIF_FONT_SRC = path.join(process.cwd(), "assets", "fonts", "NotoSerifTC-VF.otf");
 const BOOK_SPINE_TITLE = `${SITE.title}．人生玩家`;
+/** 與封面展開／書脊一致：菊16開 */
+const TRIM_LABEL = `菊16開（${BOOK_TRIM_MM.width}×${BOOK_TRIM_MM.height} mm）`;
 
 const PAGE_BREAK_MD = "\n\n<div class=\"pagebreak\"></div>\n\n";
 const PAGE_BREAK_HTML = '<div class="pagebreak"></div>\n';
@@ -649,21 +654,15 @@ function buildPrintHtml(bodyHtml: string): string {
   <title>${escapeHtml(SITE.title)} — ${escapeHtml(SITE.author)}</title>
   <style>
     /* 嵌入繁中 Noto Serif TC：全形標點置中（台／港慣用），避免落到日文偏下或西文基線 */
-    @font-face {
-      font-family: "Noto Serif TC";
-      src: url("${PRINT_SERIF_FONT}") format("opentype");
-      font-weight: 200 900;
-      font-style: normal;
-      font-display: block;
-    }
+    ${printSerifFontFaceCss(PRINT_SERIF_FONT_REL)}
     :root {
       --ink: #1a1a1a;
       --muted: #555;
       --rule: #ccc;
       --paper: #fff;
-      --bind: 28mm;
-      --outer: 16mm;
-      --vert: 18mm;
+      --bind: 20mm;
+      --outer: 14mm;
+      --vert: 15mm;
       --cover-paper: #${PRINT_COLORS.coverPaper};
       --cover-ink: #${PRINT_COLORS.coverInk};
       --cover-sage: #${PRINT_COLORS.coverSage};
@@ -672,9 +671,11 @@ function buildPrintHtml(bodyHtml: string): string {
       --cover-gold-soft: #${PRINT_COLORS.coverGoldSoft};
       --font-serif: "Noto Serif TC", "Source Han Serif TC", "Source Han Serif",
         "Songti TC", "PingFang TC", "Microsoft JhengHei", serif;
+      --trim-w: ${BOOK_TRIM_MM.width}mm;
+      --trim-h: ${BOOK_TRIM_MM.height}mm;
     }
     * { box-sizing: border-box; }
-    html { font-size: 11pt; }
+    html { font-size: 10pt; }
     body {
       margin: 0;
       color: var(--ink);
@@ -711,7 +712,7 @@ function buildPrintHtml(bodyHtml: string): string {
     .toolbar button:hover, .toolbar a.btn:hover { opacity: 0.92; }
     .toolbar .hint { color: rgba(245,247,246,0.75); font-size: 12px; }
     .sheet {
-      max-width: 210mm;
+      max-width: var(--trim-w);
       margin: 1.5rem auto 3rem;
       padding: var(--vert) var(--outer) var(--vert) var(--bind);
       background: var(--paper);
@@ -720,12 +721,12 @@ function buildPrintHtml(bodyHtml: string): string {
     h1, h2, h3, h4, h5, h6 {
       font-weight: 600;
       line-height: 1.35;
-      margin: 1.6em 0 0.6em;
+      margin: 1.45em 0 0.55em;
       page-break-after: avoid;
     }
-    h1 { font-size: 1.85rem; margin-top: 0; }
-    h2 { font-size: 1.35rem; border-bottom: 1px solid var(--rule); padding-bottom: 0.25em; }
-    h3 { font-size: 1.15rem; }
+    h1 { font-size: 1.55rem; margin-top: 0; }
+    h2 { font-size: 1.2rem; border-bottom: 1px solid var(--rule); padding-bottom: 0.25em; }
+    h3 { font-size: 1.05rem; }
     p {
       margin: 0.65em 0;
       orphans: 3;
@@ -864,7 +865,7 @@ function buildPrintHtml(bodyHtml: string): string {
     .cover-page {
       position: relative;
       margin: calc(var(--vert) * -1) calc(var(--outer) * -1) 0 calc(var(--bind) * -1);
-      min-height: calc(297mm - 2 * var(--vert));
+      min-height: calc(var(--trim-h) - 2 * var(--vert));
       background: var(--cover-paper);
       color: var(--cover-ink);
       overflow: hidden;
@@ -996,12 +997,12 @@ function buildPrintHtml(bodyHtml: string): string {
       color: #8a867c;
     }
 
-    /* —— 書面折頁｜作者介紹 —— */
+    /* —— 書面折頁｜作者介紹（內文示意；上機勒口見封面展開） —— */
     .author-flap-page {
       box-sizing: border-box;
-      width: 105mm;
-      max-width: 48%;
-      margin: 8mm 0 8mm auto;
+      width: 90mm;
+      max-width: 72%;
+      margin: 6mm 0 6mm auto;
       padding: 14mm 10mm 16mm 12mm;
       border-left: 1px solid #${PRINT_COLORS.flapBorder};
       background: #${PRINT_COLORS.flapBg};
@@ -1128,9 +1129,9 @@ function buildPrintHtml(bodyHtml: string): string {
     }
 
     @page {
-      size: A4;
-      /* 左側稍寬：單面影印後左側裝訂成冊；下方留給 Puppeteer 頁腳頁碼 */
-      margin: 18mm 16mm 22mm 26mm;
+      size: ${BOOK_TRIM_MM.width}mm ${BOOK_TRIM_MM.height}mm; /* 菊16開 */
+      /* 左側稍寬：膠裝裝訂邊；下方留給 pdf-lib 頁碼 */
+      margin: 15mm 14mm 18mm 20mm;
     }
 
     @media print {
@@ -1188,8 +1189,8 @@ function buildPrintHtml(bodyHtml: string): string {
         min-height: 0;
       }
       .author-flap-page {
-        width: 105mm;
-        max-width: 48%;
+        width: 90mm;
+        max-width: 72%;
         margin-left: auto;
         margin-right: 0;
         min-height: 0 !important;
@@ -1207,7 +1208,7 @@ function buildPrintHtml(bodyHtml: string): string {
     <strong>${escapeHtml(SITE.title)}｜${escapeHtml(SITE.author)}</strong>
     <button type="button" onclick="window.print()">列印／另存 PDF</button>
     <a class="btn" href="./${MD_NAME}">下載 Markdown</a>
-    <span class="hint">建議：瀏覽器 → 列印 → 另存為 PDF → A4 → 邊界「預設」即可（頁面已含裝訂邊）</span>
+    <span class="hint">建議：瀏覽器 → 列印 → 另存為 PDF → ${TRIM_LABEL} → 邊界「預設」即可（頁面已含裝訂邊）。正式成冊請用已產出的 PDF（頁碼自自序起算）。</span>
   </div>
   <article class="sheet">
 ${bodyHtml}
@@ -1220,32 +1221,33 @@ ${bodyHtml}
 function printReadme(): string {
   return `# ${SITE.title} — 印刷成冊說明
 
+> 內容狀態：${SITE.version} **draft**（尚未達 review／published）。上機前請先完成編輯審定與 ISBN。
+
 ## 檔案
 
 | 檔案 | 用途 |
 |------|------|
-| \`${PDF_NAME}\` | **推薦**：A4 完整書 PDF，可直接下載帶到影印店 |
+| \`${PDF_NAME}\` | **推薦**：${TRIM_LABEL} 完整書 PDF（頁碼自「自序」=1） |
 | \`莊子全解-印刷版.pdf\` | 同上（中文檔名別名） |
-| \`zhuangzi-atlas-print.docx\` | Word 成冊版（可編輯後再列印） |
+| \`zhuangzi-atlas-cover-wrap.pdf\` | 封面展開上機稿（勒口＋封底＋書脊＋封面＋勒口） |
+| \`zhuangzi-atlas-print.docx\` | Word 成冊版（可編輯；頁碼規則以 PDF 為準） |
 | \`莊子全解-印刷版.docx\` | Word 中文檔名別名 |
-| \`${HTML_NAME}\` | 用瀏覽器開啟 →「列印」→「另存為 PDF」 |
-| \`${MD_NAME}\` | 完整 Markdown 原稿（可用 Typora／VS Code／pandoc 再開） |
+| \`${HTML_NAME}\` | 瀏覽器預覽；正式頁碼請用已產出的 PDF |
+| \`${MD_NAME}\` | 完整 Markdown 原稿 |
 
-## 影印店成冊建議
+## 成冊建議（菊16開膠裝）
 
-1. 下載 \`${PDF_NAME}\`（或網站「下載完整書 PDF」）；若需改字可下 Word。
-2. 紙張 **A4**；版面直向；左側已預留裝訂邊。
-3. 帶到影印店：單面或雙面列印後膠裝／騎馬釘；若單面膠裝，請要求**左側裝訂**。
+1. 內文：下載 \`${PDF_NAME}\`，紙張 **${BOOK_TRIM_MM.width}×${BOOK_TRIM_MM.height} mm（菊16開）**，左側裝訂。
+2. 封面：下載 \`zhuangzi-atlas-cover-wrap.pdf\`，列印選「實際大小」，含 3mm 出血。
+3. 書脊寬度請以實際頁數＋印廠紙樣複核（設計預設見書脊 PDF 說明頁）。
 
 ## 重新產生
 
-在專案根目錄執行：
-
 \`\`\`bash
 npm run ebook:print      # HTML + Markdown
-npm run ebook:pdf        # 從 HTML 產 A4 PDF（需 Chrome／Edge）
-npm run ebook:docx       # 從 HTML 產 Word（.docx）
-npm run ebook:print:all  # HTML + PDF + Word
+npm run ebook:pdf        # 菊16開 PDF（需 Chrome／Edge）
+npm run ebook:docx       # Word
+npm run ebook:print:all  # HTML + PDF + Word + 裝訂／書脊／封面展開
 \`\`\`
 `;
 }
@@ -1282,27 +1284,11 @@ function ensureCoverAsset() {
   }
 }
 
-/** 把倉庫內的繁中襯線字型同步到 dist／public，供 HTML／PDF 以相對路徑載入 */
-function ensurePrintSerifFont() {
-  if (!fs.existsSync(PRINT_SERIF_FONT_SRC)) {
-    console.warn(
-      `missing print serif font: ${PRINT_SERIF_FONT_SRC}（標點可能落到後備字型而偏下）`,
-    );
-    return;
-  }
-  for (const root of [OUT_DIR, PUBLIC_DIR]) {
-    const dest = path.join(root, PRINT_SERIF_FONT);
-    fs.mkdirSync(path.dirname(dest), { recursive: true });
-    fs.copyFileSync(PRINT_SERIF_FONT_SRC, dest);
-    console.log("font", dest);
-  }
-}
-
 function main() {
   fs.mkdirSync(OUT_DIR, { recursive: true });
   fs.mkdirSync(PUBLIC_DIR, { recursive: true });
   ensureCoverAsset();
-  ensurePrintSerifFont();
+  ensurePrintSerifFontCopied([OUT_DIR, PUBLIC_DIR]);
 
   const { md, chapterCount, missing } = buildPrintMarkdown();
   const mdPath = path.join(OUT_DIR, MD_NAME);

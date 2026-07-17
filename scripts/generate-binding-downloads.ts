@@ -28,9 +28,16 @@ import {
   PRINT_YEAR,
 } from "../src/lib/printFrontMatter";
 import { BOOK_TRIM_MM, SPINE_DESIGN } from "../src/lib/printSpine";
+import {
+  PRINT_SERIF_FONT_REL,
+  ensurePrintSerifFontCopied,
+  printSerifFontFaceCss,
+} from "../src/lib/printFont";
 
 const PUBLIC_DIR = path.join(process.cwd(), "public", "downloads");
 const OUT_DIR = path.join(process.cwd(), "dist", "ebook");
+const TRIM_W = BOOK_TRIM_MM.width;
+const TRIM_H = BOOK_TRIM_MM.height;
 const PRINT_PDF = path.join(PUBLIC_DIR, "zhuangzi-atlas-print.pdf");
 const SPINE_IMAGE = "assets/spine-calligraphy.png";
 const BOOK_SPINE = `${SITE.title}．人生玩家`;
@@ -85,18 +92,19 @@ function assetDataUri(absPath: string): string {
 
 function shellHtml(title: string, body: string, extraCss = ""): string {
   return `<!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant-TW">
 <head>
   <meta charset="utf-8" />
   <title>${escapeHtml(title)}</title>
   <style>
-    @page { size: A4; margin: 0; }
+    ${printSerifFontFaceCss(PRINT_SERIF_FONT_REL)}
+    @page { size: ${TRIM_W}mm ${TRIM_H}mm; margin: 0; }
     * { box-sizing: border-box; }
     html, body {
       margin: 0;
       padding: 0;
-      width: 210mm;
-      min-height: 297mm;
+      width: ${TRIM_W}mm;
+      min-height: ${TRIM_H}mm;
       background: #${C.coverPaper};
       color: #${C.coverInk};
       -webkit-print-color-adjust: exact;
@@ -124,8 +132,8 @@ function coverHtmlFallback(): string {
   }
   const body = printCoverBodyHtml(assetDataUri(titlePath), assetDataUri(authorPath));
   const css = `
-    @page { size: A4; margin: 0; }
-    html, body { margin: 0; padding: 0; width: 210mm; height: 297mm; overflow: hidden; }
+    @page { size: ${TRIM_W}mm ${TRIM_H}mm; margin: 0; }
+    html, body { margin: 0; padding: 0; width: ${TRIM_W}mm; height: ${TRIM_H}mm; overflow: hidden; }
     ${printCoverCssFromTheme()}
   `;
   return shellHtml(`${SITE.title} — 封面`, body, css);
@@ -155,7 +163,7 @@ async function writeCoverFromPrintPdf(enBase: string, zhAlias: string): Promise<
 
 function backCoverHtml(): string {
   const css = `
-    .page { position: relative; width: 210mm; height: 297mm; overflow: hidden; background: #${C.coverPaper}; padding: 28mm 22mm 24mm; }
+    .page { position: relative; width: ${TRIM_W}mm; height: ${TRIM_H}mm; overflow: hidden; background: #${C.coverPaper}; padding: 18mm 14mm 16mm; }
     .geo-panel { position: absolute; top: 18%; left: 0; width: 28%; height: 55%; background: #${C.coverSage}; opacity: 0.78; }
     .geo-bar { position: absolute; right: 0; bottom: 22%; width: 52%; height: 5mm; background: #${C.coverStone}; }
     .geo-gold { position: absolute; top: 10%; left: 8%; width: 10mm; height: 10mm; background: #${C.coverGold}; }
@@ -205,21 +213,21 @@ function flapHtml(): string {
   const nameSrc = assetDataUri(namePath);
   const css = `
     .page {
-      width: 210mm;
-      height: 297mm;
+      width: ${TRIM_W}mm;
+      height: ${TRIM_H}mm;
       background: #fff;
       position: relative;
-      padding: 18mm 16mm;
+      padding: 12mm 10mm;
     }
     .flap {
       box-sizing: border-box;
-      width: 105mm;
-      max-width: 48%;
-      margin: 8mm 0 8mm auto;
-      padding: 16mm 12mm 18mm 14mm;
+      width: 90mm;
+      max-width: 72%;
+      margin: 4mm 0 4mm auto;
+      padding: 12mm 10mm 14mm 12mm;
       border-left: 1px solid #${C.flapBorder};
       background: #${C.flapBg};
-      min-height: 240mm;
+      min-height: 160mm;
     }
     .label { margin: 0 0 1.6rem; font-size: 10pt; letter-spacing: 0.22em; color: #${C.flapLabel}; font-family: system-ui, sans-serif; }
     .name { margin: 0 0 0.35rem; line-height: 0; }
@@ -304,6 +312,10 @@ async function htmlToPdf(html: string, outBase: string, zhAlias: string): Promis
 }
 
 async function main() {
+  fs.mkdirSync(OUT_DIR, { recursive: true });
+  fs.mkdirSync(PUBLIC_DIR, { recursive: true });
+  ensurePrintSerifFontCopied([OUT_DIR, PUBLIC_DIR]);
+
   const spinePath = path.join(PUBLIC_DIR, SPINE_IMAGE);
   if (!fs.existsSync(spinePath)) {
     throw new Error(`找不到書脊圖：${SPINE_IMAGE}`);

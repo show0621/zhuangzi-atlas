@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 /**
- * 從印刷 HTML 產出 A4 PDF（影印店成冊用）。
+ * 從印刷 HTML 產出菊16開（148×210 mm）PDF（膠裝成冊用）。
  *
  * 優先順序：
  *   1. puppeteer-core + 本機 Chrome／Edge（page.pdf）
@@ -38,12 +38,12 @@ const PDF_ALIAS = "莊子全解-印刷版.pdf";
 const PREFACE_TOC_ID = "莊子全解自序";
 
 const PDF_OPTS = {
-  format: "A4" as const,
+  // 實際尺寸以 HTML @page（菊16開 148×210）為準
   printBackground: true,
   preferCSSPageSize: true,
   // 頁碼改由 pdf-lib 自「自序」起蓋章；Chrome footer 無法中途重編
   displayHeaderFooter: false,
-  margin: { top: "16mm", right: "14mm", bottom: "18mm", left: "24mm" },
+  margin: { top: "15mm", right: "14mm", bottom: "18mm", left: "20mm" },
 };
 
 function resolveHtmlPath(): string {
