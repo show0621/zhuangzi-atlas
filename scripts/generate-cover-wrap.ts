@@ -171,48 +171,59 @@ function wrapHtml(titleSrc: string, authorSrc: string, spineSrc: string, flapNam
 
     /* —— 封底 —— */
     .back-geo-panel {
-      position: absolute; top: 16%; left: 0; width: 26%; height: 58%;
-      background: #${C.coverSage}; opacity: 0.78;
+      position: absolute; top: 22%; left: 0; width: 15%; height: 40%;
+      background: #${C.coverSage}; opacity: 0.5;
     }
     .back-geo-bar {
-      position: absolute; right: 0; bottom: 20%; width: 48%; height: 4mm;
+      position: absolute; right: 0; bottom: 16%; width: 44%; height: 4mm;
       background: #${C.coverStone};
     }
     .back-geo-gold {
-      position: absolute; top: 9%; left: 7%; width: 8mm; height: 8mm;
+      position: absolute; top: 10mm; left: 6mm; width: 6.5mm; height: 6.5mm;
       background: #${C.coverGold};
     }
     .back-inner {
       position: relative; z-index: 2;
-      padding: 16mm 12mm 14mm 18mm; height: 100%;
+      box-sizing: border-box;
+      padding: 13mm 9mm 11mm 26mm; height: 100%;
+      background: transparent;
     }
     .back-title {
-      margin: 0.2rem 0 0;
+      margin: 0.15rem 0 0;
       font-family: "Kaiti TC", "KaiTi", serif;
-      font-size: 18pt; letter-spacing: 0.22em; color: #${C.coverGold};
+      font-size: 16pt; letter-spacing: 0.2em; color: #${C.coverGold};
     }
     .back-blurb {
-      margin: 1.1rem 0 0;
-      font-size: 8.8pt; line-height: 1.9; text-align: justify;
+      margin: 1rem 0 0;
+      font-size: 8.5pt; line-height: 1.9; text-align: justify;
+      color: #${C.coverInk};
     }
     .back-quote {
-      margin: 1.2rem 0 0;
+      margin: 1.1rem 0 0;
       font-family: "Kaiti TC", "KaiTi", serif;
-      font-size: 10.5pt; letter-spacing: 0.06em; line-height: 1.7;
+      font-size: 10pt; letter-spacing: 0.06em; line-height: 1.7;
       color: #${C.coverStone};
     }
+    .back-footer {
+      margin-top: 1.15rem;
+      padding: 0.7rem 0.75rem 0.65rem;
+      background: #${C.coverPaper};
+      border: 1px solid rgba(47, 52, 48, 0.1);
+      box-shadow: 0 0 0 2.5mm #${C.coverPaper};
+    }
     .back-author {
-      margin: 1.4rem 0 0;
-      font-size: 9.5pt; letter-spacing: 0.16em; color: #${C.coverGold};
+      margin: 0;
+      font-size: 9.5pt; letter-spacing: 0.14em; color: #${C.coverInk};
+      font-weight: 600;
     }
     .back-meta {
-      margin: 0.4rem 0 0;
-      font-size: 7.5pt; line-height: 1.6; color: #${C.coverMeta};
+      margin: 0.35rem 0 0;
+      font-size: 7.2pt; line-height: 1.55; color: #${C.coverMuted};
       font-family: system-ui, sans-serif;
     }
     .back-isbn {
-      margin: 1.4rem 0 0;
-      font-size: 8.5pt; letter-spacing: 0.12em; color: #${C.coverStone};
+      margin: 0.75rem 0 0;
+      font-size: 8pt; letter-spacing: 0.12em; color: #${C.coverStone};
       font-family: Georgia, serif;
     }
 
@@ -321,12 +332,14 @@ function wrapHtml(titleSrc: string, authorSrc: string, spineSrc: string, flapNam
             並連回無待、心齋、無用之用等核心概念。
           </p>
           <p class="back-quote">${escapeHtml(AFTERWORD_CALLIGRAPHY)}</p>
-          <p class="back-author">${escapeHtml(SITE.author)}</p>
-          <p class="back-meta">
-            ${escapeHtml(SITE.englishTitle)}　｜　版本 ${escapeHtml(SITE.version)}・${PRINT_YEAR}<br />
-            ${escapeHtml(SITE_URL)}
-          </p>
-          <p class="back-isbn">ISBN　—　—　—　—　—</p>
+          <div class="back-footer">
+            <p class="back-author">${escapeHtml(SITE.author)}</p>
+            <p class="back-meta">
+              ${escapeHtml(SITE.englishTitle)}　｜　版本 ${escapeHtml(SITE.version)}・${PRINT_YEAR}<br />
+              ${escapeHtml(SITE_URL)}
+            </p>
+            <p class="back-isbn">ISBN　—　—　—　—　—</p>
+          </div>
         </div>
       </section>
 
