@@ -40,6 +40,7 @@
       background: #e8e8e8;
       font-family: var(--font-serif);
       line-height: 1.75;
+      text-autospace: no-autospace;
     }
     .toolbar {
       position: sticky;
@@ -91,6 +92,8 @@
       widows: 3;
       text-align: justify;
       text-justify: inter-ideograph;
+      /* Chrome 會在漢字與阿拉伯數字間自動加空隙（約為 80 → 約為␠80） */
+      text-autospace: no-autospace;
       line-break: strict;
       word-break: normal;
       overflow-wrap: break-word;
@@ -506,7 +509,12 @@
     }
 
     @media print {
-      body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      body {
+        background: white;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        text-autospace: no-autospace;
+      }
       .toolbar { display: none !important; }
       .sheet {
         max-width: none;
@@ -662,7 +670,7 @@
 <div class="pagebreak"></div>
 
 <h1 id="莊子全解自序">《莊⁠子⁠全⁠解》自⁠序</h1>
-<p>台灣人的平均壽命約為80歲，這⁠意⁠味⁠著40歲⁠的⁠我，已⁠經⁠站⁠在⁠了⁠人⁠生⁠折⁠返⁠點。</p>
+<p>台灣人的平均壽命約為八十歲，這⁠意⁠味⁠著⁠四⁠十⁠歲⁠的⁠我，已⁠經⁠站⁠在⁠了⁠人⁠生⁠折⁠返⁠點。</p>
 <p>回⁠首⁠這⁠幾⁠年，迎⁠接⁠女⁠兒⁠的⁠新⁠生，目⁠睹⁠父⁠母⁠的⁠逐⁠漸⁠老⁠化，經⁠歷⁠了⁠自⁠己⁠的⁠一⁠場⁠大⁠病，再⁠到⁠送⁠走⁠阿⁠公——生、老、病、死，彷⁠彿⁠在⁠短⁠時⁠間⁠內⁠將⁠人⁠生「全⁠餐」吃⁠了⁠一⁠遍。記⁠得⁠那⁠年⁠躺⁠在⁠病⁠床⁠上，我曾發誓絕不再為了工作透支生命，可⁠康⁠復⁠後，卻又下意識地加班到深夜才離去。也記得大伯與阿公臨終時，那⁠瘦⁠骨⁠嶙⁠峋、與⁠往⁠昔⁠判⁠若⁠兩⁠人⁠的⁠模⁠樣，那⁠種⁠視⁠覺⁠上⁠的⁠衝⁠擊，曾⁠讓⁠我⁠陷⁠入⁠巨⁠大⁠的⁠虛⁠無：我⁠們⁠窮⁠盡⁠一⁠生，到⁠底⁠在⁠追⁠求⁠什⁠麼？</p>
 <p>當⁠女⁠兒⁠出⁠生，看著那個小生命努力睜開眼，第⁠一⁠次⁠探⁠索⁠這⁠個⁠世⁠界，我⁠對⁠她⁠說：「嗨，歡⁠迎⁠來⁠到⁠這⁠個⁠世⁠界。」那⁠一⁠刻，生⁠命⁠顯⁠得⁠無⁠比⁠神⁠奇；但⁠當⁠阿⁠公⁠離⁠世，站⁠在⁠棺⁠木⁠前，看著他因脫水而變得陌生，甚⁠至⁠難⁠以⁠辨⁠識⁠的⁠容⁠顏，我⁠才⁠驚⁠覺，原來死亡並非電影裡的平靜安詳，而⁠是⁠如⁠此⁠赤⁠裸⁠且⁠殘⁠酷。</p>
 <p>生⁠命⁠之⁠於⁠此，似⁠乎⁠就⁠是⁠這⁠樣。走⁠的⁠時⁠候，煙⁠消⁠雲⁠散；走⁠過⁠一⁠遭，連⁠曾⁠經⁠穿⁠過⁠的⁠衣⁠物、蓋⁠過⁠的⁠棉⁠被，最⁠終⁠都⁠將⁠被⁠捨⁠棄。彷⁠彿⁠來⁠過，卻⁠沒⁠帶⁠走⁠什⁠麼，也⁠沒⁠留⁠下⁠什⁠麼。在⁠那⁠一⁠剎⁠那，我隱約觸摸到了人生的底色。喔，原⁠來⁠這⁠就⁠是⁠人⁠生！</p>
