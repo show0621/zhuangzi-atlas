@@ -29,12 +29,12 @@ st.markdown(
 NEXT_BASE = "http://localhost:3000"
 PAGES_BASE = "https://show0621.github.io/zhuangzi-atlas"
 # 全套產檔版本戳：改這個可強制破除 GitHub Pages／瀏覽器舊快取
-_ASSET_V = "print-ready-v5-701c"
+_ASSET_V = "print-layout-v6-701c"
 _DL = f"{PAGES_BASE}/downloads"
 
 DOWNLOADS = [
     {
-        "group": "內文成冊（菊16開・約 357 頁）",
+        "group": "內文成冊（菊16開・約 348 頁）",
         "items": [
             ("完整書 PDF", f"{_DL}/zhuangzi-atlas-print.pdf?v={_ASSET_V}", True),
             ("完整書 PDF（中文檔名）", f"{_DL}/莊子全解-印刷版.pdf?v={_ASSET_V}", False),

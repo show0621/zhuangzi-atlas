@@ -642,6 +642,50 @@ function injectIllustratedCover(bodyHtml: string): string {
   return `${illustratedCoverHtml()}\n${PAGE_BREAK_HTML}${bodyHtml.slice(firstBreak + PAGE_BREAK_HTML.length)}`;
 }
 
+/**
+ * Wrap fragile heading + block pairs so Chromium keeps them on one page
+ * (mind maps, structure diagrams, h3 + list, calligraphy figures).
+ */
+function wrapPrintKeepBlocks(html: string): string {
+  let out = html;
+
+  // §16 心智圖 + diagram（mermaid 用「直到下一個 h2」避免誤截斷 </div>）
+  out = out.replace(
+    /(<h2 id="16-[^"]*">[\s\S]*?<\/h2>)\s*(<div class="mermaid">[\s\S]*?<\/div>)(?=\s*(?:<h2|<div class="pagebreak"|$))/g,
+    '<div class="print-keep print-mindmap">$1\n$2</div>',
+  );
+  out = out.replace(
+    /(<h2 id="16-[^"]*">[\s\S]*?<\/h2>)\s*(<pre class="code code-diagram">[\s\S]*?<\/pre>)/g,
+    '<div class="print-keep print-mindmap">$1\n$2</div>',
+  );
+
+  // §03 結構分析 + optional「結構圖」h3 + ASCII diagram
+  out = out.replace(
+    /(<h2 id="03-[^"]*">[\s\S]*?<\/h2>)\s*(<h3[^>]*>[\s\S]*?<\/h3>\s*)?(<pre class="code code-diagram">[\s\S]*?<\/pre>)/g,
+    '<div class="print-keep print-structure">$1\n$2$3</div>',
+  );
+
+  // h3 + list（延伸閱讀小標與書目；略過已包裝者）
+  out = out.replace(
+    /(?<!<div class="print-keep print-h3-block">)(<h3 id="[^"]*">[\s\S]*?<\/h3>)\s*(<(?:ul|ol)>[\s\S]*?<\/(?:ul|ol)>)/g,
+    '<div class="print-keep print-h3-block">$1\n$2</div>',
+  );
+
+  // 修復：mermaid 後首個 h3 誤留孤兒 </div>（h3 開頭缺 wrapper）
+  out = out.replace(
+    /(<h2 id="17-[^"]*">[\s\S]*?<\/h2>\s*)(<h3 id="[^"]*">[\s\S]*?<\/h3>\s*<(?:ul|ol)>[\s\S]*?<\/(?:ul|ol)>)<\/div>(?=\s*(?:<div class="print-keep print-h3-block">|<h3|<div class="pagebreak"|$))/g,
+    '$1<div class="print-keep print-h3-block">$2</div>',
+  );
+
+  // Calligraphy / figure immediately after heading
+  out = out.replace(
+    /(<(?:h2|h3)[^>]*>[\s\S]*?<\/(?:h2|h3)>)\s*(<img class="calligraphy-img"[^>]*\/?>)/g,
+    '<div class="print-keep print-figure">$1\n$2</div>',
+  );
+
+  return out;
+}
+
 function inlineFormat(text: string): string {
   // 先做中文斷行保護，再 escape／套 inline markdown
   let s = escapeHtml(protectPrintBreaks(text));
@@ -749,6 +793,7 @@ function buildPrintHtml(bodyHtml: string): string {
       font-weight: 600;
       line-height: 1.35;
       margin: 1.45em 0 0.55em;
+      break-after: avoid;
       page-break-after: avoid;
     }
     h1 { font-size: 1.55rem; margin-top: 0; }
@@ -859,6 +904,23 @@ function buildPrintHtml(bodyHtml: string): string {
     .mermaid svg {
       max-width: 100%;
       height: auto;
+    }
+    /* 印刷：標題與圖、表、圖表綁定，避免「小標在上一頁、內容在下一頁」 */
+    .print-keep {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .print-keep > h2,
+    .print-keep > h3 {
+      margin-top: 0;
+    }
+    .print-mindmap .mermaid,
+    .print-mindmap pre.code-diagram {
+      margin-top: 0.35em;
+    }
+    .print-bibliography {
+      break-inside: auto;
+      page-break-inside: auto;
     }
     .pagebreak {
       display: block;
@@ -1281,6 +1343,36 @@ function buildPrintHtml(bodyHtml: string): string {
         break-inside: avoid;
         page-break-inside: avoid;
       }
+      /* 標題與緊接的下一區塊不分頁（未包在 print-keep 者） */
+      h2 + p, h2 + blockquote, h2 + pre, h2 + div, h2 + ul, h2 + ol, h2 + table, h2 + h3,
+      h3 + p, h3 + blockquote, h3 + pre, h3 + ul, h3 + ol, h3 + table,
+      h4 + p, h4 + ul, h4 + ol {
+        break-before: avoid;
+        page-break-before: avoid;
+      }
+      .print-keep {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      .print-mindmap > h2,
+      .print-structure > h2,
+      .print-h3-block > h3,
+      .print-figure > h2,
+      .print-figure > h3 {
+        break-after: avoid !important;
+        page-break-after: avoid !important;
+      }
+      .print-mindmap .mermaid svg {
+        max-height: 160mm;
+        width: auto;
+        height: auto;
+      }
+      img.calligraphy-img,
+      .epigraph-page,
+      .afterword-calligraphy-wrap {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
       #後記 ~ blockquote {
         break-inside: auto !important;
         page-break-inside: auto !important;
@@ -1402,7 +1494,9 @@ function main() {
 
   for (const m of missing) console.warn("missing", m);
 
-  const bodyHtml = embedAssetImages(injectIllustratedCover(mdToHtml(md)));
+  const bodyHtml = wrapPrintKeepBlocks(
+    embedAssetImages(injectIllustratedCover(mdToHtml(md))),
+  );
   const html = buildPrintHtml(bodyHtml);
   const htmlPath = path.join(OUT_DIR, HTML_NAME);
   fs.writeFileSync(htmlPath, html, "utf8");
