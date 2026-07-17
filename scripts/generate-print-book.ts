@@ -960,23 +960,23 @@ function buildPrintHtml(bodyHtml: string): string {
     .cover-author {
       position: absolute;
       left: 0;
-      bottom: 18%;
+      /* 與墨色條同底＋上移，讓文楷字視覺落在條內中央 */
+      bottom: calc(18% + 2.6mm);
       z-index: 3;
       box-sizing: border-box;
       width: 58%;
-      height: 11mm;
+      height: auto;
       margin: 0;
       padding: 0 0 0 12mm;
-      display: flex;
-      align-items: center;
+      line-height: 0;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
     .cover-author-img {
       display: block;
-      height: 6.2mm;
+      height: 5.6mm;
       width: auto;
-      max-width: 48mm;
+      max-width: 52mm;
     }
     .cover-meta {
       position: absolute;
