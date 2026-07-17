@@ -1059,8 +1059,8 @@ function buildPrintHtml(bodyHtml: string): string {
       margin: 0 auto;
     }
     .epigraph-img { max-width: 175mm; }
-    /* 後記書法：縮小以塞進末頁空白，避免獨佔下一頁 */
-    .afterword-img { max-width: 88mm; }
+    /* 後記書法：去底色＋緊裁後可維持較大字面，仍併在末頁空白 */
+    .afterword-img { max-width: 125mm; }
     .sr-only {
       position: absolute;
       width: 1px;
