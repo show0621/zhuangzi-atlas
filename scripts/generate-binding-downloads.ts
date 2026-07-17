@@ -23,6 +23,7 @@ import {
   printCoverCssFromTheme,
 } from "../src/lib/printCoverHtml";
 import {
+  AFTERWORD_CALLIGRAPHY,
   AUTHOR_FLAP,
   PRINT_COLORS as C,
   PRINT_YEAR,
@@ -162,20 +163,83 @@ async function writeCoverFromPrintPdf(enBase: string, zhAlias: string): Promise<
 }
 
 function backCoverHtml(): string {
+  // 與封面展開封底對齊：金塊與書名錯開；正文落在米色區，不壓在sage上（避免金／灰字發髒）
   const css = `
-    .page { position: relative; width: ${TRIM_W}mm; height: ${TRIM_H}mm; overflow: hidden; background: #${C.coverPaper}; padding: 18mm 14mm 16mm; }
-    .geo-panel { position: absolute; top: 18%; left: 0; width: 28%; height: 55%; background: #${C.coverSage}; opacity: 0.78; }
-    .geo-bar { position: absolute; right: 0; bottom: 22%; width: 52%; height: 5mm; background: #${C.coverStone}; }
-    .geo-gold { position: absolute; top: 10%; left: 8%; width: 10mm; height: 10mm; background: #${C.coverGold}; }
-    .inner { position: relative; z-index: 2; max-width: 120mm; margin-left: auto; }
-    .label { margin: 0 0 1.2rem; font-size: 10pt; letter-spacing: 0.28em; color: #${C.coverMeta}; font-family: system-ui, sans-serif; }
-    .title { margin: 0; font-family: "Kaiti TC", "KaiTi", serif; font-size: 28pt; letter-spacing: 0.28em; color: #${C.coverGold}; }
-    .blurb { margin: 1.6rem 0 0; font-size: 11.5pt; line-height: 1.95; text-align: justify; color: #${C.coverInk}; }
-    .quote { margin: 2rem 0 0; font-family: "Kaiti TC", "KaiTi", serif; font-size: 13pt; letter-spacing: 0.08em; line-height: 1.8; color: #${C.coverStone}; }
-    .author { margin: 2.4rem 0 0; font-size: 12pt; letter-spacing: 0.18em; color: #${C.coverGold}; font-weight: 600; }
-    .meta { margin: 0.5rem 0 0; font-size: 9.5pt; line-height: 1.7; color: #${C.coverMeta}; font-family: system-ui, sans-serif; }
-    .isbn { margin: 2.2rem 0 0; font-size: 10pt; letter-spacing: 0.12em; color: #${C.coverStone}; font-family: Georgia, serif; }
-    .hint { position: absolute; right: 22mm; bottom: 12mm; font-size: 9pt; color: #${C.coverMeta}; font-family: system-ui, sans-serif; }
+    .page {
+      position: relative;
+      width: ${TRIM_W}mm; height: ${TRIM_H}mm;
+      overflow: hidden;
+      background: #${C.coverPaper};
+    }
+    .geo-panel {
+      /* 左側色帶止於正文欄之前，且不延伸到署名區 */
+      position: absolute; top: 22%; left: 0; width: 16%; height: 42%;
+      background: #${C.coverSage}; opacity: 0.5;
+    }
+    .geo-bar {
+      position: absolute; right: 0; bottom: 16%; width: 46%; height: 4.5mm;
+      background: #${C.coverStone};
+    }
+    .geo-gold {
+      position: absolute; top: 12mm; left: 8mm; width: 7mm; height: 7mm;
+      background: #${C.coverGold};
+    }
+    .inner {
+      position: relative; z-index: 2;
+      box-sizing: border-box;
+      height: 100%;
+      /* 正文整欄讓過左側色帶與金塊 */
+      padding: 16mm 14mm 18mm 34mm;
+      background: transparent;
+    }
+    .label {
+      margin: 0 0 1rem;
+      font-size: 9.5pt; letter-spacing: 0.28em;
+      color: #${C.coverMeta}; font-family: system-ui, sans-serif;
+    }
+    .title {
+      margin: 0;
+      font-family: "Kaiti TC", "KaiTi", serif;
+      font-size: 24pt; letter-spacing: 0.24em;
+      color: #${C.coverGold};
+    }
+    .blurb {
+      margin: 1.35rem 0 0;
+      font-size: 10.5pt; line-height: 1.95; text-align: justify;
+      color: #${C.coverInk};
+    }
+    .quote {
+      margin: 1.5rem 0 0;
+      font-family: "Kaiti TC", "KaiTi", serif;
+      font-size: 12pt; letter-spacing: 0.08em; line-height: 1.8;
+      color: #${C.coverStone};
+    }
+    .footer-block {
+      margin-top: 2rem;
+      padding: 1rem 1.1rem 1.05rem;
+      background: #${C.coverPaper};
+      border: 1px solid rgba(47, 52, 48, 0.1);
+      box-shadow: 0 0 0 3mm #${C.coverPaper}; /* 隔開左側色帶，印色不混 */
+    }
+    .author {
+      margin: 0;
+      font-size: 12pt; letter-spacing: 0.18em;
+      color: #${C.coverInk}; font-weight: 600;
+    }
+    .meta {
+      margin: 0.55rem 0 0;
+      font-size: 9pt; line-height: 1.7;
+      color: #${C.coverMuted}; font-family: system-ui, sans-serif;
+    }
+    .isbn {
+      margin: 1.1rem 0 0;
+      font-size: 10pt; letter-spacing: 0.12em;
+      color: #${C.coverStone}; font-family: Georgia, serif;
+    }
+    .hint {
+      position: absolute; right: 12mm; bottom: 8mm; z-index: 3;
+      font-size: 8.5pt; color: #${C.coverMeta}; font-family: system-ui, sans-serif;
+    }
   `;
   const body = `
   <div class="page">
@@ -189,13 +253,15 @@ function backCoverHtml(): string {
         原典・白話・哲學・人生智慧。本書依《莊子》篇章脈絡展開，清楚區分原典、歷代注家與現代詮釋，
         並連回無待、心齋、無用之用等核心概念，供通讀、劃線與交叉思考。
       </p>
-      <p class="quote">人生如逆旅，我亦是行人。</p>
-      <p class="author">${escapeHtml(SITE.author)}</p>
-      <p class="meta">
-        ${escapeHtml(SITE.englishTitle)}　｜　版本 ${escapeHtml(SITE.version)}・${PRINT_YEAR}<br />
-        ${escapeHtml(SITE_URL)}
-      </p>
-      <p class="isbn">ISBN　—　—　—　—　—</p>
+      <p class="quote">${escapeHtml(AFTERWORD_CALLIGRAPHY)}</p>
+      <div class="footer-block">
+        <p class="author">${escapeHtml(SITE.author)}</p>
+        <p class="meta">
+          ${escapeHtml(SITE.englishTitle)}　｜　版本 ${escapeHtml(SITE.version)}・${PRINT_YEAR}<br />
+          ${escapeHtml(SITE_URL)}
+        </p>
+        <p class="isbn">ISBN　—　—　—　—　—</p>
+      </div>
     </div>
     <p class="hint">封底｜單獨下載頁（ISBN 出版時再填）</p>
   </div>`;
