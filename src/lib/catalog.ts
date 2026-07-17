@@ -42,7 +42,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "逍遙遊",
     part: "內篇",
     order: 1,
-    status: "draft",
+    status: "review",
     summary: "由鯤鵬至無待：小大之辯、有待／無待、至人無己，以及惠子「無用之用」。本篇為全書自由觀的總綱。",
   },
   {
@@ -51,7 +51,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "齊物論",
     part: "內篇",
     order: 2,
-    status: "draft",
+    status: "review",
     summary: "由天籟、成心、是非之辯至莊周夢蝶，考察如何鬆開自以為是的尺度。",
   },
   {
@@ -60,7 +60,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "養生主",
     part: "內篇",
     order: 3,
-    status: "draft",
+    status: "review",
     summary: "以緣督、庖丁解牛與秦失弔老聃，討論保全生命、順其自然與死生之變。",
   },
   {
@@ -69,7 +69,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "人間世",
     part: "內篇",
     order: 4,
-    status: "draft",
+    status: "review",
     summary: "由顏回使衛、心齋與支離疏諸寓言，討論亂世中不以正直自傷的處世工夫。",
   },
   {
@@ -78,7 +78,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "德充符",
     part: "內篇",
     order: 5,
-    status: "draft",
+    status: "review",
     summary: "以王駘、申徒嘉與哀駘它等形殘者，反省以形貌、才能與名位衡量人的偏見。",
   },
   {
@@ -87,7 +87,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "大宗師",
     part: "內篇",
     order: 6,
-    status: "draft",
+    status: "review",
     summary: "由真人、相忘於江湖與子桑戶之死，探問以道為宗師的死生工夫。",
   },
   {
@@ -96,7 +96,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "應帝王",
     part: "內篇",
     order: 7,
-    status: "draft",
+    status: "review",
     summary: "以巫咸、神巫、蒲衣子與渾沌之死，探問不以控制傷害萬物的政治。",
   },
   // 外篇
@@ -142,7 +142,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "天地",
     part: "外篇",
     order: 12,
-    status: "draft",
+    status: "review",
     summary: "天地化均與帝王之德；漢陰丈人拒桔槔而護純白，由機心轉入忘乎物、入於天。",
   },
   {
@@ -151,7 +151,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "天道",
     part: "外篇",
     order: 13,
-    status: "draft",
+    status: "review",
     summary: "天道運而無所積；虛靜恬淡為帝王之休；君臣父子有序；輪扁斫輪示不可盡傳之知。",
   },
   {
@@ -160,7 +160,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "天運",
     part: "外篇",
     order: 14,
-    status: "draft",
+    status: "review",
     summary: "天其運乎與禮樂興廢；芻狗、推舟於陸；孔子見老聃論六經陳跡與烏鵲孺之化。",
   },
   {
@@ -169,7 +169,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "刻意",
     part: "外篇",
     order: 15,
-    status: "draft",
+    status: "review",
     summary: "刻意尚行諸士之偏尚；導引養形對出養神；純粹不雜、淡然無極為天地之道。",
   },
   {
@@ -178,7 +178,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "繕性",
     part: "外篇",
     order: 16,
-    status: "draft",
+    status: "review",
     summary: "由俗學、仁義與成心對性命的增飾，回到不失其初的自得。",
   },
   {
@@ -187,7 +187,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "秋水",
     part: "外篇",
     order: 17,
-    status: "draft",
+    status: "review",
     summary: "河伯見海若而知小大無定；由尺度之相對，進到不以人滅天的生命分際。",
   },
   {
@@ -196,7 +196,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "至樂",
     part: "外篇",
     order: 18,
-    status: "draft",
+    status: "review",
     summary: "由至樂之問、髑髏之辯與鼓盆而歌，辨快樂、生命變化與哀傷的分際。",
   },
   {
@@ -205,7 +205,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "達生",
     part: "外篇",
     order: 19,
-    status: "draft",
+    status: "review",
     summary: "由養生、忘形到工巧，說明通達生命在於不以外物傷神。",
   },
   {
@@ -214,7 +214,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "山木",
     part: "外篇",
     order: 20,
-    status: "draft",
+    status: "review",
     summary: "山木不材得全、雁不材被殺；在材與不材間，尋求不為物役的處世分際。",
   },
   {
@@ -223,7 +223,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "田子方",
     part: "外篇",
     order: 21,
-    status: "draft",
+    status: "review",
     summary: "以溫伯雪子、真畫者與魯哀公等故事，辨真偽、形神與不為名役。",
   },
   {
@@ -232,7 +232,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "知北遊",
     part: "外篇",
     order: 22,
-    status: "draft",
+    status: "review",
     summary: "知向北方求道而不得，以道不可言、不可知的問答，轉入體道與不知之知。",
   },
   // 雜篇
@@ -278,7 +278,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "寓言",
     part: "雜篇",
     order: 27,
-    status: "draft",
+    status: "review",
     summary: "「寓言十九、重言十七、卮言日出，和以天倪」：本篇自我揭示莊子式說話方法，並以陽子居、曾子等故事示範語言如何鬆動成見。",
   },
   {
@@ -287,7 +287,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "讓王",
     part: "雜篇",
     order: 28,
-    status: "draft",
+    status: "review",
     summary: "堯舜讓天下、大王去邠、原憲曾子安貧等故事串成的尊生輕位敘事；宜作後出道家隱逸材料讀，勿逕稱為莊周親筆政論。",
   },
   {
@@ -296,7 +296,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "盜跖",
     part: "雜篇",
     order: 29,
-    status: "draft",
+    status: "review",
     summary: "孔子見盜跖的誇飾辯難：以盜賊之口反詰仁義、名譽與聖王敘事的偽善；屬雜篇戲劇體，須先辨文類再談義理。",
   },
   {
@@ -305,7 +305,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "說劍",
     part: "雜篇",
     order: 30,
-    status: "draft",
+    status: "review",
     summary: "趙文王好劍，莊子以庶人劍、諸侯劍、天子劍三層譬喻，把嗜殺之慾轉譯為治國尺度的政治諷喻。",
   },
   {
@@ -314,7 +314,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "漁父",
     part: "雜篇",
     order: 31,
-    status: "draft",
+    status: "review",
     summary: "漁父於緇帷之林訓孔子：真者精誠之至，法天貴真；禮樂儀文若失誠，則徒成飾偽。",
   },
   {
@@ -323,7 +323,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "列御寇",
     part: "雜篇",
     order: 32,
-    status: "draft",
+    status: "review",
     summary: "列子食於十漿、伯昏無人警「虛而遨遊」；曹商使秦諷刺啖名；莊子將死拒厚葬，以天地為棺槨。",
   },
   {
@@ -332,7 +332,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "天下",
     part: "雜篇",
     order: 33,
-    status: "draft",
+    status: "review",
     summary: "全書學術史收束：道術將為天下裂；依序衡定墨、宋尹、彭田慎、關老與莊周，並以寓言／重言／卮言自述莊學。",
   },
 ];

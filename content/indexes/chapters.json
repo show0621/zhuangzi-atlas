@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "generatedAt": "2026-07-17T07:10:19.573Z",
+  "generatedAt": "2026-07-17T07:26:56.348Z",
   "chapterCount": 34,
   "chapters": [
     {
@@ -37,7 +37,7 @@
       "title": "逍遙遊",
       "part": "內篇",
       "summary": "由鯤鵬至無待：小大之辯、有待／無待、至人無己，以及惠子「無用之用」。本篇為全書自由觀的總綱。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -57,7 +57,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 6987
+      "wordCountApprox": 7033
     },
     {
       "id": "02",
@@ -65,7 +65,7 @@
       "title": "齊物論",
       "part": "內篇",
       "summary": "由天籟、成心、是非之辯至莊周夢蝶，考察如何鬆開自以為是的尺度。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -85,7 +85,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3460
+      "wordCountApprox": 3500
     },
     {
       "id": "03",
@@ -93,7 +93,7 @@
       "title": "養生主",
       "part": "內篇",
       "summary": "以緣督、庖丁解牛與秦失弔老聃，討論保全生命、順其自然與死生之變。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -113,7 +113,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3298
+      "wordCountApprox": 3340
     },
     {
       "id": "04",
@@ -121,7 +121,7 @@
       "title": "人間世",
       "part": "內篇",
       "summary": "由顏回使衛、心齋與支離疏諸寓言，討論亂世中不以正直自傷的處世工夫。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -141,7 +141,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3314
+      "wordCountApprox": 3353
     },
     {
       "id": "05",
@@ -149,7 +149,7 @@
       "title": "德充符",
       "part": "內篇",
       "summary": "以王駘、申徒嘉與哀駘它等形殘者，反省以形貌、才能與名位衡量人的偏見。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -169,7 +169,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3336
+      "wordCountApprox": 3375
     },
     {
       "id": "06",
@@ -177,7 +177,7 @@
       "title": "大宗師",
       "part": "內篇",
       "summary": "由真人、相忘於江湖與子桑戶之死，探問以道為宗師的死生工夫。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -197,7 +197,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3430
+      "wordCountApprox": 3469
     },
     {
       "id": "07",
@@ -205,7 +205,7 @@
       "title": "應帝王",
       "part": "內篇",
       "summary": "以巫咸、神巫、蒲衣子與渾沌之死，探問不以控制傷害萬物的政治。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -225,7 +225,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3465
+      "wordCountApprox": 3506
     },
     {
       "id": "08",
@@ -345,7 +345,7 @@
       "title": "天地",
       "part": "外篇",
       "summary": "天地化均與帝王之德；漢陰丈人拒桔槔而護純白，由機心轉入忘乎物、入於天。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -365,7 +365,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3521
+      "wordCountApprox": 3553
     },
     {
       "id": "13",
@@ -373,7 +373,7 @@
       "title": "天道",
       "part": "外篇",
       "summary": "天道運而無所積；虛靜恬淡為帝王之休；君臣父子有序；輪扁斫輪示不可盡傳之知。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -393,7 +393,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3406
+      "wordCountApprox": 3449
     },
     {
       "id": "14",
@@ -401,7 +401,7 @@
       "title": "天運",
       "part": "外篇",
       "summary": "天其運乎與禮樂興廢；芻狗、推舟於陸；孔子見老聃論六經陳跡與烏鵲孺之化。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -421,7 +421,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3469
+      "wordCountApprox": 3509
     },
     {
       "id": "15",
@@ -429,7 +429,7 @@
       "title": "刻意",
       "part": "外篇",
       "summary": "刻意尚行諸士之偏尚；導引養形對出養神；純粹不雜、淡然無極為天地之道。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -449,7 +449,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3370
+      "wordCountApprox": 3409
     },
     {
       "id": "16",
@@ -457,7 +457,7 @@
       "title": "繕性",
       "part": "外篇",
       "summary": "由俗學、仁義與成心對性命的增飾，回到不失其初的自得。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -477,7 +477,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3324
+      "wordCountApprox": 3351
     },
     {
       "id": "17",
@@ -485,7 +485,7 @@
       "title": "秋水",
       "part": "外篇",
       "summary": "河伯見海若而知小大無定；由尺度之相對，進到不以人滅天的生命分際。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -505,7 +505,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3189
+      "wordCountApprox": 3228
     },
     {
       "id": "18",
@@ -513,7 +513,7 @@
       "title": "至樂",
       "part": "外篇",
       "summary": "由至樂之問、髑髏之辯與鼓盆而歌，辨快樂、生命變化與哀傷的分際。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -533,7 +533,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3518
+      "wordCountApprox": 3544
     },
     {
       "id": "19",
@@ -541,7 +541,7 @@
       "title": "達生",
       "part": "外篇",
       "summary": "由養生、忘形到工巧，說明通達生命在於不以外物傷神。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -561,7 +561,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3201
+      "wordCountApprox": 3232
     },
     {
       "id": "20",
@@ -569,7 +569,7 @@
       "title": "山木",
       "part": "外篇",
       "summary": "山木不材得全、雁不材被殺；在材與不材間，尋求不為物役的處世分際。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -589,7 +589,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3397
+      "wordCountApprox": 3424
     },
     {
       "id": "21",
@@ -597,7 +597,7 @@
       "title": "田子方",
       "part": "外篇",
       "summary": "以溫伯雪子、真畫者與魯哀公等故事，辨真偽、形神與不為名役。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -617,7 +617,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3213
+      "wordCountApprox": 3239
     },
     {
       "id": "22",
@@ -625,7 +625,7 @@
       "title": "知北遊",
       "part": "外篇",
       "summary": "知向北方求道而不得，以道不可言、不可知的問答，轉入體道與不知之知。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -645,7 +645,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3755
+      "wordCountApprox": 3792
     },
     {
       "id": "23",
@@ -765,7 +765,7 @@
       "title": "寓言",
       "part": "雜篇",
       "summary": "「寓言十九、重言十七、卮言日出，和以天倪」：本篇自我揭示莊子式說話方法，並以陽子居、曾子等故事示範語言如何鬆動成見。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -785,7 +785,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4800
+      "wordCountApprox": 4827
     },
     {
       "id": "28",
@@ -793,7 +793,7 @@
       "title": "讓王",
       "part": "雜篇",
       "summary": "堯舜讓天下、大王去邠、原憲曾子安貧等故事串成的尊生輕位敘事；宜作後出道家隱逸材料讀，勿逕稱為莊周親筆政論。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -813,7 +813,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4669
+      "wordCountApprox": 4694
     },
     {
       "id": "29",
@@ -821,7 +821,7 @@
       "title": "盜跖",
       "part": "雜篇",
       "summary": "孔子見盜跖的誇飾辯難：以盜賊之口反詰仁義、名譽與聖王敘事的偽善；屬雜篇戲劇體，須先辨文類再談義理。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -841,7 +841,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4482
+      "wordCountApprox": 4523
     },
     {
       "id": "30",
@@ -849,7 +849,7 @@
       "title": "說劍",
       "part": "雜篇",
       "summary": "趙文王好劍，莊子以庶人劍、諸侯劍、天子劍三層譬喻，把嗜殺之慾轉譯為治國尺度的政治諷喻。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -869,7 +869,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4496
+      "wordCountApprox": 4534
     },
     {
       "id": "31",
@@ -877,7 +877,7 @@
       "title": "漁父",
       "part": "雜篇",
       "summary": "漁父於緇帷之林訓孔子：真者精誠之至，法天貴真；禮樂儀文若失誠，則徒成飾偽。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -897,7 +897,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 6303
+      "wordCountApprox": 6327
     },
     {
       "id": "32",
@@ -905,7 +905,7 @@
       "title": "列御寇",
       "part": "雜篇",
       "summary": "列子食於十漿、伯昏無人警「虛而遨遊」；曹商使秦諷刺啖名；莊子將死拒厚葬，以天地為棺槨。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -925,7 +925,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 5900
+      "wordCountApprox": 5935
     },
     {
       "id": "33",
@@ -933,7 +933,7 @@
       "title": "天下",
       "part": "雜篇",
       "summary": "全書學術史收束：道術將為天下裂；依序衡定墨、宋尹、彭田慎、關老與莊周，並以寓言／重言／卮言自述莊學。",
-      "status": "draft",
+      "status": "review",
       "headings": [
         "01. 篇名與背景",
         "02. 成書背景",
@@ -953,7 +953,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 7173
+      "wordCountApprox": 7205
     }
   ]
 }
