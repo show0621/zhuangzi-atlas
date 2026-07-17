@@ -198,6 +198,11 @@ function flapHtml(): string {
   const paras = AUTHOR_FLAP.paragraphs
     .map((p) => `<p class="body">${escapeHtml(p)}</p>`)
     .join("\n");
+  const namePath = path.join(PUBLIC_DIR, "assets/flap-author-name.png");
+  if (!fs.existsSync(namePath)) {
+    throw new Error("找不到折頁署名圖：assets/flap-author-name.png");
+  }
+  const nameSrc = assetDataUri(namePath);
   const css = `
     .page {
       width: 210mm;
@@ -217,7 +222,8 @@ function flapHtml(): string {
       min-height: 240mm;
     }
     .label { margin: 0 0 1.6rem; font-size: 10pt; letter-spacing: 0.22em; color: #${C.flapLabel}; font-family: system-ui, sans-serif; }
-    .name { margin: 0 0 0.35rem; font-size: 26pt; letter-spacing: 0.2em; color: #${C.flapName}; font-weight: 700; }
+    .name { margin: 0 0 0.35rem; line-height: 0; }
+    .name-img { display: block; height: 11mm; width: auto; max-width: 58mm; }
     .role { margin: 0 0 1.6rem; color: #${C.flapRole}; letter-spacing: 0.08em; font-size: 12pt; }
     .body { margin: 0 0 1.1rem; font-size: 12pt; line-height: 1.95; color: #${C.flapBody}; text-align: justify; }
     .body:last-child { margin-bottom: 0; }
@@ -227,7 +233,7 @@ function flapHtml(): string {
   <div class="page">
     <section class="flap">
       <p class="label">書面折頁｜作者介紹</p>
-      <p class="name">${escapeHtml(AUTHOR_FLAP.name)}</p>
+      <p class="name"><img class="name-img" src="${nameSrc}" alt="${escapeHtml(AUTHOR_FLAP.name)}" /></p>
       <p class="role">${escapeHtml(AUTHOR_FLAP.role)}・《${escapeHtml(SITE.title)}》</p>
       ${paras}
     </section>

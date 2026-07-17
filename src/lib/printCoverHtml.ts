@@ -7,6 +7,8 @@ import { PRINT_COLORS, PRINT_YEAR } from "./printFrontMatter";
 
 export const COVER_TITLE_IMAGE = "assets/print-cover-title-cursive.png";
 export const COVER_AUTHOR_IMAGE = "assets/cover-author-wenkai.png";
+/** 折頁用「李孟霖」：思源宋體 Light，避免「霖」粗體糊死 */
+export const FLAP_AUTHOR_NAME_IMAGE = "assets/flap-author-name.png";
 
 function escapeHtml(s: string): string {
   return s

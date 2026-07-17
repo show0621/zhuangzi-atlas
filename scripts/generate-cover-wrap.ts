@@ -21,6 +21,7 @@ import {
 import {
   COVER_AUTHOR_IMAGE,
   COVER_TITLE_IMAGE,
+  FLAP_AUTHOR_NAME_IMAGE,
 } from "../src/lib/printCoverHtml";
 import {
   BOOK_TRIM_MM,
@@ -84,7 +85,7 @@ function findBrowser(): string | null {
  * 印刷面由左至右：後勒口｜封底｜書脊｜封面｜前勒口
  * 頁面含 3mm 出血。
  */
-function wrapHtml(titleSrc: string, authorSrc: string, spineSrc: string): string {
+function wrapHtml(titleSrc: string, authorSrc: string, spineSrc: string, flapNameSrc: string): string {
   const pageW = WRAP_W + BLEED * 2;
   const pageH = TRIM_H + BLEED * 2;
   const authorParas = AUTHOR_FLAP.paragraphs
@@ -269,11 +270,8 @@ function wrapHtml(titleSrc: string, authorSrc: string, spineSrc: string): string
     }
 
     /* —— 前勒口：作者 —— */
-    .author-name {
-      margin: 0 0 0.25rem;
-      font-size: 16pt; letter-spacing: 0.18em; color: #${C.flapName};
-      font-family: "Kaiti TC", "KaiTi", serif;
-    }
+    .author-name { margin: 0 0 0.35rem; line-height: 0; }
+    .author-name-img { display: block; height: 9mm; width: auto; max-width: 48mm; }
     .author-role {
       margin: 0 0 1.1rem;
       font-size: 8.5pt; letter-spacing: 0.12em; color: #${C.flapRole};
@@ -356,7 +354,9 @@ function wrapHtml(titleSrc: string, authorSrc: string, spineSrc: string): string
       <section class="panel flap-front">
         <div class="flap-inner">
           <p class="flap-label">前勒口｜作者介紹</p>
-          <p class="author-name">${escapeHtml(AUTHOR_FLAP.name)}</p>
+          <p class="author-name">
+            <img class="author-name-img" src="${flapNameSrc}" alt="${escapeHtml(AUTHOR_FLAP.name)}" />
+          </p>
           <p class="author-role">${escapeHtml(AUTHOR_FLAP.role)}・《${escapeHtml(SITE.title)}》</p>
           ${authorParas}
         </div>
@@ -443,8 +443,9 @@ async function main() {
   const titleSrc = assetDataUri(COVER_TITLE_IMAGE);
   const authorSrc = assetDataUri(COVER_AUTHOR_IMAGE);
   const spineSrc = assetDataUri(SPINE_IMAGE);
+  const flapNameSrc = assetDataUri(FLAP_AUTHOR_NAME_IMAGE);
 
-  const wrapPage = wrapHtml(titleSrc, authorSrc, spineSrc);
+  const wrapPage = wrapHtml(titleSrc, authorSrc, spineSrc, flapNameSrc);
   const htmlPath = path.join(OUT_DIR, "zhuangzi-atlas-cover-wrap.html");
   fs.mkdirSync(OUT_DIR, { recursive: true });
   fs.mkdirSync(PUBLIC_DIR, { recursive: true });
