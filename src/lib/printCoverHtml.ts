@@ -95,20 +95,7 @@ export function printCoverCss(vars: {
       max-width: 118mm;
       height: auto;
       margin: 0 0 0 -2mm;
-      -webkit-mask-image: linear-gradient(
-        to bottom,
-        transparent 0%,
-        #000 8%,
-        #000 92%,
-        transparent 100%
-      );
-      mask-image: linear-gradient(
-        to bottom,
-        transparent 0%,
-        #000 8%,
-        #000 92%,
-        transparent 100%
-      );
+      /* 不用 CSS mask：避免 PDF soft-mask 讓燙金書名在預覽中消失 */
     }
     .cover-subtitle {
       margin: 1.1rem 0 0;
