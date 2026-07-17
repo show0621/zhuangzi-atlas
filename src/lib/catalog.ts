@@ -107,7 +107,7 @@ export const CHAPTERS: ChapterMeta[] = [
     part: "外篇",
     order: 8,
     status: "draft",
-    summary: "批判矯飾仁義，主張回歸性命之情。",
+    summary: "以駢拇枝指、附贅縣疣為喻，辨仁義外加與性命之情；伯夷、盜跖名號異而傷性同。",
   },
   {
     id: "09",
@@ -116,7 +116,7 @@ export const CHAPTERS: ChapterMeta[] = [
     part: "外篇",
     order: 9,
     status: "draft",
-    summary: "伯樂治馬之喻：文明規範與自然本性的衝突。",
+    summary: "馬之真性對照伯樂治馬、陶匠治埴木；治天下之過在於以規矩鉤繩強物就範，並以赫胥氏之民寫素樸。",
   },
   {
     id: "10",
@@ -125,7 +125,7 @@ export const CHAPTERS: ChapterMeta[] = [
     part: "外篇",
     order: 10,
     status: "draft",
-    summary: "聖知與盜跖：知識、制度如何反過來被盜用。",
+    summary: "由守篋反為大盜積，寫田成子盜齊並盜聖知之法；盜亦有道，聖人不死則大盜不止。",
   },
   {
     id: "11",
@@ -134,7 +134,7 @@ export const CHAPTERS: ChapterMeta[] = [
     part: "外篇",
     order: 11,
     status: "draft",
-    summary: "在之宥之：寬容、自在與治天下的限度。",
+    summary: "聞在宥天下，不聞治天下；崔瞿問老聃、廣成子教黃帝、雲將遇鴻蒙，層層收束於無為而安性命之情。",
   },
   {
     id: "12",

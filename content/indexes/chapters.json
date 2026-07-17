@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "generatedAt": "2026-07-16T06:23:57.523Z",
+  "generatedAt": "2026-07-17T05:41:07.376Z",
   "chapterCount": 34,
   "chapters": [
     {
@@ -29,7 +29,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3251
+      "wordCountApprox": 3266
     },
     {
       "id": "01",
@@ -57,7 +57,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 7085
+      "wordCountApprox": 7100
     },
     {
       "id": "02",
@@ -85,7 +85,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4152
+      "wordCountApprox": 4167
     },
     {
       "id": "03",
@@ -113,7 +113,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4101
+      "wordCountApprox": 4116
     },
     {
       "id": "04",
@@ -141,7 +141,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4099
+      "wordCountApprox": 4114
     },
     {
       "id": "05",
@@ -169,7 +169,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4093
+      "wordCountApprox": 4108
     },
     {
       "id": "06",
@@ -197,7 +197,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4117
+      "wordCountApprox": 4132
     },
     {
       "id": "07",
@@ -225,14 +225,14 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4084
+      "wordCountApprox": 4099
     },
     {
       "id": "08",
       "slug": "駢拇",
       "title": "駢拇",
       "part": "外篇",
-      "summary": "批判矯飾仁義，主張回歸性命之情。",
+      "summary": "以駢拇枝指、附贅縣疣為喻，辨仁義外加與性命之情；伯夷、盜跖名號異而傷性同。",
       "status": "draft",
       "headings": [
         "01. 篇名與背景",
@@ -253,14 +253,14 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3698
+      "wordCountApprox": 3030
     },
     {
       "id": "09",
       "slug": "馬蹄",
       "title": "馬蹄",
       "part": "外篇",
-      "summary": "伯樂治馬之喻：文明規範與自然本性的衝突。",
+      "summary": "馬之真性對照伯樂治馬、陶匠治埴木；治天下之過在於以規矩鉤繩強物就範，並以赫胥氏之民寫素樸。",
       "status": "draft",
       "headings": [
         "01. 篇名與背景",
@@ -281,14 +281,14 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3709
+      "wordCountApprox": 3243
     },
     {
       "id": "10",
       "slug": "胠篋",
       "title": "胠篋",
       "part": "外篇",
-      "summary": "聖知與盜跖：知識、制度如何反過來被盜用。",
+      "summary": "由守篋反為大盜積，寫田成子盜齊並盜聖知之法；盜亦有道，聖人不死則大盜不止。",
       "status": "draft",
       "headings": [
         "01. 篇名與背景",
@@ -309,14 +309,14 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3715
+      "wordCountApprox": 3377
     },
     {
       "id": "11",
       "slug": "在宥",
       "title": "在宥",
       "part": "外篇",
-      "summary": "在之宥之：寬容、自在與治天下的限度。",
+      "summary": "聞在宥天下，不聞治天下；崔瞿問老聃、廣成子教黃帝、雲將遇鴻蒙，層層收束於無為而安性命之情。",
       "status": "draft",
       "headings": [
         "01. 篇名與背景",
@@ -337,7 +337,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3711
+      "wordCountApprox": 3525
     },
     {
       "id": "12",
@@ -365,7 +365,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3698
+      "wordCountApprox": 3715
     },
     {
       "id": "13",
@@ -393,7 +393,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3722
+      "wordCountApprox": 3739
     },
     {
       "id": "14",
@@ -421,7 +421,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3696
+      "wordCountApprox": 3713
     },
     {
       "id": "15",
@@ -449,7 +449,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3693
+      "wordCountApprox": 3710
     },
     {
       "id": "16",
@@ -477,7 +477,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4135
+      "wordCountApprox": 4150
     },
     {
       "id": "17",
@@ -505,7 +505,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 3178
+      "wordCountApprox": 3193
     },
     {
       "id": "18",
@@ -533,7 +533,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4373
+      "wordCountApprox": 4388
     },
     {
       "id": "19",
@@ -561,7 +561,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4094
+      "wordCountApprox": 4109
     },
     {
       "id": "20",
@@ -589,7 +589,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4307
+      "wordCountApprox": 4322
     },
     {
       "id": "21",
@@ -617,7 +617,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4134
+      "wordCountApprox": 4149
     },
     {
       "id": "22",
@@ -645,7 +645,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4567
+      "wordCountApprox": 4582
     },
     {
       "id": "23",
@@ -673,7 +673,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4350
+      "wordCountApprox": 3841
     },
     {
       "id": "24",
@@ -701,7 +701,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4321
+      "wordCountApprox": 3626
     },
     {
       "id": "25",
@@ -729,7 +729,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4345
+      "wordCountApprox": 3695
     },
     {
       "id": "26",
@@ -757,7 +757,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4355
+      "wordCountApprox": 3851
     },
     {
       "id": "27",
@@ -785,7 +785,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4352
+      "wordCountApprox": 4883
     },
     {
       "id": "28",
@@ -813,7 +813,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4369
+      "wordCountApprox": 4384
     },
     {
       "id": "29",
@@ -841,7 +841,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4371
+      "wordCountApprox": 4386
     },
     {
       "id": "30",
@@ -869,7 +869,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4363
+      "wordCountApprox": 4378
     },
     {
       "id": "31",
@@ -897,7 +897,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4351
+      "wordCountApprox": 6392
     },
     {
       "id": "32",
@@ -925,7 +925,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4363
+      "wordCountApprox": 5972
     },
     {
       "id": "33",
@@ -953,7 +953,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4431
+      "wordCountApprox": 4446
     }
   ]
 }
