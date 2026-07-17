@@ -10,7 +10,7 @@ export const metadata = {
 const PDF_PRIMARY = {
   name: "zhuangzi-atlas-print.pdf",
   label: "下載完整書 PDF",
-  desc: "A4 印刷版全書（封面、折頁作者介紹、題辭、出版資訊、自序、緒論、目錄含頁碼、篇章、後記）。編集：李孟霖。可直接下載帶到影印店。",
+  desc: "菊16開（148×210 mm）全書：封面、折頁作者介紹、題辭、出版資訊、自序（第1頁起編）、緒論、目錄含頁碼、篇章、後記。編集：李孟霖。與封面展開同開本，可交印廠膠裝。",
 } as const;
 
 const WORD_PRIMARY = {
@@ -23,7 +23,7 @@ const WORD_PRIMARY = {
 const COVER_WRAP = {
   name: "zhuangzi-atlas-cover-wrap.pdf",
   label: "封面展開 PDF（上機用）",
-  desc: "菊16開 1:1：後勒口＋封底＋書脊＋封面＋前勒口（含 3mm 出血）。241頁／80g米色輕質估書脊 18mm。列印請選實際大小。",
+  desc: "菊16開 1:1：後勒口＋封底＋書脊＋封面＋前勒口（含 3mm 出血）。約 336 頁／80g米色輕質估書脊 24mm（90g 約 28mm）。列印請選實際大小。",
   alias: "莊子全解-封面展開.pdf",
 } as const;
 
@@ -44,7 +44,7 @@ const BINDING_PARTS = [
   {
     name: "zhuangzi-atlas-spine.pdf",
     label: "書脊 PDF",
-    desc: "菊16開 1:1 書脊條（預設約 18×210 mm）＋規格說明頁。",
+    desc: "菊16開 1:1 書脊條（預設約 24×210 mm，依 336 頁／80g 估算）＋規格說明頁。",
     alias: "莊子全解-書脊.pdf",
   },
   {
@@ -86,7 +86,7 @@ const FILES = [
   {
     name: "zhuangzi-atlas-print.html",
     label: "印刷 HTML",
-    desc: "可用瀏覽器開啟後自行「列印 → 另存為 PDF」。已設 A4 與較寬裝訂邊。",
+    desc: "可用瀏覽器開啟預覽。正式頁碼／開本請以下載的菊16開 PDF 為準。",
   },
   {
     name: "zhuangzi-atlas-print.md",
@@ -118,7 +118,11 @@ export default function DownloadPage() {
         <p className="text-xs tracking-[0.2em] text-muted">PRINT · BIND · WORD</p>
         <h1 className="font-serif text-3xl text-ink">下載印刷版</h1>
         <p className="max-w-2xl text-muted leading-relaxed">
-          將《{SITE.title}》匯出為可影印、可膠裝的成冊稿：含封面、題辭、出版資訊、自序、緒論、目錄與全書篇章。編集：{SITE.author}。另提供封面／封底／書脊／作者折頁單獨 PDF。
+          將《{SITE.title}》匯出為菊16開膠裝成冊稿：含封面、題辭、出版資訊、自序、緒論、目錄與全書篇章。編集：{SITE.author}。另提供封面展開／封底／書脊／作者折頁。
+        </p>
+        <p className="max-w-2xl rounded-xl border border-amber-700/25 bg-amber-50/80 px-4 py-3 text-sm leading-relaxed text-ink/90">
+          <strong className="font-medium">出版前必讀：</strong>
+          目前為 v{SITE.version} <strong>draft</strong>（尚未 review／published）。多數篇章仍為骨架級草稿，不宜逕稱正式出版版；ISBN／定價／印廠紙樣亦尚未齊備。下列檔案可供試印與校對。
         </p>
       </header>
 
@@ -271,11 +275,14 @@ export default function DownloadPage() {
             下載 <strong className="text-ink">完整書 PDF</strong> 或{" "}
             <strong className="text-ink">Word</strong>（上方按鈕），或開啟 HTML 自行另存。
           </li>
-          <li>紙張選 <strong className="text-ink">A4</strong>；版面直向；左側已預留裝訂邊。</li>
-          <li>帶到影印店：單面或雙面列印後，請店員<strong className="text-ink">左側膠裝</strong>。</li>
+          <li>
+            內文紙張選 <strong className="text-ink">菊16開（148×210 mm）</strong>
+            ；版面直向；左側已預留裝訂邊。封面用「封面展開 PDF」，列印選實際大小。
+          </li>
+          <li>交印廠：內文＋封面展開對開本後<strong className="text-ink">左側無線膠裝</strong>；書脊寬以實際頁數與紙樣複核。</li>
         </ol>
         <p className="text-muted">
-          目前版本 v{SITE.version}（draft）。內容仍可能修訂；正式出版級請待 review／published。
+          目前版本 v{SITE.version}（draft）。內容與版式仍可能修訂；達出版級前請完成 review／published 與 ISBN。
         </p>
         <p className="text-muted text-xs">
           本機重新產生：<code className="font-mono">npm run ebook:print:all</code>

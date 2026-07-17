@@ -32,6 +32,11 @@ import {
   SPINE_IMAGE,
   coverWrapWidthMm,
 } from "../src/lib/printSpine";
+import {
+  PRINT_SERIF_FONT_REL,
+  ensurePrintSerifFontCopied,
+  printSerifFontFaceCss,
+} from "../src/lib/printFont";
 
 const PUBLIC_DIR = path.join(process.cwd(), "public", "downloads");
 const OUT_DIR = path.join(process.cwd(), "dist", "ebook");
@@ -93,11 +98,12 @@ function wrapHtml(titleSrc: string, authorSrc: string, spineSrc: string, flapNam
     .join("\n");
 
   return `<!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant-TW">
 <head>
   <meta charset="utf-8" />
   <title>${escapeHtml(SITE.title)} — 封面展開</title>
   <style>
+    ${printSerifFontFaceCss(PRINT_SERIF_FONT_REL)}
     @page { size: ${pageW}mm ${pageH}mm; margin: 0; }
     * { box-sizing: border-box; }
     html, body {
@@ -440,6 +446,10 @@ async function htmlToPdf(
 }
 
 async function main() {
+  fs.mkdirSync(OUT_DIR, { recursive: true });
+  fs.mkdirSync(PUBLIC_DIR, { recursive: true });
+  ensurePrintSerifFontCopied([OUT_DIR, PUBLIC_DIR]);
+
   const titleSrc = assetDataUri(COVER_TITLE_IMAGE);
   const authorSrc = assetDataUri(COVER_AUTHOR_IMAGE);
   const spineSrc = assetDataUri(SPINE_IMAGE);
@@ -447,8 +457,6 @@ async function main() {
 
   const wrapPage = wrapHtml(titleSrc, authorSrc, spineSrc, flapNameSrc);
   const htmlPath = path.join(OUT_DIR, "zhuangzi-atlas-cover-wrap.html");
-  fs.mkdirSync(OUT_DIR, { recursive: true });
-  fs.mkdirSync(PUBLIC_DIR, { recursive: true });
   fs.writeFileSync(htmlPath, wrapPage, "utf8");
   fs.copyFileSync(htmlPath, path.join(PUBLIC_DIR, "zhuangzi-atlas-cover-wrap.html"));
 

@@ -4,6 +4,7 @@
  */
 import { SITE } from "./catalog";
 import { PRINT_COLORS, PRINT_YEAR } from "./printFrontMatter";
+import { BOOK_TRIM_MM } from "./printSpine";
 
 export const COVER_TITLE_IMAGE = "assets/print-cover-title-cursive.png";
 export const COVER_AUTHOR_IMAGE = "assets/cover-author-wenkai.png";
@@ -32,8 +33,8 @@ export function printCoverCss(vars: {
   return `
     .cover-page {
       position: relative;
-      width: 210mm;
-      height: 297mm;
+      width: ${BOOK_TRIM_MM.width}mm;
+      height: ${BOOK_TRIM_MM.height}mm;
       margin: 0;
       background: #${vars.paper};
       color: #${vars.ink};

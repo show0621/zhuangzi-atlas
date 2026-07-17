@@ -1,14 +1,21 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant-TW">
 <head>
   <meta charset="utf-8" />
   <title>莊子全解 — 封面展開</title>
   <style>
-    @page { size: 500mm 216mm; margin: 0; }
+    @font-face {
+      font-family: "Noto Serif TC";
+      src: url("assets/fonts/NotoSerifTC-VF.otf") format("opentype");
+      font-weight: 200 900;
+      font-style: normal;
+      font-display: block;
+    }
+    @page { size: 506mm 216mm; margin: 0; }
     * { box-sizing: border-box; }
     html, body {
       margin: 0; padding: 0;
-      width: 500mm; height: 216mm;
+      width: 506mm; height: 216mm;
       background: #F7F5F0;
       color: #1C1C1C;
       -webkit-print-color-adjust: exact;
@@ -17,11 +24,11 @@
     }
     .sheet {
       position: relative;
-      width: 500mm; height: 216mm;
+      width: 506mm; height: 216mm;
       padding: 3mm;
     }
     .wrap {
-      width: 494mm; height: 210mm;
+      width: 500mm; height: 210mm;
       display: flex;
       flex-direction: row;
       background: #F7F5F0;
@@ -30,7 +37,7 @@
     .panel { position: relative; height: 210mm; flex: 0 0 auto; overflow: hidden; }
     .flap-back { width: 90mm; background: #FAF6EF; }
     .back { width: 148mm; }
-    .spine { width: 18mm; background: #fff; }
+    .spine { width: 24mm; background: #fff; }
     .front { width: 148mm; }
     .flap-front { width: 90mm; background: #FAF6EF; }
 
@@ -42,8 +49,8 @@
     .tick-b { top: auto; bottom: 0; }
     .t1 { left: 93mm; }
     .t2 { left: 241mm; }
-    .t3 { left: 259mm; }
-    .t4 { left: 407mm; }
+    .t3 { left: 265mm; }
+    .t4 { left: 413mm; }
 
     /* —— 後勒口：內容簡介 —— */
     .flap-inner { padding: 12mm 8mm 12mm 9mm; height: 100%; }
@@ -203,7 +210,7 @@
           </p>
           <p class="flap-meta">
             Zhuangzi Atlas<br />
-            菊16開　｜　241 頁　｜　版本 0.3.0・2026
+            菊16開　｜　336 頁　｜　版本 0.3.0・2026
           </p>
         </div>
       </section>

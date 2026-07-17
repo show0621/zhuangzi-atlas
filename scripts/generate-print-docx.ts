@@ -11,13 +11,11 @@ import {
   AlignmentType,
   BorderStyle,
   Document,
-  Footer,
   HeadingLevel,
   HeightRule,
   ImageRun,
   Packer,
   PageBreak,
-  PageNumber,
   Paragraph,
   ShadingType,
   Table,
@@ -48,7 +46,7 @@ const AFTERWORD_IMAGE = "assets/afterword-calligraphy.png";
 const BOOK_SPINE = `${SITE.title}．人生玩家`;
 const SPINE_IMAGE = "assets/spine-calligraphy.png";
 
-/** 內容區寬度（A4 − 左右邊距） */
+/** 內容區寬度（菊16開 − 左右邊距） */
 const CONTENT_WIDTH = 9525;
 const NO_BORDER: IBorderOptions = { style: BorderStyle.NONE, size: 0, color: "FFFFFF" };
 const NO_BORDERS = {
@@ -873,34 +871,19 @@ async function main() {
         properties: {
           page: {
             size: {
-              width: 11906, // A4
-              height: 16838,
+              // 菊16開 148×210 mm（DXA）
+              width: 8391,
+              height: 11906,
             },
             margin: {
-              top: 1134,
-              right: 907,
-              bottom: 1134,
-              left: 1474,
+              top: 850,
+              right: 794,
+              bottom: 1020,
+              left: 1134,
             },
           },
         },
-        footers: {
-          default: new Footer({
-            children: [
-              new Paragraph({
-                alignment: AlignmentType.CENTER,
-                children: [
-                  new TextRun({
-                    children: [PageNumber.CURRENT],
-                    font: "Microsoft JhengHei",
-                    size: 18,
-                    color: "555555",
-                  }),
-                ],
-              }),
-            ],
-          }),
-        },
+        // 頁碼規則以 PDF 為準（自序=1）；Word 不蓋章，避免前頁誤編
         children,
       },
     ],
