@@ -15,6 +15,12 @@ import fs from "fs";
 import path from "path";
 import { CHAPTERS, SITE, PART_ORDER, type ChapterPart } from "../src/lib/catalog";
 import { getChapterPath, readChapter } from "../src/lib/content";
+import { protectPrintBreaks } from "../src/lib/cjkLineBreak";
+import {
+  COVER_AUTHOR_IMAGE,
+  COVER_TITLE_IMAGE,
+  printCoverBodyHtml,
+} from "../src/lib/printCoverHtml";
 import {
   AFTERWORD_CALLIGRAPHY,
   AUTHOR_FLAP,
@@ -31,7 +37,6 @@ const PDF_NAME = "zhuangzi-atlas-print.pdf";
 const README_NAME = "README-列印說明.md";
 const COVER_IMAGE = "assets/print-cover-minimal.png";
 const COVER_IMAGE_FALLBACK = "assets/print-cover-minecraft.png";
-const COVER_TITLE_IMAGE = "assets/print-cover-title-cursive.png";
 const EPIGRAPH_IMAGE = "assets/epigraph-calligraphy.png";
 const AFTERWORD_IMAGE = "assets/afterword-calligraphy.png";
 const SPINE_IMAGE = "assets/spine-calligraphy.png";
@@ -246,8 +251,7 @@ function slugifyHeading(title: string): string {
 }
 
 function afterwordMarkdown(): string {
-  // 以 Word Joiner（U+2060）避免「本來面目」等成語被拆行
-  const 本來面目 = "本\u2060來\u2060面\u2060目";
+  // 斷行保護在 markdown→HTML／Word 轉換時統一套用（見 protectPrintBreaks）
   return `# 後記
 
 本書在此落筆，但屬於我們的人生才正要啟航。
@@ -256,7 +260,7 @@ function afterwordMarkdown(): string {
 
 > 子瞻中大科，登金門，上玉堂，遠於寂寞之濱，權臣忌子瞻為宰相耳。
 >
-> 人生一世間，如白駒之過隙。二三十年功名富貴，轉盼成空，何不一筆勾斷，尋取自家${本來面目}，萬劫常住，永無墮落。縱未得到如來地，亦可以驂駕鸞鶴，翱翔三島，為不死人。何乃膠柱守株，待入惡趣？
+> 人生一世間，如白駒之過隙。二三十年功名富貴，轉盼成空，何不一筆勾斷，尋取自家本來面目，萬劫常住，永無墮落。縱未得到如來地，亦可以驂駕鸞鶴，翱翔三島，為不死人。何乃膠柱守株，待入惡趣？
 >
 > 昔有問師，佛法在甚麼處？師云在行住坐臥處，著衣吃飯處，屙屎剌撒處，沒理沒會處，死活不得處。子瞻胸中有萬卷書，筆下無一點塵，到這地位，不知性命所在，一生聰明，要作甚麼？
 >
@@ -591,24 +595,10 @@ function mdToHtml(md: string): string {
 }
 
 function illustratedCoverHtml(): string {
-  const titleImg = resolvePublicAsset(COVER_TITLE_IMAGE);
-  return `<section class="cover-page" id="cover">
-  <div class="cover-geo" aria-hidden="true">
-    <span class="cover-geo-panel"></span>
-    <span class="cover-geo-bar"></span>
-    <span class="cover-geo-gold"></span>
-  </div>
-  <div class="cover-titles">
-    <p class="cover-title">
-      <img class="cover-title-img" src="${titleImg}" alt="${escapeHtml(SITE.title)}" />
-    </p>
-    <p class="cover-subtitle">${escapeHtml(SITE.subtitle)}</p>
-    <p class="cover-english">${escapeHtml(SITE.englishTitle)}</p>
-    <p class="cover-tagline">人生玩家</p>
-    <p class="cover-author">${escapeHtml(SITE.author)}</p>
-    <p class="cover-meta">版本 ${escapeHtml(SITE.version)}・${YEAR}</p>
-  </div>
-</section>`;
+  return printCoverBodyHtml(
+    resolvePublicAsset(COVER_TITLE_IMAGE),
+    resolvePublicAsset(COVER_AUTHOR_IMAGE),
+  );
 }
 
 /** Embed local asset images as data URIs so PDF print never loses cover/calligraphy. */
@@ -629,7 +619,8 @@ function injectIllustratedCover(bodyHtml: string): string {
 }
 
 function inlineFormat(text: string): string {
-  let s = escapeHtml(text);
+  // 先做中文斷行保護，再 escape／套 inline markdown
+  let s = escapeHtml(protectPrintBreaks(text));
   // links [text](url)
   s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
   // bold ** ** or __ __
@@ -727,20 +718,26 @@ function buildPrintHtml(bodyHtml: string): string {
       widows: 3;
       text-align: justify;
       text-justify: inter-ideograph;
+      line-break: strict;
+      word-break: normal;
+      overflow-wrap: break-word;
     }
+    /* 引文左齊：避免短句雙齊把字距拉成「疏網」 */
     blockquote {
       margin: 0.9em 0;
       padding: 0.35em 0 0.35em 1em;
       border-left: 3px solid #3d5c4f;
       color: #222;
       background: #f7faf8;
-      text-align: justify;
-      text-justify: inter-ideograph;
+      text-align: left;
+      line-break: strict;
+      word-break: normal;
+      overflow-wrap: break-word;
     }
     blockquote p {
       margin: 0.35em 0;
-      text-align: justify;
-      text-justify: inter-ideograph;
+      text-align: left;
+      line-break: strict;
     }
     ul, ol { margin: 0.6em 0; padding-left: 1.4em; }
     li { margin: 0.25em 0; }
@@ -881,7 +878,7 @@ function buildPrintHtml(bodyHtml: string): string {
       left: 0;
       bottom: 18%;
       width: 58%;
-      height: 7mm;
+      height: 11mm;
       background: var(--cover-stone);
     }
     .cover-geo-gold {
@@ -913,6 +910,21 @@ function buildPrintHtml(bodyHtml: string): string {
       max-width: 118mm;
       height: auto;
       margin: 0 0 0 -2mm;
+      /* 透明底＋邊緣淡出，融入封面紙色，避免白塊 */
+      -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        #000 8%,
+        #000 92%,
+        transparent 100%
+      );
+      mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        #000 8%,
+        #000 92%,
+        transparent 100%
+      );
     }
     .cover-subtitle {
       margin: 1.1rem 0 0;
@@ -937,15 +949,34 @@ function buildPrintHtml(bodyHtml: string): string {
       color: var(--cover-stone);
       font-weight: 500;
     }
+    /* 署名落在墨色條內：霞鹜文楷圖，比「騎線跳出」更穩、更書卷 */
     .cover-author {
-      margin: 2.4rem 0 0;
-      font-size: 1.05rem;
-      letter-spacing: 0.22em;
-      color: var(--cover-gold);
-      font-weight: 600;
+      position: absolute;
+      left: 0;
+      /* 與墨色條同底＋上移，讓文楷字視覺落在條內中央 */
+      bottom: calc(18% + 2.6mm);
+      z-index: 3;
+      box-sizing: border-box;
+      width: 58%;
+      height: auto;
+      margin: 0;
+      padding: 0 0 0 12mm;
+      line-height: 0;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .cover-author-img {
+      display: block;
+      height: 5.6mm;
+      width: auto;
+      max-width: 52mm;
     }
     .cover-meta {
-      margin: 0.55rem 0 0;
+      position: absolute;
+      left: 12mm;
+      bottom: calc(18% - 9mm);
+      z-index: 3;
+      margin: 0;
       font-size: 0.78rem;
       letter-spacing: 0.08em;
       color: #8a867c;
@@ -1218,6 +1249,7 @@ function ensureCoverAsset() {
     COVER_IMAGE,
     COVER_IMAGE_FALLBACK,
     COVER_TITLE_IMAGE,
+    COVER_AUTHOR_IMAGE,
     EPIGRAPH_IMAGE,
     AFTERWORD_IMAGE,
     SPINE_IMAGE,

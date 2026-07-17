@@ -30,6 +30,7 @@ import {
   type IBorderOptions,
 } from "docx";
 import { SITE, CHAPTERS, PART_ORDER, type ChapterPart } from "../src/lib/catalog";
+import { protectPrintBreaks } from "../src/lib/cjkLineBreak";
 import {
   AUTHOR_FLAP,
   PRINT_COLORS,
@@ -318,19 +319,6 @@ function coverTextParagraphs(): Paragraph[] {
       before: 240,
       font: "KaiTi",
     },
-    {
-      text: SITE.author,
-      size: 24,
-      bold: true,
-      color: PRINT_COLORS.coverGold,
-      before: 400,
-    },
-    {
-      text: `版本 ${SITE.version}・${PRINT_YEAR}`,
-      size: 16,
-      color: PRINT_COLORS.coverMeta,
-      before: 80,
-    },
   ];
   for (const L of lines) {
     out.push(
@@ -421,20 +409,52 @@ function coverChildren(): FileChild[] {
     ],
   });
 
-  // 底部墨色橫條（約左側 58% 寬，對齊 PDF .cover-geo-bar）
+  // 底部墨色橫條＋署名落在條內（約左側 58% 寬，對齊 PDF .cover-geo-bar）
   const barW = Math.round(CONTENT_WIDTH * 0.58);
   const bar = new Table({
     width: { size: CONTENT_WIDTH, type: WidthType.DXA },
     columnWidths: [barW, CONTENT_WIDTH - barW],
     rows: [
       new TableRow({
-        height: { value: 280, rule: HeightRule.ATLEAST },
+        height: { value: 420, rule: HeightRule.ATLEAST },
         children: [
           new TableCell({
             width: { size: barW, type: WidthType.DXA },
             borders: NO_BORDERS,
             shading: { type: ShadingType.CLEAR, fill: PRINT_COLORS.coverStone },
-            children: [new Paragraph({ children: [] })],
+            verticalAlign: VerticalAlign.CENTER,
+            margins: { top: 40, bottom: 40, left: 160, right: 80 },
+            children: (() => {
+              const authorPath = resolveAsset("assets/cover-author-wenkai.png");
+              if (authorPath) {
+                const data = fs.readFileSync(authorPath);
+                return [
+                  new Paragraph({
+                    alignment: AlignmentType.LEFT,
+                    children: [
+                      new ImageRun({
+                        type: "png",
+                        data,
+                        transformation: { width: 168, height: 38 },
+                      }),
+                    ],
+                  }),
+                ];
+              }
+              return [
+                new Paragraph({
+                  alignment: AlignmentType.LEFT,
+                  children: [
+                    new TextRun({
+                      text: SITE.author,
+                      size: 22,
+                      color: "E8D5A3",
+                      font: "KaiTi",
+                    }),
+                  ],
+                }),
+              ];
+            })(),
           }),
           new TableCell({
             width: { size: CONTENT_WIDTH - barW, type: WidthType.DXA },
@@ -450,6 +470,18 @@ function coverChildren(): FileChild[] {
     main,
     new Paragraph({ spacing: { before: 400 }, children: [] }),
     bar,
+    new Paragraph({
+      alignment: AlignmentType.LEFT,
+      spacing: { before: 120, after: 60 },
+      children: [
+        new TextRun({
+          text: `版本 ${SITE.version}・${PRINT_YEAR}`,
+          size: 16,
+          color: PRINT_COLORS.coverMeta,
+          font: "Microsoft JhengHei",
+        }),
+      ],
+    }),
   ];
 }
 
@@ -683,7 +715,11 @@ function blocksToChildren(blocks: Block[], afterImg: string | null): FileChild[]
           alignment: AlignmentType.BOTH,
           spacing: { after: 140 },
           children: [
-            new TextRun({ text: b.text, font: "Microsoft JhengHei", size: 22 }),
+            new TextRun({
+              text: protectPrintBreaks(b.text),
+              font: "Microsoft JhengHei",
+              size: 22,
+            }),
           ],
         }),
       );
@@ -710,16 +746,15 @@ function blocksToChildren(blocks: Block[], afterImg: string | null): FileChild[]
 
     if (b.type === "quote") {
       for (const line of b.lines) {
-        // 避免「本來面目」等四字成語被拆行
-        const text = line.replace(/本來面目/g, "本\u2060來\u2060面\u2060目");
         out.push(
           new Paragraph({
-            alignment: AlignmentType.BOTH,
+            // 引文左齊，避免短句雙齊拉開字距
+            alignment: AlignmentType.LEFT,
             spacing: { after: 80 },
             indent: { left: 360 },
             children: [
               new TextRun({
-                text,
+                text: protectPrintBreaks(line),
                 italics: true,
                 font: "Microsoft JhengHei",
                 size: 22,
