@@ -20,17 +20,37 @@ const WORD_PRIMARY = {
   alias: "莊子全解-印刷版.docx",
 } as const;
 
-const SPINE_PDF = {
-  name: "zhuangzi-atlas-spine.pdf",
-  label: "下載書脊 PDF",
-  desc: "單獨一頁書脊橫條（莊子全解．人生玩家｜李孟霖 編集），裁切後可貼於膠裝書脊。",
-  alias: "莊子全解-書脊.pdf",
-} as const;
+const BINDING_PARTS = [
+  {
+    name: "zhuangzi-atlas-cover.pdf",
+    label: "封面 PDF",
+    desc: "極簡封面單頁（與全書封面一致）。",
+    alias: "莊子全解-封面.pdf",
+  },
+  {
+    name: "zhuangzi-atlas-back.pdf",
+    label: "封底 PDF",
+    desc: "封底單頁（簡介、編集、網站；ISBN 欄位留白待出版填寫）。",
+    alias: "莊子全解-封底.pdf",
+  },
+  {
+    name: "zhuangzi-atlas-spine.pdf",
+    label: "書脊 PDF",
+    desc: "書脊橫條（狂放草書：莊子全解．人生玩家｜李孟霖 編集），裁切後可貼於膠裝書脊。",
+    alias: "莊子全解-書脊.pdf",
+  },
+  {
+    name: "zhuangzi-atlas-flap.pdf",
+    label: "作者折頁 PDF",
+    desc: "書面折頁｜作者介紹（李孟霖編集自敘）。",
+    alias: "莊子全解-作者折頁.pdf",
+  },
+] as const;
 
 const SPINE_WORD = {
   name: "zhuangzi-atlas-spine.docx",
   label: "下載書脊 Word",
-  desc: "與書脊 PDF 相同內容的 Word 版，方便微調尺寸後再列印。",
+  desc: "書脊 Word 版，方便微調尺寸後再列印。",
   alias: "莊子全解-書脊.docx",
 } as const;
 
@@ -45,11 +65,11 @@ const FILES = [
     label: "完整書 Word（中文檔名）",
     desc: "與上方 Word 內容相同，檔名為中文。",
   },
-  {
-    name: SPINE_PDF.alias,
-    label: "書脊 PDF（中文檔名）",
-    desc: "單獨書脊橫條，檔名為中文。",
-  },
+  ...BINDING_PARTS.map((p) => ({
+    name: p.alias,
+    label: `${p.label.replace(" PDF", "")}（中文檔名）`,
+    desc: p.desc,
+  })),
   {
     name: SPINE_WORD.alias,
     label: "書脊 Word（中文檔名）",
@@ -82,7 +102,6 @@ export default function DownloadPage() {
   const pdfAliasHref = assetPathWithVersion(`/downloads/${FILES[0].name}`);
   const wordHref = assetPathWithVersion(`/downloads/${WORD_PRIMARY.name}`);
   const wordAliasHref = assetPathWithVersion(`/downloads/${WORD_PRIMARY.alias}`);
-  const spinePdfHref = assetPathWithVersion(`/downloads/${SPINE_PDF.name}`);
   const spineWordHref = assetPathWithVersion(`/downloads/${SPINE_WORD.name}`);
 
   return (
@@ -91,7 +110,7 @@ export default function DownloadPage() {
         <p className="text-xs tracking-[0.2em] text-muted">PRINT · BIND · WORD</p>
         <h1 className="font-serif text-3xl text-ink">下載印刷版</h1>
         <p className="max-w-2xl text-muted leading-relaxed">
-          將《{SITE.title}》匯出為可影印、可膠裝的成冊稿：含封面、題辭、出版資訊、自序、緒論、目錄與全書篇章。編集：{SITE.author}。提供完整書與單獨書脊的 PDF／Word。
+          將《{SITE.title}》匯出為可影印、可膠裝的成冊稿：含封面、題辭、出版資訊、自序、緒論、目錄與全書篇章。編集：{SITE.author}。另提供封面／封底／書脊／作者折頁單獨 PDF。
         </p>
       </header>
 
@@ -142,30 +161,41 @@ export default function DownloadPage() {
         <p className="text-xs text-muted font-mono break-all">{wordHref}</p>
       </section>
 
-      <section className="rounded-2xl border border-line/70 bg-white/45 px-6 py-7 space-y-4">
-        <p className="text-xs tracking-[0.18em] text-muted font-medium">SPINE</p>
-        <h2 className="font-serif text-2xl text-ink">書脊單獨下載</h2>
+      <section className="rounded-2xl border border-line/70 bg-white/45 px-6 py-7 space-y-5">
+        <p className="text-xs tracking-[0.18em] text-muted font-medium">BINDING</p>
+        <h2 className="font-serif text-2xl text-ink">裝幀單頁單獨下載</h2>
         <p className="text-sm text-muted leading-relaxed max-w-xl">
-          {SPINE_PDF.desc}
+          封面、封底、書脊、作者折頁各為獨立 A4 PDF，方便分檔交給影印店或設計師。
         </p>
-        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-          <a
-            href={spinePdfHref}
-            download={SPINE_PDF.name}
-            className="inline-flex items-center justify-center rounded-full border border-accent bg-accent/10 px-8 py-3 text-base font-medium text-accent transition hover:bg-accent/15"
-          >
-            下載書脊 PDF
-          </a>
+        <ul className="grid gap-3 sm:grid-cols-2">
+          {BINDING_PARTS.map((p) => {
+            const href = assetPathWithVersion(`/downloads/${p.name}`);
+            return (
+              <li key={p.name} className="rounded-xl border border-line/60 bg-white/50 px-4 py-4 space-y-2">
+                <p className="font-medium text-ink">{p.label}</p>
+                <p className="text-sm text-muted leading-relaxed">{p.desc}</p>
+                <a
+                  href={href}
+                  download={p.name}
+                  className="inline-flex items-center justify-center rounded-full border border-accent bg-accent/10 px-5 py-2 text-sm font-medium text-accent transition hover:bg-accent/15"
+                >
+                  下載 {p.label}
+                </a>
+                <p className="text-xs text-muted font-mono break-all">{href}</p>
+              </li>
+            );
+          })}
+        </ul>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center pt-1">
           <a
             href={spineWordHref}
             download={SPINE_WORD.name}
-            className="inline-flex items-center justify-center rounded-full border border-ink/25 bg-white px-8 py-3 text-base font-medium text-ink transition hover:bg-paper"
+            className="inline-flex items-center justify-center rounded-full border border-ink/25 bg-white px-6 py-2.5 text-sm font-medium text-ink transition hover:bg-paper"
           >
-            下載書脊 Word
+            另：書脊 Word
           </a>
+          <p className="text-xs text-muted">本機重產：<code className="font-mono">npm run ebook:binding</code></p>
         </div>
-        <p className="text-xs text-muted font-mono break-all">{spinePdfHref}</p>
-        <p className="text-xs text-muted font-mono break-all">{spineWordHref}</p>
       </section>
 
       <section className="rounded-2xl border border-line/70 bg-white/35 px-5 py-5 space-y-2 text-sm leading-relaxed">
@@ -203,7 +233,7 @@ export default function DownloadPage() {
           <li>目錄</li>
           <li>內篇 → 外篇 → 雜篇正文</li>
           <li>後記／版權頁</li>
-          <li>書脊：請另下載「書脊 PDF／Word」（完整書 PDF 不含書脊；完整書 Word 末頁仍附）</li>
+          <li>裝幀單頁：封面／封底／書脊／作者折頁請另下載（完整書 PDF 不含書脊；完整書 Word 末頁仍附書脊）</li>
         </ol>
       </section>
 
@@ -241,7 +271,7 @@ export default function DownloadPage() {
         </p>
         <p className="text-muted text-xs">
           本機重新產生：<code className="font-mono">npm run ebook:print:all</code>
-          （HTML／Markdown → PDF → Word → 書脊）。
+          （HTML／Markdown → PDF → Word → 裝幀單頁 → 書脊 Word）。
         </p>
       </section>
 
