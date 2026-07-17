@@ -16,7 +16,7 @@ const PDF_PRIMARY = {
 const WORD_PRIMARY = {
   name: "zhuangzi-atlas-print.docx",
   label: "下載完整書 Word",
-  desc: "與 PDF 相同成冊內容的 Word（.docx）版，另含書脊頁，可用 Microsoft Word／WPS／Google Docs 開啟編輯後再列印。",
+  desc: "前頁版式對齊印刷 PDF（極簡封面色塊、作者自敘折頁、題辭書法），正文可編輯；另含書脊頁。目錄頁碼以 PDF 為準。可用 Microsoft Word／WPS／Google Docs 開啟後再列印。",
   alias: "莊子全解-印刷版.docx",
 } as const;
 

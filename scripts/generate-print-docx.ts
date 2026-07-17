@@ -13,19 +13,28 @@ import {
   Document,
   Footer,
   HeadingLevel,
+  HeightRule,
   ImageRun,
   Packer,
   PageBreak,
   PageNumber,
   Paragraph,
+  ShadingType,
   Table,
   TableCell,
   TableRow,
   TextRun,
+  VerticalAlign,
   WidthType,
   type FileChild,
+  type IBorderOptions,
 } from "docx";
 import { SITE, CHAPTERS, PART_ORDER, type ChapterPart } from "../src/lib/catalog";
+import {
+  AUTHOR_FLAP,
+  PRINT_COLORS,
+  PRINT_YEAR,
+} from "../src/lib/printFrontMatter";
 
 const OUT_DIR = path.join(process.cwd(), "dist", "ebook");
 const PUBLIC_DIR = path.join(process.cwd(), "public", "downloads");
@@ -33,15 +42,20 @@ const MD_NAME = "zhuangzi-atlas-print.md";
 const DOCX_NAME = "zhuangzi-atlas-print.docx";
 const DOCX_ALIAS = "莊子全解-印刷版.docx";
 
-const COVER_CANDIDATES = [
-  "assets/print-cover-minimal.png",
-  "assets/print-cover-minecraft.png",
-  "assets/print-cover-minecraft.jpg",
-];
 const EPIGRAPH_IMAGE = "assets/epigraph-calligraphy.png";
 const AFTERWORD_IMAGE = "assets/afterword-calligraphy.png";
 const BOOK_SPINE = `${SITE.title}．人生玩家`;
 const SPINE_IMAGE = "assets/spine-calligraphy.png";
+
+/** 內容區寬度（A4 − 左右邊距） */
+const CONTENT_WIDTH = 9525;
+const NO_BORDER: IBorderOptions = { style: BorderStyle.NONE, size: 0, color: "FFFFFF" };
+const NO_BORDERS = {
+  top: NO_BORDER,
+  bottom: NO_BORDER,
+  left: NO_BORDER,
+  right: NO_BORDER,
+};
 
 const PAGE_BREAK_MD = '<div class="pagebreak"></div>';
 
@@ -257,23 +271,57 @@ function imageParagraph(filePath: string, widthPx: number, heightPx: number): Pa
   });
 }
 
-function coverChildren(): FileChild[] {
-  const out: FileChild[] = [];
-  const left = AlignmentType.LEFT;
-
-  // 左上角文字：對齊最初印刷封面排版（極簡燙金色）
-  const lines: Array<{ text: string; size: number; bold?: boolean; color?: string; before?: number; font?: string }> = [
-    { text: SITE.title, size: 56, bold: true, color: "B8923A", before: 200, font: "KaiTi" },
-    { text: SITE.subtitle, size: 20, color: "4A4A46", before: 160 },
-    { text: SITE.englishTitle, size: 16, color: "7A776E", before: 120, font: "Georgia" },
-    { text: "人生玩家", size: 28, bold: true, color: "2F3430", before: 240, font: "KaiTi" },
-    { text: SITE.author, size: 24, bold: true, color: "B8923A", before: 400 },
-    { text: `版本 ${SITE.version}・2026`, size: 16, color: "8A867C", before: 80 },
+function coverTextParagraphs(): Paragraph[] {
+  const lines: Array<{
+    text: string;
+    size: number;
+    bold?: boolean;
+    color: string;
+    before?: number;
+    font?: string;
+  }> = [
+    {
+      text: SITE.title,
+      size: 56,
+      bold: true,
+      color: PRINT_COLORS.coverGold,
+      before: 200,
+      font: "KaiTi",
+    },
+    { text: SITE.subtitle, size: 20, color: PRINT_COLORS.coverMuted, before: 160 },
+    {
+      text: SITE.englishTitle,
+      size: 16,
+      color: PRINT_COLORS.coverEnglish,
+      before: 120,
+      font: "Georgia",
+    },
+    {
+      text: "人生玩家",
+      size: 28,
+      bold: true,
+      color: PRINT_COLORS.coverStone,
+      before: 240,
+      font: "KaiTi",
+    },
+    {
+      text: SITE.author,
+      size: 24,
+      bold: true,
+      color: PRINT_COLORS.coverGold,
+      before: 400,
+    },
+    {
+      text: `版本 ${SITE.version}・${PRINT_YEAR}`,
+      size: 16,
+      color: PRINT_COLORS.coverMeta,
+      before: 80,
+    },
   ];
-  for (const L of lines) {
-    out.push(
+  return lines.map(
+    (L) =>
       new Paragraph({
-        alignment: left,
+        alignment: AlignmentType.LEFT,
         spacing: { before: L.before ?? 80, after: 60 },
         children: [
           new TextRun({
@@ -285,67 +333,203 @@ function coverChildren(): FileChild[] {
           }),
         ],
       }),
-    );
-  }
-
-  // 底部幾何色塊氣氛圖（縮小，避免搶過左上文字）
-  const coverPath = resolveAsset(...COVER_CANDIDATES);
-  if (coverPath) {
-    out.push(new Paragraph({ spacing: { before: 360 }, children: [] }));
-    out.push(imageParagraph(coverPath, 360, 200));
-  }
-  return out;
+  );
 }
 
-function authorFlapChildren(): FileChild[] {
+/** 極簡封面：左上文字＋右側鼠尾草綠／金方塊＋底部墨色橫條（對齊 PDF） */
+function coverChildren(): FileChild[] {
+  const leftW = 5500;
+  const rightW = CONTENT_WIDTH - leftW;
+  const goldSize = 700;
+
+  const main = new Table({
+    width: { size: CONTENT_WIDTH, type: WidthType.DXA },
+    columnWidths: [leftW, rightW],
+    rows: [
+      new TableRow({
+        height: { value: 9000, rule: HeightRule.ATLEAST },
+        children: [
+          new TableCell({
+            width: { size: leftW, type: WidthType.DXA },
+            borders: NO_BORDERS,
+            shading: { type: ShadingType.CLEAR, fill: PRINT_COLORS.coverPaper },
+            verticalAlign: VerticalAlign.TOP,
+            margins: { top: 200, bottom: 200, left: 120, right: 200 },
+            children: coverTextParagraphs(),
+          }),
+          new TableCell({
+            width: { size: rightW, type: WidthType.DXA },
+            borders: NO_BORDERS,
+            shading: { type: ShadingType.CLEAR, fill: PRINT_COLORS.coverSage },
+            verticalAlign: VerticalAlign.TOP,
+            margins: { top: 200, bottom: 200, left: 200, right: 200 },
+            children: [
+              new Paragraph({
+                alignment: AlignmentType.RIGHT,
+                children: [],
+              }),
+              // 右上金方塊：嵌套表格靠右
+              new Table({
+                width: { size: rightW - 400, type: WidthType.DXA },
+                columnWidths: [rightW - 400 - goldSize, goldSize],
+                rows: [
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        width: { size: rightW - 400 - goldSize, type: WidthType.DXA },
+                        borders: NO_BORDERS,
+                        children: [new Paragraph({ children: [] })],
+                      }),
+                      new TableCell({
+                        width: { size: goldSize, type: WidthType.DXA },
+                        borders: NO_BORDERS,
+                        shading: {
+                          type: ShadingType.CLEAR,
+                          fill: PRINT_COLORS.coverGold,
+                        },
+                        children: [
+                          new Paragraph({
+                            spacing: { before: goldSize - 40 },
+                            children: [],
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+            ],
+          }),
+        ],
+      }),
+    ],
+  });
+
+  // 底部墨色橫條（約左側 58% 寬，對齊 PDF .cover-geo-bar）
+  const barW = Math.round(CONTENT_WIDTH * 0.58);
+  const bar = new Table({
+    width: { size: CONTENT_WIDTH, type: WidthType.DXA },
+    columnWidths: [barW, CONTENT_WIDTH - barW],
+    rows: [
+      new TableRow({
+        height: { value: 280, rule: HeightRule.ATLEAST },
+        children: [
+          new TableCell({
+            width: { size: barW, type: WidthType.DXA },
+            borders: NO_BORDERS,
+            shading: { type: ShadingType.CLEAR, fill: PRINT_COLORS.coverStone },
+            children: [new Paragraph({ children: [] })],
+          }),
+          new TableCell({
+            width: { size: CONTENT_WIDTH - barW, type: WidthType.DXA },
+            borders: NO_BORDERS,
+            children: [new Paragraph({ children: [] })],
+          }),
+        ],
+      }),
+    ],
+  });
+
   return [
-    new Paragraph({
-      children: [
-        new TextRun({
-          text: "書面折頁｜作者介紹",
-          size: 18,
-          color: "8A7350",
-          font: "Microsoft JhengHei",
-        }),
-      ],
-    }),
-    new Paragraph({
-      spacing: { before: 200, after: 80 },
-      children: [
-        new TextRun({ text: "李孟霖", bold: true, size: 36, font: "Microsoft JhengHei" }),
-      ],
-    }),
-    new Paragraph({
-      spacing: { after: 200 },
-      children: [
-        new TextRun({
-          text: `編集・《${SITE.title}》`,
-          size: 20,
-          color: "7A6248",
-          font: "Microsoft JhengHei",
-        }),
-      ],
-    }),
-    new Paragraph({
-      spacing: { after: 160 },
-      children: [
-        new TextRun({
-          text: "出生於台灣。年少時不學無術，母親說以後長大應該是放牛吃草、撿牛屎賺錢。這幾年在人世中載浮載沉，見證過人性純粹的惡，也感受過美好。是個迷途的小書僮。",
-          size: 22,
-          font: "Microsoft JhengHei",
-        }),
-      ],
-    }),
-    new Paragraph({
-      children: [
-        new TextRun({
-          text: "未來打算寫一本結合 OECD 指引與各國判決的移轉訂價與預先訂價實務指南。（有時間的話）",
-          size: 22,
-          font: "Microsoft JhengHei",
-        }),
-      ],
-    }),
+    main,
+    new Paragraph({ spacing: { before: 400 }, children: [] }),
+    bar,
   ];
+}
+
+/** 作者折頁：右半奶油色欄＋左邊線（對齊 PDF .author-flap-page） */
+function authorFlapChildren(): FileChild[] {
+  const leftW = Math.round(CONTENT_WIDTH * 0.5);
+  const rightW = CONTENT_WIDTH - leftW;
+  const flapLeftBorder: IBorderOptions = {
+    style: BorderStyle.SINGLE,
+    size: 12,
+    color: PRINT_COLORS.flapBorder,
+  };
+
+  const bodyParas = AUTHOR_FLAP.paragraphs.map(
+    (text) =>
+      new Paragraph({
+        alignment: AlignmentType.BOTH,
+        spacing: { after: 200 },
+        children: [
+          new TextRun({
+            text,
+            size: 22,
+            color: PRINT_COLORS.flapBody,
+            font: "Microsoft JhengHei",
+          }),
+        ],
+      }),
+  );
+
+  const flap = new Table({
+    width: { size: CONTENT_WIDTH, type: WidthType.DXA },
+    columnWidths: [leftW, rightW],
+    rows: [
+      new TableRow({
+        height: { value: 11000, rule: HeightRule.ATLEAST },
+        children: [
+          new TableCell({
+            width: { size: leftW, type: WidthType.DXA },
+            borders: NO_BORDERS,
+            children: [new Paragraph({ children: [] })],
+          }),
+          new TableCell({
+            width: { size: rightW, type: WidthType.DXA },
+            borders: {
+              top: NO_BORDER,
+              bottom: NO_BORDER,
+              right: NO_BORDER,
+              left: flapLeftBorder,
+            },
+            shading: { type: ShadingType.CLEAR, fill: PRINT_COLORS.flapBg },
+            verticalAlign: VerticalAlign.TOP,
+            margins: { top: 400, bottom: 400, left: 280, right: 240 },
+            children: [
+              new Paragraph({
+                spacing: { after: 280 },
+                children: [
+                  new TextRun({
+                    text: "書面折頁｜作者介紹",
+                    size: 18,
+                    color: PRINT_COLORS.flapLabel,
+                    font: "Microsoft JhengHei",
+                  }),
+                ],
+              }),
+              new Paragraph({
+                spacing: { before: 80, after: 80 },
+                children: [
+                  new TextRun({
+                    text: AUTHOR_FLAP.name,
+                    bold: true,
+                    size: 36,
+                    color: PRINT_COLORS.flapName,
+                    font: "Microsoft JhengHei",
+                  }),
+                ],
+              }),
+              new Paragraph({
+                spacing: { after: 280 },
+                children: [
+                  new TextRun({
+                    text: `${AUTHOR_FLAP.role}・《${SITE.title}》`,
+                    size: 20,
+                    color: PRINT_COLORS.flapRole,
+                    font: "Microsoft JhengHei",
+                  }),
+                ],
+              }),
+              ...bodyParas,
+            ],
+          }),
+        ],
+      }),
+    ],
+  });
+
+  return [flap];
 }
 
 function wordTocChildren(): FileChild[] {

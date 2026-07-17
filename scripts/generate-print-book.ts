@@ -15,8 +15,14 @@ import fs from "fs";
 import path from "path";
 import { CHAPTERS, SITE, PART_ORDER, type ChapterPart } from "../src/lib/catalog";
 import { getChapterPath, readChapter } from "../src/lib/content";
+import {
+  AFTERWORD_CALLIGRAPHY,
+  AUTHOR_FLAP,
+  EPIGRAPH_TEXT,
+  PRINT_COLORS,
+  PRINT_YEAR as YEAR,
+} from "../src/lib/printFrontMatter";
 
-const YEAR = 2026;
 const OUT_DIR = path.join(process.cwd(), "dist", "ebook");
 const PUBLIC_DIR = path.join(process.cwd(), "public", "downloads");
 const MD_NAME = "zhuangzi-atlas-print.md";
@@ -29,19 +35,6 @@ const EPIGRAPH_IMAGE = "assets/epigraph-calligraphy.png";
 const AFTERWORD_IMAGE = "assets/afterword-calligraphy.png";
 const SPINE_IMAGE = "assets/spine-calligraphy.png";
 const BOOK_SPINE_TITLE = `${SITE.title}．人生玩家`;
-
-const EPIGRAPH_TEXT =
-  "人生不過短短三萬天，要放膽體驗，要勇敢冒險與嘗試，不要把自己困在方寸之間。";
-const AFTERWORD_CALLIGRAPHY = "人生如逆旅，我亦是行人。";
-
-const AUTHOR_FLAP = {
-  name: "李孟霖",
-  role: "編集",
-  paragraphs: [
-    "出生於台灣。年少時不學無術，母親說以後長大應該是放牛吃草、撿牛屎賺錢。這幾年在人世中載浮載沉，見證過人性純粹的惡，也感受過美好。是個迷途的小書僮。",
-    "未來打算寫一本結合 OECD 指引與各國判決的移轉訂價與預先訂價實務指南。（有時間的話）",
-  ],
-} as const;
 
 const PAGE_BREAK_MD = "\n\n<div class=\"pagebreak\"></div>\n\n";
 const PAGE_BREAK_HTML = '<div class="pagebreak"></div>\n';
@@ -664,12 +657,12 @@ function buildPrintHtml(bodyHtml: string): string {
       --bind: 28mm;
       --outer: 16mm;
       --vert: 18mm;
-      --cover-paper: #f7f5f0;
-      --cover-ink: #1c1c1c;
-      --cover-sage: #6d7f6e;
-      --cover-stone: #2f3430;
-      --cover-gold: #b8923a;
-      --cover-gold-soft: #d4bc7a;
+      --cover-paper: #${PRINT_COLORS.coverPaper};
+      --cover-ink: #${PRINT_COLORS.coverInk};
+      --cover-sage: #${PRINT_COLORS.coverSage};
+      --cover-stone: #${PRINT_COLORS.coverStone};
+      --cover-gold: #${PRINT_COLORS.coverGold};
+      --cover-gold-soft: #${PRINT_COLORS.coverGoldSoft};
     }
     * { box-sizing: border-box; }
     html { font-size: 11pt; }
@@ -968,8 +961,8 @@ function buildPrintHtml(bodyHtml: string): string {
       max-width: 48%;
       margin: 8mm 0 8mm auto;
       padding: 14mm 10mm 16mm 12mm;
-      border-left: 1px solid #d8c9a8;
-      background: #faf6ef;
+      border-left: 1px solid #${PRINT_COLORS.flapBorder};
+      background: #${PRINT_COLORS.flapBg};
       /* 勿用 100vh：會把底色撐破到下一頁 */
       min-height: 0;
       max-height: none;
@@ -983,7 +976,7 @@ function buildPrintHtml(bodyHtml: string): string {
       margin: 0 0 1.6rem;
       font-size: 0.78rem;
       letter-spacing: 0.22em;
-      color: #8a7350;
+      color: #${PRINT_COLORS.flapLabel};
       font-family: system-ui, sans-serif;
     }
     .author-flap-name {
