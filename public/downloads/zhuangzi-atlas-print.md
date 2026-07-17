@@ -266,9 +266,6 @@ Zhuangzi Atlas
 <nav class="toc" id="目錄-wrap">
 <h1 id="目錄">目錄</h1>
 <ul class="toc-list toc-front">
-<li class="toc-row" data-target="cover"><a href="#cover">封面</a><span class="toc-dots" aria-hidden="true"></span><span class="toc-page"></span></li>
-<li class="toc-row" data-target="作者介紹"><a href="#作者介紹">作者介紹</a><span class="toc-dots" aria-hidden="true"></span><span class="toc-page"></span></li>
-<li class="toc-row" data-target="出版資訊"><a href="#出版資訊">出版資訊</a><span class="toc-dots" aria-hidden="true"></span><span class="toc-page"></span></li>
 <li class="toc-row" data-target="莊子全解自序"><a href="#莊子全解自序">自序</a><span class="toc-dots" aria-hidden="true"></span><span class="toc-page"></span></li>
 <li class="toc-row" data-target="緒論"><a href="#緒論">緒論：如何閱讀《莊子》</a><span class="toc-dots" aria-hidden="true"></span><span class="toc-page"></span></li>
 </ul>
