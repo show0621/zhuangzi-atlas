@@ -6747,12 +6747,13 @@ flowchart TD
 >
 > 三世諸佛，則是一個有血性的漢子。子瞻若能腳下承當，把一二十年富貴功名賤如泥土，努力向前，珍重，珍重。
 
-願你我心中，皆能養就那一點浩然之氣，乘千里快哉之風，自在前行。
-
 %%RAW%%
-<div class="afterword-calligraphy-wrap">
-  <img class="calligraphy-img afterword-img" src="assets/afterword-calligraphy.png" alt="人生如逆旅，我亦是行人。" />
-  <p class="calligraphy-fallback sr-only">人生如逆旅，我亦是行人。</p>
+<div class="afterword-closing">
+  <p>願你我心中，皆能養就那一點浩然之氣，乘千里快哉之風，自在前行。</p>
+  <div class="afterword-calligraphy-wrap">
+    <img class="calligraphy-img afterword-img" src="assets/afterword-calligraphy.png" alt="人生如逆旅，我亦是行人。" />
+    <p class="calligraphy-fallback sr-only">人生如逆旅，我亦是行人。</p>
+  </div>
 </div>
 %%/RAW%%
 
