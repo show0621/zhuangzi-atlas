@@ -41,6 +41,9 @@ const COVER_IMAGE_FALLBACK = "assets/print-cover-minecraft.png";
 const EPIGRAPH_IMAGE = "assets/epigraph-calligraphy.png";
 const AFTERWORD_IMAGE = "assets/afterword-calligraphy.png";
 const SPINE_IMAGE = "assets/spine-calligraphy.png";
+/** 繁中襯線（標點置中於字框；勿讓系統後備成日文／西文基線標點） */
+const PRINT_SERIF_FONT = "assets/fonts/NotoSerifTC-VF.otf";
+const PRINT_SERIF_FONT_SRC = path.join(process.cwd(), "assets", "fonts", "NotoSerifTC-VF.otf");
 const BOOK_SPINE_TITLE = `${SITE.title}．人生玩家`;
 
 const PAGE_BREAK_MD = "\n\n<div class=\"pagebreak\"></div>\n\n";
@@ -639,12 +642,20 @@ function inlineFormat(text: string): string {
 
 function buildPrintHtml(bodyHtml: string): string {
   return `<!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant-TW">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${escapeHtml(SITE.title)} — ${escapeHtml(SITE.author)}</title>
   <style>
+    /* 嵌入繁中 Noto Serif TC：全形標點置中（台／港慣用），避免落到日文偏下或西文基線 */
+    @font-face {
+      font-family: "Noto Serif TC";
+      src: url("${PRINT_SERIF_FONT}") format("opentype");
+      font-weight: 200 900;
+      font-style: normal;
+      font-display: block;
+    }
     :root {
       --ink: #1a1a1a;
       --muted: #555;
@@ -659,6 +670,8 @@ function buildPrintHtml(bodyHtml: string): string {
       --cover-stone: #${PRINT_COLORS.coverStone};
       --cover-gold: #${PRINT_COLORS.coverGold};
       --cover-gold-soft: #${PRINT_COLORS.coverGoldSoft};
+      --font-serif: "Noto Serif TC", "Source Han Serif TC", "Source Han Serif",
+        "Songti TC", "PingFang TC", "Microsoft JhengHei", serif;
     }
     * { box-sizing: border-box; }
     html { font-size: 11pt; }
@@ -666,8 +679,7 @@ function buildPrintHtml(bodyHtml: string): string {
       margin: 0;
       color: var(--ink);
       background: #e8e8e8;
-      font-family: "Noto Serif TC", "Source Han Serif TC", "Source Han Serif",
-        "Songti TC", "宋体", "SimSun", "Georgia", serif;
+      font-family: var(--font-serif);
       line-height: 1.75;
     }
     .toolbar {
@@ -1270,10 +1282,27 @@ function ensureCoverAsset() {
   }
 }
 
+/** 把倉庫內的繁中襯線字型同步到 dist／public，供 HTML／PDF 以相對路徑載入 */
+function ensurePrintSerifFont() {
+  if (!fs.existsSync(PRINT_SERIF_FONT_SRC)) {
+    console.warn(
+      `missing print serif font: ${PRINT_SERIF_FONT_SRC}（標點可能落到後備字型而偏下）`,
+    );
+    return;
+  }
+  for (const root of [OUT_DIR, PUBLIC_DIR]) {
+    const dest = path.join(root, PRINT_SERIF_FONT);
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    fs.copyFileSync(PRINT_SERIF_FONT_SRC, dest);
+    console.log("font", dest);
+  }
+}
+
 function main() {
   fs.mkdirSync(OUT_DIR, { recursive: true });
   fs.mkdirSync(PUBLIC_DIR, { recursive: true });
   ensureCoverAsset();
+  ensurePrintSerifFont();
 
   const { md, chapterCount, missing } = buildPrintMarkdown();
   const mdPath = path.join(OUT_DIR, MD_NAME);
