@@ -276,12 +276,13 @@ function afterwordMarkdown(): string {
 >
 > 三世諸佛，則是一個有血性的漢子。子瞻若能腳下承當，把一二十年富貴功名賤如泥土，努力向前，珍重，珍重。
 
-願你我心中，皆能養就那一點浩然之氣，乘千里快哉之風，自在前行。
-
 %%RAW%%
-<div class="afterword-calligraphy-wrap">
-  <img class="calligraphy-img afterword-img" src="${resolvePublicAsset(AFTERWORD_IMAGE)}" alt="${escapeHtml(AFTERWORD_CALLIGRAPHY)}" />
-  <p class="calligraphy-fallback sr-only">${escapeHtml(AFTERWORD_CALLIGRAPHY)}</p>
+<div class="afterword-closing">
+  <p>願你我心中，皆能養就那一點浩然之氣，乘千里快哉之風，自在前行。</p>
+  <div class="afterword-calligraphy-wrap">
+    <img class="calligraphy-img afterword-img" src="${resolvePublicAsset(AFTERWORD_IMAGE)}" alt="${escapeHtml(AFTERWORD_CALLIGRAPHY)}" />
+    <p class="calligraphy-fallback sr-only">${escapeHtml(AFTERWORD_CALLIGRAPHY)}</p>
+  </div>
 </div>
 %%/RAW%%
 `;
@@ -1058,7 +1059,8 @@ function buildPrintHtml(bodyHtml: string): string {
       margin: 0 auto;
     }
     .epigraph-img { max-width: 175mm; }
-    .afterword-img { max-width: 150mm; }
+    /* 後記書法：縮小以塞進末頁空白，避免獨佔下一頁 */
+    .afterword-img { max-width: 88mm; }
     .sr-only {
       position: absolute;
       width: 1px;
@@ -1078,14 +1080,32 @@ function buildPrintHtml(bodyHtml: string): string {
       page-break-inside: avoid;
       break-inside: avoid;
     }
+    /* 收束段＋書法盡量同頁；勿把書法整塊踢到空白頁 */
+    .afterword-closing {
+      margin-top: 0.85rem;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .afterword-closing > p {
+      margin: 0.65em 0 0.85rem;
+    }
     .afterword-calligraphy-wrap {
-      margin-top: 3.5rem;
-      min-height: 42mm;
+      margin-top: 0.35rem;
+      min-height: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-end;
-      padding-bottom: 0.5rem;
+      padding-bottom: 0;
+      break-before: avoid;
+      page-break-before: avoid;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    /* 後記長信允許跨頁，否則會擠掉書法或留下大片空白 */
+    #後記 ~ blockquote {
+      break-inside: auto;
+      page-break-inside: auto;
     }
 
     /* —— 書脊橫條面 —— */
@@ -1200,6 +1220,19 @@ function buildPrintHtml(bodyHtml: string): string {
         page-break-after: auto;
       }
       blockquote, pre.code, li, table.md-table { break-inside: avoid; page-break-inside: avoid; }
+      #後記 ~ blockquote {
+        break-inside: auto !important;
+        page-break-inside: auto !important;
+      }
+      .afterword-closing,
+      .afterword-calligraphy-wrap {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      .afterword-calligraphy-wrap {
+        break-before: avoid !important;
+        page-break-before: avoid !important;
+      }
     }
   </style>
 </head>
