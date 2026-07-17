@@ -252,6 +252,8 @@ function slugifyHeading(title: string): string {
 }
 
 function afterwordMarkdown(): string {
+  // 以 Word Joiner（U+2060）避免「本來面目」等成語被拆行
+  const 本來面目 = "本\u2060來\u2060面\u2060目";
   return `# 後記
 
 本書在此落筆，但屬於我們的人生才正要啟航。
@@ -260,7 +262,7 @@ function afterwordMarkdown(): string {
 
 > 子瞻中大科，登金門，上玉堂，遠於寂寞之濱，權臣忌子瞻為宰相耳。
 >
-> 人生一世間，如白駒之過隙。二三十年功名富貴，轉盼成空，何不一筆勾斷，尋取自家本來面目，萬劫常住，永無墮落。縱未得到如來地，亦可以驂駕鸞鶴，翱翔三島，為不死人。何乃膠柱守株，待入惡趣？
+> 人生一世間，如白駒之過隙。二三十年功名富貴，轉盼成空，何不一筆勾斷，尋取自家${本來面目}，萬劫常住，永無墮落。縱未得到如來地，亦可以驂駕鸞鶴，翱翔三島，為不死人。何乃膠柱守株，待入惡趣？
 >
 > 昔有問師，佛法在甚麼處？師云在行住坐臥處，著衣吃飯處，屙屎剌撒處，沒理沒會處，死活不得處。子瞻胸中有萬卷書，筆下無一點塵，到這地位，不知性命所在，一生聰明，要作甚麼？
 >
@@ -723,15 +725,27 @@ function buildPrintHtml(bodyHtml: string): string {
     h1 { font-size: 1.85rem; margin-top: 0; }
     h2 { font-size: 1.35rem; border-bottom: 1px solid var(--rule); padding-bottom: 0.25em; }
     h3 { font-size: 1.15rem; }
-    p { margin: 0.65em 0; orphans: 3; widows: 3; }
+    p {
+      margin: 0.65em 0;
+      orphans: 3;
+      widows: 3;
+      text-align: justify;
+      text-justify: inter-ideograph;
+    }
     blockquote {
       margin: 0.9em 0;
       padding: 0.35em 0 0.35em 1em;
       border-left: 3px solid #3d5c4f;
       color: #222;
       background: #f7faf8;
+      text-align: justify;
+      text-justify: inter-ideograph;
     }
-    blockquote p { margin: 0.35em 0; }
+    blockquote p {
+      margin: 0.35em 0;
+      text-align: justify;
+      text-justify: inter-ideograph;
+    }
     ul, ol { margin: 0.6em 0; padding-left: 1.4em; }
     li { margin: 0.25em 0; }
     hr {

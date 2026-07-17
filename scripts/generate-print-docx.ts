@@ -480,6 +480,7 @@ function blocksToChildren(blocks: Block[], afterImg: string | null): FileChild[]
     if (b.type === "para") {
       out.push(
         new Paragraph({
+          alignment: AlignmentType.BOTH,
           spacing: { after: 140 },
           children: [
             new TextRun({ text: b.text, font: "Microsoft JhengHei", size: 22 }),
@@ -509,13 +510,16 @@ function blocksToChildren(blocks: Block[], afterImg: string | null): FileChild[]
 
     if (b.type === "quote") {
       for (const line of b.lines) {
+        // 避免「本來面目」等四字成語被拆行
+        const text = line.replace(/本來面目/g, "本\u2060來\u2060面\u2060目");
         out.push(
           new Paragraph({
+            alignment: AlignmentType.BOTH,
             spacing: { after: 80 },
             indent: { left: 360 },
             children: [
               new TextRun({
-                text: line,
+                text,
                 italics: true,
                 font: "Microsoft JhengHei",
                 size: 22,
