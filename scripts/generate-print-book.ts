@@ -32,6 +32,7 @@ const README_NAME = "README-列印說明.md";
 const COVER_IMAGE = "assets/print-cover-minimal.png";
 const COVER_IMAGE_FALLBACK = "assets/print-cover-minecraft.png";
 const COVER_TITLE_IMAGE = "assets/print-cover-title-cursive.png";
+const COVER_AUTHOR_IMAGE = "assets/cover-author-wenkai.png";
 const EPIGRAPH_IMAGE = "assets/epigraph-calligraphy.png";
 const AFTERWORD_IMAGE = "assets/afterword-calligraphy.png";
 const SPINE_IMAGE = "assets/spine-calligraphy.png";
@@ -592,6 +593,7 @@ function mdToHtml(md: string): string {
 
 function illustratedCoverHtml(): string {
   const titleImg = resolvePublicAsset(COVER_TITLE_IMAGE);
+  const authorImg = resolvePublicAsset(COVER_AUTHOR_IMAGE);
   return `<section class="cover-page" id="cover">
   <div class="cover-geo" aria-hidden="true">
     <span class="cover-geo-panel"></span>
@@ -605,9 +607,11 @@ function illustratedCoverHtml(): string {
     <p class="cover-subtitle">${escapeHtml(SITE.subtitle)}</p>
     <p class="cover-english">${escapeHtml(SITE.englishTitle)}</p>
     <p class="cover-tagline">人生玩家</p>
-    <p class="cover-author">${escapeHtml(SITE.author)}</p>
-    <p class="cover-meta">版本 ${escapeHtml(SITE.version)}・${YEAR}</p>
   </div>
+  <p class="cover-author">
+    <img class="cover-author-img" src="${authorImg}" alt="${escapeHtml(SITE.author)}" />
+  </p>
+  <p class="cover-meta">版本 ${escapeHtml(SITE.version)}・${YEAR}</p>
 </section>`;
 }
 
@@ -881,7 +885,7 @@ function buildPrintHtml(bodyHtml: string): string {
       left: 0;
       bottom: 18%;
       width: 58%;
-      height: 7mm;
+      height: 11mm;
       background: var(--cover-stone);
     }
     .cover-geo-gold {
@@ -913,6 +917,21 @@ function buildPrintHtml(bodyHtml: string): string {
       max-width: 118mm;
       height: auto;
       margin: 0 0 0 -2mm;
+      /* 透明底＋邊緣淡出，融入封面紙色，避免白塊 */
+      -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        #000 8%,
+        #000 92%,
+        transparent 100%
+      );
+      mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        #000 8%,
+        #000 92%,
+        transparent 100%
+      );
     }
     .cover-subtitle {
       margin: 1.1rem 0 0;
@@ -937,15 +956,34 @@ function buildPrintHtml(bodyHtml: string): string {
       color: var(--cover-stone);
       font-weight: 500;
     }
+    /* 署名落在墨色條內：霞鹜文楷圖，比「騎線跳出」更穩、更書卷 */
     .cover-author {
-      margin: 2.4rem 0 0;
-      font-size: 1.05rem;
-      letter-spacing: 0.22em;
-      color: var(--cover-gold);
-      font-weight: 600;
+      position: absolute;
+      left: 0;
+      bottom: 18%;
+      z-index: 3;
+      box-sizing: border-box;
+      width: 58%;
+      height: 11mm;
+      margin: 0;
+      padding: 0 0 0 12mm;
+      display: flex;
+      align-items: center;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .cover-author-img {
+      display: block;
+      height: 6.2mm;
+      width: auto;
+      max-width: 48mm;
     }
     .cover-meta {
-      margin: 0.55rem 0 0;
+      position: absolute;
+      left: 12mm;
+      bottom: calc(18% - 9mm);
+      z-index: 3;
+      margin: 0;
       font-size: 0.78rem;
       letter-spacing: 0.08em;
       color: #8a867c;
@@ -1218,6 +1256,7 @@ function ensureCoverAsset() {
     COVER_IMAGE,
     COVER_IMAGE_FALLBACK,
     COVER_TITLE_IMAGE,
+    COVER_AUTHOR_IMAGE,
     EPIGRAPH_IMAGE,
     AFTERWORD_IMAGE,
     SPINE_IMAGE,
