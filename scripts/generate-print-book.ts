@@ -642,6 +642,25 @@ function injectIllustratedCover(bodyHtml: string): string {
   return `${illustratedCoverHtml()}\n${PAGE_BREAK_HTML}${bodyHtml.slice(firstBreak + PAGE_BREAK_HTML.length)}`;
 }
 
+const PRINT_KEEP_OPEN =
+  /<div class="print-keep print-(?:mindmap|structure-diagram|h3-block|figure)">/g;
+
+/** Warn if print-keep wrappers leave unbalanced divs (common source of blank PDF pages). */
+function assertPrintKeepBalance(html: string): void {
+  const opens = (html.match(PRINT_KEEP_OPEN) ?? []).length;
+  const closes = (html.match(/<\/div>/g) ?? []).length;
+  // Sheet contains many legitimate </div>; compare only print-keep open count vs tagged closes.
+  const keepCloses = (
+    html.match(/<\/div>(?=\s*(?:<h[1-6]|<div class="pagebreak"|<\/article|$))/g) ??
+    []
+  ).length;
+  if (opens > 0 && opens > keepCloses + 40) {
+    console.warn(
+      `print-keep wrappers may be unbalanced (opens≈${opens}); check wrapPrintKeepBlocks`,
+    );
+  }
+}
+
 /**
  * Wrap fragile heading + block pairs so Chromium keeps them on one page
  * (mind maps, structure diagrams, h3 + list, calligraphy figures).
@@ -649,29 +668,71 @@ function injectIllustratedCover(bodyHtml: string): string {
 function wrapPrintKeepBlocks(html: string): string {
   let out = html;
 
-  // §16 心智圖 + diagram（mermaid 用「直到下一個 h2」避免誤截斷 </div>）
+  // 清掉舊版誤包裝殘留（h2 §03 整段誤入 print-structure、雙層 mindmap）
   out = out.replace(
-    /(<h2 id="16-[^"]*">[\s\S]*?<\/h2>)\s*(<div class="mermaid">[\s\S]*?<\/div>)(?=\s*(?:<h2|<div class="pagebreak"|$))/g,
-    '<div class="print-keep print-mindmap">$1\n$2</div>',
+    /<div class="print-keep print-structure">(<h2 id="03-[^"]*">)/g,
+    "$1",
   );
   out = out.replace(
-    /(<h2 id="16-[^"]*">[\s\S]*?<\/h2>)\s*(<pre class="code code-diagram">[\s\S]*?<\/pre>)/g,
-    '<div class="print-keep print-mindmap">$1\n$2</div>',
-  );
-
-  // §03 結構分析 + optional「結構圖」h3 + ASCII diagram
-  out = out.replace(
-    /(<h2 id="03-[^"]*">[\s\S]*?<\/h2>)\s*(<h3[^>]*>[\s\S]*?<\/h3>\s*)?(<pre class="code code-diagram">[\s\S]*?<\/pre>)/g,
-    '<div class="print-keep print-structure">$1\n$2$3</div>',
+    /<div class="print-keep print-mindmap"><div class="print-keep print-mindmap">/g,
+    '<div class="print-keep print-mindmap">',
   );
 
-  // h3 + list（延伸閱讀小標與書目；略過已包裝者）
+  // §16 心智圖 + diagram（mermaid 或 ASCII；略過已包裝者；閉合由下方 normalizer 統一）
   out = out.replace(
-    /(?<!<div class="print-keep print-h3-block">)(<h3 id="[^"]*">[\s\S]*?<\/h3>)\s*(<(?:ul|ol)>[\s\S]*?<\/(?:ul|ol)>)/g,
+    /(?<!<div class="print-keep print-mindmap">)(<h2 id="16-[^"]*">[\s\S]*?<\/h2>)\s*(<div class="mermaid">[\s\S]*?<\/div>)(?=\s*(?:<h2|<div class="pagebreak"|$))/g,
+    '<div class="print-keep print-mindmap">$1\n$2',
+  );
+  out = out.replace(
+    /(?<!<div class="print-keep print-mindmap">)(<h2 id="16-[^"]*">[\s\S]*?<\/h2>)\s*(<pre class="code code-diagram">[\s\S]*?<\/pre>)/g,
+    '<div class="print-keep print-mindmap">$1\n$2',
+  );
+
+  // §03「結構圖」：只綁 h3 + ASCII（+ 可選 mermaid），不包整段 §03
+  out = out.replace(
+    /(?<!<div class="print-keep print-structure-diagram">)(<h3 id="結構圖">[\s\S]*?<\/h3>)\s*(<pre class="code code-diagram">[\s\S]*?<\/pre>)(\s*<div class="mermaid">[\s\S]*?<\/div>)?/g,
+    '<div class="print-keep print-structure-diagram">$1\n$2$3</div>',
+  );
+
+  // h3 + list（延伸閱讀；排除「結構圖」）
+  out = out.replace(
+    /(?<!<div class="print-keep print-h3-block">)(<h3 id="(?!結構圖)[^"]*">[\s\S]*?<\/h3>)\s*(<(?:ul|ol)>[\s\S]*?<\/(?:ul|ol)>)/g,
     '<div class="print-keep print-h3-block">$1\n$2</div>',
   );
 
-  // 修復：mermaid 後首個 h3 誤留孤兒 </div>（h3 開頭缺 wrapper）
+  // 修復：結構圖誤包 h3-block
+  out = out.replace(
+    /<div class="print-keep print-structure-diagram"><div class="print-keep print-h3-block">(<h3 id="結構圖">[\s\S]*?<\/h3>\s*<pre class="code code-diagram">[\s\S]*?<\/pre>(?:\s*<div class="mermaid">[\s\S]*?<\/div>)?)<\/div><\/div>/g,
+    '<div class="print-keep print-structure-diagram">$1</div>',
+  );
+  out = out.replace(
+    /<div class="print-keep print-structure-diagram"><div class="print-keep print-h3-block">(<h3 id="結構圖">[\s\S]*?<\/h3>\s*<pre class="code code-diagram">[\s\S]*?<\/pre>(?:\s*<div class="mermaid">[\s\S]*?<\/div>)?)<\/div>/g,
+    '<div class="print-keep print-structure-diagram">$1</div>',
+  );
+
+  // 修復：§16 心智圖 — 確保恰有一層 print-mindmap 閉合（避免多餘 </div>）
+  out = out.replace(
+    /(<div class="print-keep print-mindmap"><h2 id="16-[^"]*">[\s\S]*?<\/h2>\s*<div class="mermaid">[\s\S]*?<\/div>)(?:\s*<\/div>)*(\s*<h2 id="17-)/g,
+    "$1</div>$2",
+  );
+  out = out.replace(
+    /(<div class="print-keep print-mindmap"><h2 id="16-[^"]*">[\s\S]*?<\/h2>\s*<pre class="code code-diagram">[\s\S]*?<\/pre>)(?:\s*<\/div>)*(\s*<h2 id="17-)/g,
+    "$1</div>$2",
+  );
+
+  // 修復：§03 結構圖 — 確保 structure-diagram 恰有一層閉合
+  out = out.replace(
+    /(<div class="print-keep print-structure-diagram"><h3 id="結構圖">[\s\S]*?<\/h3>\s*<pre class="code code-diagram">[\s\S]*?<\/pre>(?:\s*<div class="mermaid">[\s\S]*?<\/div>)?)(?:\s*<\/div>)*(\s*<h2 id=")/g,
+    "$1</div>$2",
+  );
+
+  // 修復：完全未包裝的 §16 + diagram
+  out = out.replace(
+    /(?<!<div class="print-keep print-mindmap">)(<h2 id="16-[^"]*">[\s\S]*?<\/h2>\s*(?:<div class="mermaid">[\s\S]*?<\/div>|<pre class="code code-diagram">[\s\S]*?<\/pre>))\s*(<h2 id="17-)/g,
+    '<div class="print-keep print-mindmap">$1</div>\n$2',
+  );
+
+  // 修復：mermaid 後首個 h3 誤留孤兒 </div>
   out = out.replace(
     /(<h2 id="17-[^"]*">[\s\S]*?<\/h2>\s*)(<h3 id="[^"]*">[\s\S]*?<\/h3>\s*<(?:ul|ol)>[\s\S]*?<\/(?:ul|ol)>)<\/div>(?=\s*(?:<div class="print-keep print-h3-block">|<h3|<div class="pagebreak"|$))/g,
     '$1<div class="print-keep print-h3-block">$2</div>',
@@ -679,10 +740,21 @@ function wrapPrintKeepBlocks(html: string): string {
 
   // Calligraphy / figure immediately after heading
   out = out.replace(
-    /(<(?:h2|h3)[^>]*>[\s\S]*?<\/(?:h2|h3)>)\s*(<img class="calligraphy-img"[^>]*\/?>)/g,
+    /(?<!<div class="print-keep print-figure">)(<(?:h2|h3)[^>]*>[\s\S]*?<\/(?:h2|h3)>)\s*(<img class="calligraphy-img"[^>]*\/?>)/g,
     '<div class="print-keep print-figure">$1\n$2</div>',
   );
 
+  // 最終：§16 mermaid 區塊僅保留一層 print-mindmap 閉合
+  out = out.replace(
+    /(<div class="print-keep print-mindmap"><h2 id="16-[^"]*">[\s\S]*?<\/h2>\s*<div class="mermaid">[\s\S]*?<\/div>)(?:\s*<\/div>)*(\s*<h2 id="17-)/g,
+    "$1</div>$2",
+  );
+  out = out.replace(
+    /(<div class="print-keep print-mindmap"><h2 id="16-[^"]*">[\s\S]*?<\/h2>\s*<pre class="code code-diagram">[\s\S]*?<\/pre>)(?:\s*<\/div>)*(\s*<h2 id="17-)/g,
+    "$1</div>$2",
+  );
+
+  assertPrintKeepBalance(out);
   return out;
 }
 
@@ -815,9 +887,10 @@ function buildPrintHtml(bodyHtml: string): string {
     .u-num {
       text-autospace: no-autospace;
       text-spacing: none;
-      font-variant-east-asian: full-width;
-      letter-spacing: 0;
-      margin: 0 -0.12em;
+      font-variant-east-asian: proportional-width;
+      letter-spacing: -0.02em;
+      margin: 0 -0.08em;
+      font-feature-settings: "halt" 0;
     }
     /* 引文左齊：避免短句雙齊把字距拉成「疏網」 */
     blockquote {
@@ -916,6 +989,10 @@ function buildPrintHtml(bodyHtml: string): string {
     }
     .print-mindmap .mermaid,
     .print-mindmap pre.code-diagram {
+      margin-top: 0.35em;
+    }
+    .print-structure-diagram pre.code-diagram,
+    .print-structure-diagram .mermaid {
       margin-top: 0.35em;
     }
     .print-bibliography {
@@ -1292,7 +1369,9 @@ function buildPrintHtml(bodyHtml: string): string {
       }
       .pagebreak::after { display: none; }
       /* 避免 pagebreak 後緊接 h1 再強制換頁 → 空白頁 */
-      .pagebreak + h1 {
+      .pagebreak + h1,
+      .pagebreak + section.epigraph-page,
+      .pagebreak + section.author-flap-page {
         break-before: avoid !important;
         page-break-before: avoid !important;
       }
@@ -1355,17 +1434,22 @@ function buildPrintHtml(bodyHtml: string): string {
         page-break-inside: avoid !important;
       }
       .print-mindmap > h2,
-      .print-structure > h2,
+      .print-structure-diagram > h3,
       .print-h3-block > h3,
       .print-figure > h2,
       .print-figure > h3 {
         break-after: avoid !important;
         page-break-after: avoid !important;
       }
-      .print-mindmap .mermaid svg {
-        max-height: 160mm;
+      .print-mindmap .mermaid svg,
+      .print-structure-diagram .mermaid svg {
+        max-height: 150mm;
         width: auto;
         height: auto;
+      }
+      .print-structure-diagram {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
       }
       img.calligraphy-img,
       .epigraph-page,
