@@ -10,7 +10,7 @@ export const BOOK_TRIM_MM = { width: 148, height: 210 } as const;
 export const FLAP_MM = 90;
 
 /** 目前印刷成冊頁數（含前後頁；以實際 PDF 為準時可覆寫） */
-export const DEFAULT_PAGE_COUNT = 241;
+export const DEFAULT_PAGE_COUNT = 336;
 
 /**
  * 無線膠裝書脊（mm）≈ (頁數÷2) × 單張厚度 + 膠水約 1mm
