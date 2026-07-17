@@ -19,6 +19,7 @@ import { protectPrintBreaks } from "../src/lib/cjkLineBreak";
 import {
   COVER_AUTHOR_IMAGE,
   COVER_TITLE_IMAGE,
+  FLAP_AUTHOR_NAME_IMAGE,
   printCoverBodyHtml,
 } from "../src/lib/printCoverHtml";
 import {
@@ -86,10 +87,13 @@ function authorFlapMarkdown(): string {
   const paras = AUTHOR_FLAP.paragraphs
     .map((p) => `  <p class="author-flap-body">${escapeHtml(p)}</p>`)
     .join("\n");
+  const nameImg = resolvePublicAsset(FLAP_AUTHOR_NAME_IMAGE);
   return `%%RAW%%
 <section class="author-flap-page" id="作者介紹">
   <p class="author-flap-label">書面折頁｜作者介紹</p>
-  <p class="author-flap-name">${escapeHtml(AUTHOR_FLAP.name)}</p>
+  <p class="author-flap-name">
+    <img class="author-flap-name-img" src="${nameImg}" alt="${escapeHtml(AUTHOR_FLAP.name)}" />
+  </p>
   <p class="author-flap-role">${escapeHtml(AUTHOR_FLAP.role)}・《${escapeHtml(SITE.title)}》</p>
 ${paras}
 </section>
@@ -1009,12 +1013,15 @@ function buildPrintHtml(bodyHtml: string): string {
     }
     .author-flap-name {
       margin: 0 0 0.35rem;
-      font-size: 1.85rem;
-      letter-spacing: 0.2em;
-      color: #2a2118;
-      font-weight: 700;
+      line-height: 0;
       break-before: avoid !important;
       page-break-before: avoid !important;
+    }
+    .author-flap-name-img {
+      display: block;
+      height: 11mm;
+      width: auto;
+      max-width: 58mm;
     }
     .author-flap-role {
       margin: 0 0 1.6rem;
@@ -1250,6 +1257,7 @@ function ensureCoverAsset() {
     COVER_IMAGE_FALLBACK,
     COVER_TITLE_IMAGE,
     COVER_AUTHOR_IMAGE,
+    FLAP_AUTHOR_NAME_IMAGE,
     EPIGRAPH_IMAGE,
     AFTERWORD_IMAGE,
     SPINE_IMAGE,

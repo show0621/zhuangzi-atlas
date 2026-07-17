@@ -548,15 +548,27 @@ function authorFlapChildren(): FileChild[] {
               }),
               new Paragraph({
                 spacing: { before: 80, after: 80 },
-                children: [
-                  new TextRun({
-                    text: AUTHOR_FLAP.name,
-                    bold: true,
-                    size: 36,
-                    color: PRINT_COLORS.flapName,
-                    font: "Microsoft JhengHei",
-                  }),
-                ],
+                children: (() => {
+                  const namePath = resolveAsset("assets/flap-author-name.png");
+                  if (namePath) {
+                    const data = fs.readFileSync(namePath);
+                    return [
+                      new ImageRun({
+                        type: "png",
+                        data,
+                        transformation: { width: 200, height: 64 },
+                      }),
+                    ];
+                  }
+                  return [
+                    new TextRun({
+                      text: AUTHOR_FLAP.name,
+                      size: 32,
+                      color: PRINT_COLORS.flapName,
+                      font: "KaiTi",
+                    }),
+                  ];
+                })(),
               }),
               new Paragraph({
                 spacing: { after: 280 },

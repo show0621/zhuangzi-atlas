@@ -22,7 +22,9 @@ Zhuangzi Atlas
 %%RAW%%
 <section class="author-flap-page" id="作者介紹">
   <p class="author-flap-label">書面折頁｜作者介紹</p>
-  <p class="author-flap-name">李孟霖</p>
+  <p class="author-flap-name">
+    <img class="author-flap-name-img" src="assets/flap-author-name.png" alt="李孟霖" />
+  </p>
   <p class="author-flap-role">編集・《莊子全解》</p>
   <p class="author-flap-body">出生於台灣。年少時不學無術，母親說以後長大應該是放牛吃草、撿牛屎賺錢。這幾年在人世中載浮載沉，見證過人性純粹的惡，也感受過美好。是個迷途的小書僮。</p>
   <p class="author-flap-body">未來打算寫一本結合 OECD 指引與各國判決的移轉訂價與預先訂價實務指南。（有時間的話）</p>
