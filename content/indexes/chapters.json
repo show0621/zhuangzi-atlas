@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "generatedAt": "2026-07-17T05:41:07.376Z",
+  "generatedAt": "2026-07-17T05:41:53.797Z",
   "chapterCount": 34,
   "chapters": [
     {
@@ -785,7 +785,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4883
+      "wordCountApprox": 4877
     },
     {
       "id": "28",
@@ -813,7 +813,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4384
+      "wordCountApprox": 4740
     },
     {
       "id": "29",
@@ -841,7 +841,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4386
+      "wordCountApprox": 4565
     },
     {
       "id": "30",
@@ -869,14 +869,14 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4378
+      "wordCountApprox": 4588
     },
     {
       "id": "31",
       "slug": "漁父",
       "title": "漁父",
       "part": "雜篇",
-      "summary": "漁父訓孔子：真與禮、法天貴真。",
+      "summary": "漁父訓孔子：真者精誠之至，法天貴真。",
       "status": "draft",
       "headings": [
         "01. 篇名與背景",
@@ -904,7 +904,7 @@
       "slug": "列御寇",
       "title": "列御寇",
       "part": "雜篇",
-      "summary": "列子、伯昏無人與莊子臨終：虛己遊世。",
+      "summary": "虛而遨遊、曹商使秦與莊子將死拒厚葬。",
       "status": "draft",
       "headings": [
         "01. 篇名與背景",
@@ -932,7 +932,7 @@
       "slug": "天下",
       "title": "天下",
       "part": "雜篇",
-      "summary": "先秦學術總論：道術為天下裂，與莊子學派自述。",
+      "summary": "道術將為天下裂：墨／宋尹／彭田慎／關老／莊譜系。",
       "status": "draft",
       "headings": [
         "01. 篇名與背景",
@@ -953,7 +953,7 @@
         "16. 心智圖",
         "17. 延伸閱讀"
       ],
-      "wordCountApprox": 4446
+      "wordCountApprox": 7325
     }
   ]
 }

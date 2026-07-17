@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-17T05:41:07.123Z",
+  "generatedAt": "2026-07-17T05:41:53.544Z",
   "chapters": [
     {
       "id": "00",
@@ -286,7 +286,7 @@
       "title": "漁父",
       "part": "雜篇",
       "status": "draft",
-      "summary": "漁父訓孔子：真與禮、法天貴真。",
+      "summary": "漁父訓孔子：真者精誠之至，法天貴真。",
       "path": "content/chapters/03-雜篇/31-漁父.md"
     },
     {
@@ -295,7 +295,7 @@
       "title": "列御寇",
       "part": "雜篇",
       "status": "draft",
-      "summary": "列子、伯昏無人與莊子臨終：虛己遊世。",
+      "summary": "虛而遨遊、曹商使秦與莊子將死拒厚葬。",
       "path": "content/chapters/03-雜篇/32-列御寇.md"
     },
     {
@@ -304,7 +304,7 @@
       "title": "天下",
       "part": "雜篇",
       "status": "draft",
-      "summary": "先秦學術總論：道術為天下裂，與莊子學派自述。",
+      "summary": "道術將為天下裂：墨／宋尹／彭田慎／關老／莊譜系。",
       "path": "content/chapters/03-雜篇/33-天下.md"
     }
   ]

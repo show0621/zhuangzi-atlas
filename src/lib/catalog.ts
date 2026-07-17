@@ -315,7 +315,7 @@ export const CHAPTERS: ChapterMeta[] = [
     part: "雜篇",
     order: 31,
     status: "draft",
-    summary: "漁父訓孔子：真與禮、法天貴真。",
+    summary: "漁父訓孔子：真者精誠之至，法天貴真。",
   },
   {
     id: "32",
@@ -324,7 +324,7 @@ export const CHAPTERS: ChapterMeta[] = [
     part: "雜篇",
     order: 32,
     status: "draft",
-    summary: "列子、伯昏無人與莊子臨終：虛己遊世。",
+    summary: "虛而遨遊、曹商使秦與莊子將死拒厚葬。",
   },
   {
     id: "33",
@@ -333,7 +333,7 @@ export const CHAPTERS: ChapterMeta[] = [
     part: "雜篇",
     order: 33,
     status: "draft",
-    summary: "先秦學術總論：道術為天下裂，與莊子學派自述。",
+    summary: "道術將為天下裂：墨／宋尹／彭田慎／關老／莊譜系。",
   },
 ];
 
