@@ -7,8 +7,12 @@
  *   2. Chrome／Edge headless CLI --print-to-pdf
  *   3. pandoc（若已安裝且有 PDF engine）
  *
- * 目錄頁碼：兩次輸出——先在各目標插入隱藏標記並產 PDF，
- * 再用 pdf.js 讀出真實頁碼寫回目錄，最後輸出乾淨 PDF。
+ * 頁碼規則：
+ *   - 封面／作者折頁／題辭／出版資訊：不編頁
+ *   - 「自序」起為第 1 頁；目錄頁碼同步以此重算
+ *
+ * 目錄頁碼：兩次輸出——先插入隱藏標記並產 PDF，
+ * 再用 pdf.js 讀出真實頁碼（扣前頁偏移）寫回目錄，最後蓋章頁碼。
  *
  * 用法：
  *   npm run ebook:pdf
@@ -22,6 +26,7 @@ import fs from "fs";
 import path from "path";
 import { spawnSync } from "child_process";
 import { pathToFileURL } from "url";
+import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 
 const OUT_DIR = path.join(process.cwd(), "dist", "ebook");
 const PUBLIC_DIR = path.join(process.cwd(), "public", "downloads");
@@ -29,17 +34,15 @@ const HTML_NAME = "zhuangzi-atlas-print.html";
 const PDF_NAME = "zhuangzi-atlas-print.pdf";
 const PDF_ALIAS = "莊子全解-印刷版.pdf";
 
+/** 頁碼起算錨點（與目錄 data-target 一致） */
+const PREFACE_TOC_ID = "莊子全解自序";
+
 const PDF_OPTS = {
   format: "A4" as const,
   printBackground: true,
   preferCSSPageSize: true,
-  displayHeaderFooter: true,
-  headerTemplate: "<div></div>",
-  footerTemplate: `
-    <div style="width:100%;text-align:center;font-size:9px;color:#555;font-family:'Noto Serif TC',serif;padding-bottom:4px;">
-      <span class="pageNumber"></span>
-    </div>
-  `,
+  // 頁碼改由 pdf-lib 自「自序」起蓋章；Chrome footer 無法中途重編
+  displayHeaderFooter: false,
   margin: { top: "16mm", right: "14mm", bottom: "18mm", left: "24mm" },
 };
 
@@ -100,7 +103,7 @@ function writeOutputs(pdfBufferOrPath: string | Buffer): string {
   return publicPdf;
 }
 
-/** 從帶標記的 PDF 抽出各 TOC 目標的真實頁碼 */
+/** 從帶標記的 PDF 抽出各 TOC 目標的實體頁碼（1-based，含前頁） */
 async function extractTocPagesFromPdf(
   pdfBytes: Uint8Array,
 ): Promise<Record<string, number>> {
@@ -124,6 +127,42 @@ async function extractTocPagesFromPdf(
   }
 
   return idToPage;
+}
+
+/** 實體頁 → 印刷頁碼（自序 = 1）；前頁目標回傳 null */
+function toPrintedPage(
+  physical: number,
+  prefacePhysical: number | undefined,
+): number | null {
+  if (prefacePhysical == null || prefacePhysical < 1) return physical;
+  if (physical < prefacePhysical) return null;
+  return physical - prefacePhysical + 1;
+}
+
+/** 自序起於頁尾中央蓋阿拉伯數字頁碼 */
+async function stampPrintedPageNumbers(
+  pdfBytes: Uint8Array,
+  prefacePhysical: number,
+): Promise<Buffer> {
+  const doc = await PDFDocument.load(pdfBytes);
+  const font = await doc.embedFont(StandardFonts.Helvetica);
+  const pages = doc.getPages();
+  const start = Math.max(1, prefacePhysical) - 1;
+  for (let i = start; i < pages.length; i += 1) {
+    const page = pages[i];
+    const { width } = page.getSize();
+    const label = String(i - start + 1);
+    const size = 9;
+    const textWidth = font.widthOfTextAtSize(label, size);
+    page.drawText(label, {
+      x: (width - textWidth) / 2,
+      y: 28,
+      size,
+      font,
+      color: rgb(0.33, 0.33, 0.33),
+    });
+  }
+  return Buffer.from(await doc.save());
 }
 
 async function tryPuppeteer(htmlPath: string): Promise<string | null> {
@@ -207,25 +246,43 @@ async function tryPuppeteer(htmlPath: string): Promise<string | null> {
       })()`);
 
       const probePdf = await page.pdf(PDF_OPTS);
-      const idToPage = await extractTocPagesFromPdf(new Uint8Array(probePdf));
-      console.log(`目錄頁碼對照：自 PDF 讀到 ${Object.keys(idToPage).length} 個目標`);
-      if (Object.keys(idToPage).length === 0) {
+      const physicalPages = await extractTocPagesFromPdf(new Uint8Array(probePdf));
+      const prefacePhysical = physicalPages[PREFACE_TOC_ID];
+      const printedPages: Record<string, number> = Object.create(null);
+      for (const [id, phys] of Object.entries(physicalPages)) {
+        const printed = toPrintedPage(phys, prefacePhysical);
+        if (printed != null) printedPages[id] = printed;
+      }
+      console.log(
+        `目錄頁碼對照：自 PDF 讀到 ${Object.keys(physicalPages).length} 個目標` +
+          (prefacePhysical != null
+            ? `；自序實體第 ${prefacePhysical} 頁 → 印刷第 1 頁`
+            : "；未找到自序錨點，頁碼未偏移"),
+      );
+      if (Object.keys(physicalPages).length === 0) {
         console.warn("警告：未能自 PDF 抽出目錄標記，目錄頁碼可能空白。");
       }
 
-      await page.evaluate(`((idToPage) => {
+      await page.evaluate(`((printedPages) => {
         document.querySelectorAll(".toc-row[data-target]").forEach((row) => {
           const target = row.getAttribute("data-target") || "";
           const span = row.querySelector(".toc-page");
-          if (span && idToPage[target] != null) {
-            span.textContent = String(idToPage[target]);
+          if (!span) return;
+          if (printedPages[target] != null) {
+            span.textContent = String(printedPages[target]);
+          } else {
+            span.textContent = "";
           }
         });
         document.querySelectorAll(".toc-pdf-marker").forEach((el) => el.remove());
-      })(${JSON.stringify(idToPage)})`);
+      })(${JSON.stringify(printedPages)})`);
 
       const pdf = await page.pdf(PDF_OPTS);
-      return writeOutputs(Buffer.from(pdf));
+      const stamped =
+        prefacePhysical != null
+          ? await stampPrintedPageNumbers(new Uint8Array(pdf), prefacePhysical)
+          : Buffer.from(pdf);
+      return writeOutputs(stamped);
     } finally {
       await browser.close();
     }

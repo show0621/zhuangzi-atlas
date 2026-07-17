@@ -190,10 +190,8 @@ function prefaceMarkdown(): string {
 
 function tocMarkdown(): string {
   type TocItem = { label: string; target: string; indent?: boolean };
+  // 頁碼自「自序」起算為 1；封面／作者／出版資訊／題辭不編頁，亦不列於目錄頁碼區
   const items: TocItem[] = [
-    { label: "封面", target: "cover" },
-    { label: "作者介紹", target: "作者介紹" },
-    { label: "出版資訊", target: "出版資訊" },
     { label: "自序", target: "莊子全解自序" },
     { label: "緒論：如何閱讀《莊子》", target: "緒論" },
   ];
