@@ -28,19 +28,63 @@ st.markdown(
 
 NEXT_BASE = "http://localhost:3000"
 PAGES_BASE = "https://show0621.github.io/zhuangzi-atlas"
-# 下載檔加版本參數，避免 GitHub Pages／瀏覽器快取舊 PDF
-_ASSET_V = "epigraph-calligraphy-nobg"
-PDF_URL = f"{PAGES_BASE}/downloads/zhuangzi-atlas-print.pdf?v={_ASSET_V}"
-PDF_ALIAS_URL = f"{PAGES_BASE}/downloads/莊子全解-印刷版.pdf?v={_ASSET_V}"
-DOCX_URL = f"{PAGES_BASE}/downloads/zhuangzi-atlas-print.docx?v={_ASSET_V}"
-DOCX_ALIAS_URL = f"{PAGES_BASE}/downloads/莊子全解-印刷版.docx?v={_ASSET_V}"
-WRAP_PDF_URL = f"{PAGES_BASE}/downloads/zhuangzi-atlas-cover-wrap.pdf?v={_ASSET_V}"
-WRAP_ALIAS_URL = f"{PAGES_BASE}/downloads/莊子全解-封面展開.pdf?v={_ASSET_V}"
-COVER_PDF_URL = f"{PAGES_BASE}/downloads/zhuangzi-atlas-cover.pdf?v={_ASSET_V}"
-BACK_PDF_URL = f"{PAGES_BASE}/downloads/zhuangzi-atlas-back.pdf?v={_ASSET_V}"
-SPINE_PDF_URL = f"{PAGES_BASE}/downloads/zhuangzi-atlas-spine.pdf?v={_ASSET_V}"
-FLAP_PDF_URL = f"{PAGES_BASE}/downloads/zhuangzi-atlas-flap.pdf?v={_ASSET_V}"
-SPINE_DOCX_URL = f"{PAGES_BASE}/downloads/zhuangzi-atlas-spine.docx?v={_ASSET_V}"
+# 全套產檔版本戳：改這個可強制破除 GitHub Pages／瀏覽器舊快取
+_ASSET_V = "full-package-20260717"
+_DL = f"{PAGES_BASE}/downloads"
+
+DOWNLOADS = [
+    {
+        "group": "內文成冊（菊16開・約 335 頁）",
+        "items": [
+            ("完整書 PDF", f"{_DL}/zhuangzi-atlas-print.pdf?v={_ASSET_V}", True),
+            ("完整書 PDF（中文檔名）", f"{_DL}/莊子全解-印刷版.pdf?v={_ASSET_V}", False),
+            ("完整書 Word", f"{_DL}/zhuangzi-atlas-print.docx?v={_ASSET_V}", True),
+            ("完整書 Word（中文檔名）", f"{_DL}/莊子全解-印刷版.docx?v={_ASSET_V}", False),
+        ],
+    },
+    {
+        "group": "上機／裝幀",
+        "items": [
+            ("封面展開 PDF（上機）", f"{_DL}/zhuangzi-atlas-cover-wrap.pdf?v={_ASSET_V}", True),
+            ("封面展開（中文檔名）", f"{_DL}/莊子全解-封面展開.pdf?v={_ASSET_V}", False),
+            ("書脊 PDF（24×210 mm）", f"{_DL}/zhuangzi-atlas-spine.pdf?v={_ASSET_V}", False),
+            ("書脊 Word", f"{_DL}/zhuangzi-atlas-spine.docx?v={_ASSET_V}", False),
+            ("封面單頁", f"{_DL}/zhuangzi-atlas-cover.pdf?v={_ASSET_V}", False),
+            ("封底單頁", f"{_DL}/zhuangzi-atlas-back.pdf?v={_ASSET_V}", False),
+            ("作者折頁", f"{_DL}/zhuangzi-atlas-flap.pdf?v={_ASSET_V}", False),
+        ],
+    },
+]
+
+st.subheader("下載最新印刷套件")
+st.success(
+    f"已對齊 GitHub Pages 最新產檔（版本 `{_ASSET_V}`）。"
+    "含：菊16開內文 PDF／Word、封面展開、書脊、封面／封底／折頁。"
+    "頁碼自「自序」起算；題辭／後記書法為去底色版。"
+)
+st.caption(
+    "若仍下到舊檔：請用下方按鈕（含版本參數），或強制重新整理／無痕視窗。"
+    f" 亦可開 [下載總頁]({PAGES_BASE}/download/?v={_ASSET_V})。"
+)
+
+for block in DOWNLOADS:
+    st.markdown(f"**{block['group']}**")
+    cols = st.columns(2)
+    for i, (label, url, primary) in enumerate(block["items"]):
+        with cols[i % 2]:
+            st.link_button(
+                label,
+                url,
+                use_container_width=True,
+                type="primary" if primary else "secondary",
+            )
+
+st.link_button(
+    "開啟線上下載總頁（GitHub Pages）",
+    f"{PAGES_BASE}/download/?v={_ASSET_V}",
+    use_container_width=True,
+)
+
 NEXT_IMMERSIVE = f"{NEXT_BASE}/immersive/逍遙遊/"
 MODE_LINKS = [
     ("純文字", "text"),
@@ -48,38 +92,6 @@ MODE_LINKS = [
     ("繪本", "pict"),
     ("播客", "podcast"),
 ]
-
-st.subheader("下載完整書 PDF／Word")
-st.caption(
-    "Streamlit 版不含檔案下載。請開啟 Next 網站下載頁（本機需 `npm run dev`，或用 GitHub Pages）。"
-)
-dl1, dl2 = st.columns(2)
-with dl1:
-    st.link_button(
-        "本機：下載印刷版",
-        f"{NEXT_BASE}/download/",
-        use_container_width=True,
-        type="primary",
-    )
-with dl2:
-    st.link_button(
-        "線上：GitHub Pages",
-        f"{PAGES_BASE}/download/",
-        use_container_width=True,
-    )
-st.markdown(
-    f"[直接 PDF（線上）]({PDF_URL}) · "
-    f"[PDF 中文檔名]({PDF_ALIAS_URL}) · "
-    f"[直接 Word（線上）]({DOCX_URL}) · "
-    f"[Word 中文檔名]({DOCX_ALIAS_URL}) · "
-    f"[封面展開（上機）]({WRAP_PDF_URL}) · "
-    f"[封面展開中文檔名]({WRAP_ALIAS_URL}) · "
-    f"[封面單頁]({COVER_PDF_URL}) · "
-    f"[封底]({BACK_PDF_URL}) · "
-    f"[書脊]({SPINE_PDF_URL}) · "
-    f"[作者折頁]({FLAP_PDF_URL}) · "
-    f"[書脊 Word]({SPINE_DOCX_URL})"
-)
 
 st.subheader("山上讀書（僅限 Next 網站）")
 st.warning(
