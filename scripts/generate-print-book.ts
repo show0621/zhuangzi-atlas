@@ -35,6 +35,10 @@ import {
   ensurePrintSerifFontCopied,
   printSerifFontFaceCss,
 } from "../src/lib/printFont";
+import {
+  ensurePrintMonoFontCopied,
+  printMonoFontFaceCss,
+} from "../src/lib/printMonoFont";
 
 const OUT_DIR = path.join(process.cwd(), "dist", "ebook");
 const PUBLIC_DIR = path.join(process.cwd(), "public", "downloads");
@@ -393,11 +397,20 @@ function mdToHtml(md: string): string {
     return `\n%%RAWBLOCK${i}%%\n`;
   });
 
-  // Protect fenced code blocks
+  // Protect fenced code blocks (text diagrams vs mermaid vs generic code)
   const fences: string[] = [];
-  src = src.replace(/```[\w]*\r?\n([\s\S]*?)```/g, (_m, code: string) => {
+  src = src.replace(/```(\w*)\r?\n([\s\S]*?)```/g, (_m, lang: string, code: string) => {
     const i = fences.length;
-    fences.push(`<pre class="code"><code>${escapeHtml(code.replace(/\n$/, ""))}</code></pre>`);
+    const trimmed = code.replace(/\n$/, "");
+    if (lang === "mermaid") {
+      fences.push(`<div class="mermaid">${escapeHtml(trimmed)}</div>`);
+    } else if (lang === "text") {
+      fences.push(
+        `<pre class="code code-diagram"><code>${escapeHtml(trimmed)}</code></pre>`,
+      );
+    } else {
+      fences.push(`<pre class="code"><code>${escapeHtml(trimmed)}</code></pre>`);
+    }
     return `\n%%FENCE${i}%%\n`;
   });
 
@@ -665,6 +678,8 @@ function buildPrintHtml(bodyHtml: string): string {
   <style>
     /* 嵌入繁中 Noto Serif TC：全形標點置中（台／港慣用），避免落到日文偏下或西文基線 */
     ${printSerifFontFaceCss(PRINT_SERIF_FONT_REL)}
+    /* 心智圖 ASCII：等寬繁中，框線字元才能對齊 */
+    ${printMonoFontFaceCss()}
     :root {
       --ink: #1a1a1a;
       --muted: #555;
@@ -822,6 +837,29 @@ function buildPrintHtml(bodyHtml: string): string {
       page-break-inside: avoid;
     }
     pre.code code { background: none; padding: 0; }
+    pre.code-diagram,
+    pre.code-diagram code {
+      font-family: "Noto Sans Mono CJK TC", ui-monospace, "Noto Sans Mono CJK SC",
+        Consolas, "Courier New", monospace;
+      font-size: 0.78rem;
+      line-height: 1.55;
+      white-space: pre;
+      letter-spacing: 0;
+      font-variant-east-asian: full-width;
+      tab-size: 2;
+    }
+    .mermaid {
+      margin: 0.85em 0 1.15em;
+      padding: 0.5em 0;
+      text-align: center;
+      break-inside: avoid;
+      page-break-inside: avoid;
+      overflow-x: auto;
+    }
+    .mermaid svg {
+      max-width: 100%;
+      height: auto;
+    }
     .pagebreak {
       display: block;
       height: 0;
@@ -1239,7 +1277,10 @@ function buildPrintHtml(bodyHtml: string): string {
         break-after: auto;
         page-break-after: auto;
       }
-      blockquote, pre.code, li, table.md-table { break-inside: avoid; page-break-inside: avoid; }
+      blockquote, pre.code, pre.code-diagram, .mermaid, li, table.md-table {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
       #後記 ~ blockquote {
         break-inside: auto !important;
         page-break-inside: auto !important;
@@ -1266,6 +1307,16 @@ function buildPrintHtml(bodyHtml: string): string {
   <article class="sheet">
 ${bodyHtml}
   </article>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "neutral",
+      securityLevel: "loose",
+      fontFamily: "Noto Serif TC, serif",
+      flowchart: { useMaxWidth: true, htmlLabels: true, curve: "basis" },
+    });
+  </script>
 </body>
 </html>
 `;
@@ -1342,6 +1393,7 @@ function main() {
   fs.mkdirSync(PUBLIC_DIR, { recursive: true });
   ensureCoverAsset();
   ensurePrintSerifFontCopied([OUT_DIR, PUBLIC_DIR]);
+  ensurePrintMonoFontCopied([OUT_DIR, PUBLIC_DIR]);
 
   const { md, chapterCount, missing } = buildPrintMarkdown();
   const mdPath = path.join(OUT_DIR, MD_NAME);

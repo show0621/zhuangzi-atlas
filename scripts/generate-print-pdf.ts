@@ -202,6 +202,21 @@ async function tryPuppeteer(htmlPath: string): Promise<string | null> {
           ),
         );
       });
+
+      // 等待 Mermaid 心智圖轉為 SVG（無 mermaid 區塊時立即通過）
+      await page
+        .waitForFunction(
+          () => {
+            const nodes = document.querySelectorAll(".mermaid");
+            if (nodes.length === 0) return true;
+            return Array.from(nodes).every((n) => n.querySelector("svg"));
+          },
+          { timeout: 120_000 },
+        )
+        .catch(() => {
+          console.warn("Mermaid 渲染逾時，部分心智圖可能仍為原始文字。");
+        });
+
       await new Promise((r) => setTimeout(r, 800));
 
       // 移除書脊殘頁；為目錄目標插入可抽取標記
