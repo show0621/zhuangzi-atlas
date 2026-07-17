@@ -20,23 +20,31 @@ const WORD_PRIMARY = {
   alias: "莊子全解-印刷版.docx",
 } as const;
 
+const COVER_WRAP = {
+  name: "zhuangzi-atlas-cover-wrap.pdf",
+  label: "封面展開 PDF（上機用）",
+  desc: "菊16開 1:1：後勒口＋封底＋書脊＋封面＋前勒口（含 3mm 出血）。241頁／80g米色輕質估書脊 18mm。列印請選實際大小。",
+  alias: "莊子全解-封面展開.pdf",
+} as const;
+
 const BINDING_PARTS = [
+  COVER_WRAP,
   {
     name: "zhuangzi-atlas-cover.pdf",
-    label: "封面 PDF",
-    desc: "極簡封面單頁（與全書封面一致）。",
+    label: "封面 PDF（單頁示意）",
+    desc: "與全書封面一致的單頁示意（非展開稿）。上機請用「封面展開 PDF」。",
     alias: "莊子全解-封面.pdf",
   },
   {
     name: "zhuangzi-atlas-back.pdf",
-    label: "封底 PDF",
-    desc: "封底單頁（簡介、編集、網站；ISBN 欄位留白待出版填寫）。",
+    label: "封底 PDF（單頁示意）",
+    desc: "封底單頁示意；上機請用「封面展開 PDF」。",
     alias: "莊子全解-封底.pdf",
   },
   {
     name: "zhuangzi-atlas-spine.pdf",
     label: "書脊 PDF",
-    desc: "菊16開 1:1 書脊條（預設約 18×210 mm，241頁／80g米色輕質估）＋規格說明頁。列印請選實際大小。",
+    desc: "菊16開 1:1 書脊條（預設約 18×210 mm）＋規格說明頁。",
     alias: "莊子全解-書脊.pdf",
   },
   {
@@ -165,7 +173,7 @@ export default function DownloadPage() {
         <p className="text-xs tracking-[0.18em] text-muted font-medium">BINDING</p>
         <h2 className="font-serif text-2xl text-ink">裝幀單頁單獨下載</h2>
         <p className="text-sm text-muted leading-relaxed max-w-xl">
-          封面、封底、作者折頁為獨立 PDF；書脊為菊16開 1:1 實寸條（另附規格頁），方便分檔交給影印店或設計師。
+          上機請下載「封面展開 PDF」（勒口＋封底＋書脊＋封面＋勒口，菊16開 1:1）。其餘為單頁示意／書脊條，方便分檔校對。
         </p>
         <ul className="grid gap-3 sm:grid-cols-2">
           {BINDING_PARTS.map((p) => {
@@ -194,7 +202,7 @@ export default function DownloadPage() {
           >
             另：書脊 Word
           </a>
-          <p className="text-xs text-muted">本機重產：<code className="font-mono">npm run ebook:binding</code></p>
+          <p className="text-xs text-muted">本機重產：<code className="font-mono">npm run ebook:wrap</code>（展開）／<code className="font-mono">npm run ebook:binding</code></p>
         </div>
       </section>
 
