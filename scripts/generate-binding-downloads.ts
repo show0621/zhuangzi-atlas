@@ -4,7 +4,7 @@
  *
  * 用法：npm run ebook:binding
  *
- * 封面優先從全本 PDF 第 1 頁抽出，確保與印刷成冊封面完全一致。
+ * 封面與展開稿共用 markup／燙金素材（不透明 JPEG，避免 PDF soft-mask 閃沒）。
  *
  * 輸出（各含英文檔名＋中文別名）：
  *   - zhuangzi-atlas-cover.pdf / 莊子全解-封面.pdf
@@ -14,7 +14,6 @@
  */
 import fs from "fs";
 import path from "path";
-import { PDFDocument } from "pdf-lib";
 import { SITE } from "../src/lib/catalog";
 import {
   COVER_AUTHOR_IMAGE,
@@ -39,7 +38,6 @@ const PUBLIC_DIR = path.join(process.cwd(), "public", "downloads");
 const OUT_DIR = path.join(process.cwd(), "dist", "ebook");
 const TRIM_W = BOOK_TRIM_MM.width;
 const TRIM_H = BOOK_TRIM_MM.height;
-const PRINT_PDF = path.join(PUBLIC_DIR, "zhuangzi-atlas-print.pdf");
 const SPINE_IMAGE = "assets/spine-calligraphy.png";
 const BOOK_SPINE = `${SITE.title}．人生玩家`;
 const SITE_URL = "https://show0621.github.io/zhuangzi-atlas/";
@@ -138,28 +136,6 @@ function coverHtmlFallback(): string {
     ${printCoverCssFromTheme()}
   `;
   return shellHtml(`${SITE.title} — 封面`, body, css);
-}
-
-/** 從全本 PDF 抽出第 1 頁＝獨立封面（像素級一致） */
-async function writeCoverFromPrintPdf(enBase: string, zhAlias: string): Promise<boolean> {
-  if (!fs.existsSync(PRINT_PDF)) return false;
-  const srcBytes = fs.readFileSync(PRINT_PDF);
-  const src = await PDFDocument.load(srcBytes, { updateMetadata: false });
-  if (src.getPageCount() < 1) return false;
-  const out = await PDFDocument.create();
-  const [page] = await out.copyPages(src, [0]);
-  out.addPage(page);
-  const bytes = await out.save();
-  const distPdf = path.join(OUT_DIR, `${enBase}.pdf`);
-  const publicPdf = path.join(PUBLIC_DIR, `${enBase}.pdf`);
-  const publicAlias = path.join(PUBLIC_DIR, zhAlias);
-  fs.mkdirSync(OUT_DIR, { recursive: true });
-  fs.writeFileSync(distPdf, bytes);
-  fs.copyFileSync(distPdf, publicPdf);
-  fs.copyFileSync(distPdf, publicAlias);
-  console.log("wrote", publicPdf, "(extracted from print PDF page 1)");
-  console.log("wrote", publicAlias);
-  return true;
 }
 
 function backCoverHtml(): string {
@@ -387,15 +363,8 @@ async function main() {
     throw new Error(`找不到書脊圖：${SPINE_IMAGE}`);
   }
 
-  // 封面：優先抽全本第 1 頁，否則用共用 markup 備援
-  const coverOk = await writeCoverFromPrintPdf(
-    "zhuangzi-atlas-cover",
-    "莊子全解-封面.pdf",
-  );
-  if (!coverOk) {
-    console.warn("找不到全本 PDF，改以共用封面 HTML 產生獨立封面。");
-    await htmlToPdf(coverHtmlFallback(), "zhuangzi-atlas-cover", "莊子全解-封面.pdf");
-  }
+  // 封面：與展開稿同一套 markup／燙金素材（不抽全本第 1 頁，避免舊 soft-mask 圖殘留）
+  await htmlToPdf(coverHtmlFallback(), "zhuangzi-atlas-cover", "莊子全解-封面.pdf");
 
   const parts: Part[] = [
     {
