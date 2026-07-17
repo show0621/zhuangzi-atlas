@@ -1058,7 +1058,11 @@ function buildPrintHtml(bodyHtml: string): string {
       height: auto;
       margin: 0 auto;
     }
-    .epigraph-img { max-width: 175mm; }
+    .epigraph-img {
+      max-width: 160mm;
+      background: transparent;
+      mix-blend-mode: multiply;
+    }
     /* 後記書法：去底色＋緊裁後可維持較大字面；multiply 消殘白 */
     .afterword-img {
       max-width: 132mm;
