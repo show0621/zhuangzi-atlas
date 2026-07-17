@@ -121,7 +121,8 @@ async function extractTocPagesFromPdf(
     const re = /§§toc:([^§]+)§§/g;
     let m: RegExpExecArray | null;
     while ((m = re.exec(text)) !== null) {
-      const id = m[1];
+      // Noto CJK 抽出時偶發康熙部首碼位（⼦／⾃）；NFKC 正規化回統一漢字
+      const id = m[1].normalize("NFKC");
       if (idToPage[id] == null) idToPage[id] = i;
     }
   }
