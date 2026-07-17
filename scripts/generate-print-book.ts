@@ -867,6 +867,8 @@ function buildPrintHtml(bodyHtml: string): string {
       margin: 1.45em 0 0.55em;
       break-after: avoid;
       page-break-after: avoid;
+      break-inside: avoid;
+      page-break-inside: avoid;
     }
     h1 { font-size: 1.55rem; margin-top: 0; }
     h2 { font-size: 1.2rem; border-bottom: 1px solid var(--rule); padding-bottom: 0.25em; }
@@ -1376,6 +1378,18 @@ function buildPrintHtml(bodyHtml: string): string {
         page-break-before: avoid !important;
       }
       a { color: inherit; text-decoration: none; }
+      /* 書籍節次：篇章 h1 新頁起；§17 延伸閱讀為收尾區，必須新頁（不緊接心智圖） */
+      h2[id^="17-"] {
+        break-before: page !important;
+        page-break-before: always !important;
+        margin-top: 0;
+      }
+      /* 篇名後首節仍與篇名同頁（閱讀提示 blockquote 可夾在中間） */
+      h1 + h2[id^="01-"],
+      h1 + blockquote + h2[id^="01-"] {
+        break-before: avoid !important;
+        page-break-before: avoid !important;
+      }
       /* 正文 h1 換頁；封面／折頁／目錄內標題除外 */
       h1 {
         break-before: page;

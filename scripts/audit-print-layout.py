@@ -75,6 +75,16 @@ def main() -> int:
         if last and re.search(r"結構圖$", last):
             issues.append((pnum, "orphan-structure-heading", "頁末僅見「結構圖」，圖表可能在下一頁"))
 
+        # 心智圖與 §17 延伸閱讀不應同頁（不同性質的收尾區）
+        if re.search(r"16\.?心智圖", n) and re.search(r"17\.?延伸閱讀", n):
+            issues.append(
+                (pnum, "mindmap-bibliography-same-page", "心智圖與§17延伸閱讀同頁，應分頁"),
+            )
+
+        # §17 標題應在頁首區（非頁末孤兒）
+        if re.search(r"17\.?延伸閱讀", n) and last and re.search(r"17\.?延伸閱讀", last):
+            issues.append((pnum, "bibliography-heading-at-page-end", "§17延伸閱讀標題在頁末"))
+
     if not issues:
         print(f"OK — {len(reader.pages)} 頁；未偵測到空白頁或常見跨頁斷裂。")
         return 0
