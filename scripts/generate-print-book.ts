@@ -170,7 +170,7 @@ function publicationInfoMarkdown(): string {
 function prefaceMarkdown(): string {
   return `# 《莊子全解》自序
 
-台灣人的平均壽命約為八十歲，這意味著四十歲的我，已經站在了人生折返點。
+台灣人的平均壽命約為80歲，這意味著40歲的我，已經站在了人生折返點。
 
 回首這幾年，迎接女兒的新生，目睹父母的逐漸老化，經歷了自己的一場大病，再到送走阿公——生、老、病、死，彷彿在短時間內將人生「全餐」吃了一遍。記得那年躺在病床上，我曾發誓絕不再為了工作透支生命，可康復後，卻又下意識地加班到深夜才離去。也記得大伯與阿公臨終時，那瘦骨嶙峋、與往昔判若兩人的模樣，那種視覺上的衝擊，曾讓我陷入巨大的虛無：我們窮盡一生，到底在追求什麼？
 
@@ -641,6 +641,15 @@ function inlineFormat(text: string): string {
   s = s.replace(/(^|[^*])\*([^*]+)\*(?!\*)/g, "$1<em>$2</em>");
   // inline code
   s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
+  // 漢字旁的半形數字：包一層以便 CSS 拉近字距（約為80歲）
+  s = s.replace(
+    /([\u3400-\u9fff\uf900-\ufaff])(\d+)/g,
+    '$1<span class="u-num">$2</span>',
+  );
+  s = s.replace(
+    /(\d+)([\u3400-\u9fff\uf900-\ufaff])/g,
+    '<span class="u-num">$1</span>$2',
+  );
   // soft line breaks inside paragraph: keep as space / <br> for single newlines already joined
   s = s.replace(/\n/g, "<br />\n");
   return s;
@@ -675,7 +684,7 @@ function buildPrintHtml(bodyHtml: string): string {
       --trim-w: ${BOOK_TRIM_MM.width}mm;
       --trim-h: ${BOOK_TRIM_MM.height}mm;
     }
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; text-autospace: no-autospace; }
     html { font-size: 10pt; }
     body {
       margin: 0;
@@ -684,6 +693,7 @@ function buildPrintHtml(bodyHtml: string): string {
       font-family: var(--font-serif);
       line-height: 1.75;
       text-autospace: no-autospace;
+      text-spacing: none;
     }
     .toolbar {
       position: sticky;
@@ -740,6 +750,14 @@ function buildPrintHtml(bodyHtml: string): string {
       line-break: strict;
       word-break: normal;
       overflow-wrap: break-word;
+    }
+    /* 半形數字：關自動間距＋略收左右，避免「約為 80」「意味著 40」像多空白 */
+    .u-num {
+      text-autospace: no-autospace;
+      text-spacing: none;
+      font-variant-east-asian: full-width;
+      letter-spacing: 0;
+      margin: 0 -0.12em;
     }
     /* 引文左齊：避免短句雙齊把字距拉成「疏網」 */
     blockquote {
