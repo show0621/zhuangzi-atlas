@@ -102,14 +102,19 @@ ${body}
 }
 
 function coverHtml(): string {
+  const titlePath = path.join(PUBLIC_DIR, "assets/print-cover-title-cursive.png");
+  if (!fs.existsSync(titlePath)) {
+    throw new Error("找不到封面書名圖：assets/print-cover-title-cursive.png");
+  }
+  const titleSrc = assetDataUri(titlePath);
   const css = `
     .page { position: relative; width: 210mm; height: 297mm; overflow: hidden; background: #${C.coverPaper}; }
     .geo-panel { position: absolute; top: 12%; right: 0; width: 34%; height: 62%; background: #${C.coverSage}; opacity: 0.88; }
     .geo-bar { position: absolute; left: 0; bottom: 18%; width: 58%; height: 7mm; background: #${C.coverStone}; }
     .geo-gold { position: absolute; top: 8%; right: 8%; width: 14mm; height: 14mm; background: #${C.coverGold}; }
-    .geo-rule { position: absolute; top: 42%; left: 8%; width: 28mm; height: 1px; background: #${C.coverGoldSoft}; }
-    .titles { position: relative; z-index: 2; max-width: 58%; padding: 28mm 14mm 24mm 18mm; text-align: left; }
-    .title { margin: 0; font-family: "Kaiti TC", "STKaiti", "KaiTi", serif; font-size: 42pt; letter-spacing: 0.32em; font-weight: 500; color: #${C.coverGold}; line-height: 1.25; }
+    .titles { position: relative; z-index: 2; max-width: 62%; padding: 24mm 12mm 24mm 16mm; text-align: left; }
+    .title { margin: 0; line-height: 1; }
+    .title-img { display: block; width: 108%; max-width: 118mm; height: auto; margin: 0 0 0 -2mm; }
     .subtitle { margin: 1.1rem 0 0; font-size: 12pt; letter-spacing: 0.14em; color: #${C.coverMuted}; }
     .english { margin: 0.85rem 0 0; font-family: Georgia, serif; letter-spacing: 0.2em; text-transform: uppercase; font-size: 9pt; color: #${C.coverEnglish}; }
     .tagline { margin: 1.35rem 0 0; font-family: "Kaiti TC", "KaiTi", serif; font-size: 18pt; letter-spacing: 0.42em; color: #${C.coverStone}; }
@@ -122,9 +127,8 @@ function coverHtml(): string {
     <div class="geo-panel"></div>
     <div class="geo-bar"></div>
     <div class="geo-gold"></div>
-    <div class="geo-rule"></div>
     <div class="titles">
-      <p class="title">${escapeHtml(SITE.title)}</p>
+      <p class="title"><img class="title-img" src="${titleSrc}" alt="${escapeHtml(SITE.title)}" /></p>
       <p class="subtitle">${escapeHtml(SITE.subtitle)}</p>
       <p class="english">${escapeHtml(SITE.englishTitle)}</p>
       <p class="tagline">人生玩家</p>

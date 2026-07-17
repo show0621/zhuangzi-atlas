@@ -272,6 +272,28 @@ function imageParagraph(filePath: string, widthPx: number, heightPx: number): Pa
 }
 
 function coverTextParagraphs(): Paragraph[] {
+  const out: Paragraph[] = [];
+  const titlePath = resolveAsset("assets/print-cover-title-cursive.png");
+  if (titlePath) {
+    out.push(imageParagraph(titlePath, 420, 168));
+  } else {
+    out.push(
+      new Paragraph({
+        alignment: AlignmentType.LEFT,
+        spacing: { before: 200, after: 60 },
+        children: [
+          new TextRun({
+            text: SITE.title,
+            bold: true,
+            size: 56,
+            color: PRINT_COLORS.coverGold,
+            font: "KaiTi",
+          }),
+        ],
+      }),
+    );
+  }
+
   const lines: Array<{
     text: string;
     size: number;
@@ -280,14 +302,6 @@ function coverTextParagraphs(): Paragraph[] {
     before?: number;
     font?: string;
   }> = [
-    {
-      text: SITE.title,
-      size: 56,
-      bold: true,
-      color: PRINT_COLORS.coverGold,
-      before: 200,
-      font: "KaiTi",
-    },
     { text: SITE.subtitle, size: 20, color: PRINT_COLORS.coverMuted, before: 160 },
     {
       text: SITE.englishTitle,
@@ -318,8 +332,8 @@ function coverTextParagraphs(): Paragraph[] {
       before: 80,
     },
   ];
-  return lines.map(
-    (L) =>
+  for (const L of lines) {
+    out.push(
       new Paragraph({
         alignment: AlignmentType.LEFT,
         spacing: { before: L.before ?? 80, after: 60 },
@@ -333,7 +347,9 @@ function coverTextParagraphs(): Paragraph[] {
           }),
         ],
       }),
-  );
+    );
+  }
+  return out;
 }
 
 /** 極簡封面：左上文字＋右側鼠尾草綠／金方塊＋底部墨色橫條（對齊 PDF） */

@@ -31,6 +31,7 @@ const PDF_NAME = "zhuangzi-atlas-print.pdf";
 const README_NAME = "README-列印說明.md";
 const COVER_IMAGE = "assets/print-cover-minimal.png";
 const COVER_IMAGE_FALLBACK = "assets/print-cover-minecraft.png";
+const COVER_TITLE_IMAGE = "assets/print-cover-title-cursive.png";
 const EPIGRAPH_IMAGE = "assets/epigraph-calligraphy.png";
 const AFTERWORD_IMAGE = "assets/afterword-calligraphy.png";
 const SPINE_IMAGE = "assets/spine-calligraphy.png";
@@ -590,15 +591,17 @@ function mdToHtml(md: string): string {
 }
 
 function illustratedCoverHtml(): string {
+  const titleImg = resolvePublicAsset(COVER_TITLE_IMAGE);
   return `<section class="cover-page" id="cover">
   <div class="cover-geo" aria-hidden="true">
     <span class="cover-geo-panel"></span>
     <span class="cover-geo-bar"></span>
     <span class="cover-geo-gold"></span>
-    <span class="cover-geo-rule"></span>
   </div>
   <div class="cover-titles">
-    <p class="cover-title">${escapeHtml(SITE.title)}</p>
+    <p class="cover-title">
+      <img class="cover-title-img" src="${titleImg}" alt="${escapeHtml(SITE.title)}" />
+    </p>
     <p class="cover-subtitle">${escapeHtml(SITE.subtitle)}</p>
     <p class="cover-english">${escapeHtml(SITE.englishTitle)}</p>
     <p class="cover-tagline">人生玩家</p>
@@ -889,33 +892,27 @@ function buildPrintHtml(bodyHtml: string): string {
       height: 14mm;
       background: var(--cover-gold);
     }
-    .cover-geo-rule {
-      position: absolute;
-      top: 42%;
-      left: 8%;
-      width: 28mm;
-      height: 1px;
-      background: var(--cover-gold-soft);
-    }
     .cover-titles {
       position: relative;
       z-index: 2;
-      max-width: 58%;
-      padding: 22mm 12mm 24mm 14mm;
+      max-width: 62%;
+      padding: 18mm 10mm 24mm 12mm;
       text-align: left;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
     .cover-title {
       margin: 0;
-      font-family: "Kaiti TC", "STKaiti", "KaiTi", "DFKai-SB", "Noto Serif TC", serif;
-      font-size: 2.85rem;
-      letter-spacing: 0.32em;
-      font-weight: 500;
-      color: var(--cover-gold);
-      line-height: 1.25;
+      line-height: 1;
       break-before: avoid !important;
       page-break-before: avoid !important;
+    }
+    .cover-title-img {
+      display: block;
+      width: 108%;
+      max-width: 118mm;
+      height: auto;
+      margin: 0 0 0 -2mm;
     }
     .cover-subtitle {
       margin: 1.1rem 0 0;
@@ -1220,6 +1217,7 @@ function ensureCoverAsset() {
   const assets = [
     COVER_IMAGE,
     COVER_IMAGE_FALLBACK,
+    COVER_TITLE_IMAGE,
     EPIGRAPH_IMAGE,
     AFTERWORD_IMAGE,
     SPINE_IMAGE,
