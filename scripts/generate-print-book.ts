@@ -299,7 +299,7 @@ function copyrightMarkdown(): string {
 ${SITE.subtitle}
 
 編著：${SITE.author}  
-版本：${SITE.version}（draft）  
+版本：${SITE.version}  
 年份：${YEAR}
 
 原典引文依據通行本系統（郭慶藩《莊子集釋》為主）。  
