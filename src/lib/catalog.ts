@@ -51,7 +51,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "齊物論",
     part: "內篇",
     order: 2,
-    status: "review",
+    status: "published",
     summary: "由天籟、成心、是非之辯至莊周夢蝶，考察如何鬆開自以為是的尺度。",
   },
   {
@@ -60,7 +60,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "養生主",
     part: "內篇",
     order: 3,
-    status: "review",
+    status: "published",
     summary: "以緣督、庖丁解牛與秦失弔老聃，討論保全生命、順其自然與死生之變。",
   },
   {
@@ -69,7 +69,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "人間世",
     part: "內篇",
     order: 4,
-    status: "review",
+    status: "published",
     summary: "由顏回使衛、心齋與支離疏諸寓言，討論亂世中不以正直自傷的處世工夫。",
   },
   {
@@ -78,7 +78,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "德充符",
     part: "內篇",
     order: 5,
-    status: "review",
+    status: "published",
     summary: "以王駘、申徒嘉與哀駘它等形殘者，反省以形貌、才能與名位衡量人的偏見。",
   },
   {
@@ -87,7 +87,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "大宗師",
     part: "內篇",
     order: 6,
-    status: "review",
+    status: "published",
     summary: "由真人、相忘於江湖與子桑戶之死，探問以道為宗師的死生工夫。",
   },
   {
@@ -96,7 +96,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "應帝王",
     part: "內篇",
     order: 7,
-    status: "review",
+    status: "published",
     summary: "以巫咸、神巫、蒲衣子與渾沌之死，探問不以控制傷害萬物的政治。",
   },
   // 外篇
@@ -251,7 +251,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "徐無鬼",
     part: "雜篇",
     order: 24,
-    status: "review",
+    status: "published",
     summary: "徐無鬼見魏武侯，以相狗相馬諷用人；匠石運斤見「質」之可貴；並以真人之過反省政治與真賞。",
   },
   {
@@ -260,7 +260,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "則陽",
     part: "雜篇",
     order: 25,
-    status: "review",
+    status: "published",
     summary: "則陽遊楚、少知問太公調；戴晉人以蝸角蠻觸之爭，逼問名實與政治尺度。",
   },
   {
