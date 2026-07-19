@@ -720,17 +720,95 @@ function wrapPrintKeepBlocks(html: string): string {
     '<div class="print-keep print-h3-block">$1\n$2</div>',
   );
 
-  // §04 標題 + 版本說明與首段原典同頁
+  // §02–§15：節標題與開頭內容綁定；頁末放不下時整組移到下一頁
+  // （避免「09. 哲學分析」只剩標題＋一句「以下為本書現代詮釋」）
+  // Pass A：h2 + blockquote + 首段 p（§09／§13 常見）
   out = out.replace(
-    /(<h2 id="04-[^"]*">[\s\S]*?<\/h2>\s*<blockquote>(?:(?!<\/blockquote>)[\s\S])*<\/blockquote>)(?=\s*<div class="print-keep print-h3-block">)/g,
-    '<div class="print-keep print-section-head">$1</div>',
+    /(?<!<div class="print-keep print-section-head">)(<h2 id="(?:0[2-9]|1[0-5])-[^"]*">[\s\S]*?<\/h2>)\s*(<blockquote>(?:(?!<\/blockquote>)[\s\S])*<\/blockquote>)\s*(<p>(?:(?!<\/p>)[\s\S])*<\/p>)/g,
+    '<div class="print-keep print-section-head">$1\n$2\n$3</div>',
   );
-
-  // §07：標題 + 走讀路線句與首個子節同頁（避免頁上只剩兩行）
+  // Pass B：其餘尚未包裝的 h2 + 緊接首塊（p／list／table／已包 h3-block）
   out = out.replace(
-    /(<h2 id="07-[^"]*">[\s\S]*?<\/h2>\s*<p>(?:(?!<\/p>)[\s\S])*<\/p>)(?=\s*<div class="print-keep print-h3-block">)/g,
-    '<div class="print-keep print-section-head">$1</div>',
+    /(?<!<div class="print-keep print-section-head">)(<h2 id="(?:0[2-9]|1[0-5])-[^"]*">[\s\S]*?<\/h2>)\s*(<div class="print-keep print-h3-block">[\s\S]*?<\/div>|<p>(?:(?!<\/p>)[\s\S])*<\/p>|<ul>(?:(?!<\/ul>)[\s\S])*<\/ul>|<ol>(?:(?!<\/ol>)[\s\S])*<\/ol>|<table[\s\S]*?<\/table>)/g,
+    '<div class="print-keep print-section-head">$1\n$2</div>',
   );
+  // Pass C：§07 走讀路線過短時，連首個子節一併帶走
+  out = out.replace(
+    /(<div class="print-keep print-section-head">)(<h2 id="07-[^"]*">[\s\S]*?<\/h2>\s*<p>(?:(?!<\/p>)[\s\S])*<\/p>)<\/div>\s*(<div class="print-keep print-h3-block">[\s\S]*?<\/div>)/g,
+    "$1$2\n$3</div>",
+  );
+  // Pass D：§08 h3 注家型 — 標題 + 前三位（郭象／成玄英／林希逸）
+  out = out.replace(
+    /(<div class="print-keep print-section-head">)(<h2 id="08-[^"]*">[\s\S]*?<\/h2>\s*<div class="print-keep print-h3-block">[\s\S]*?<\/div>)<\/div>\s*(<div class="print-keep print-h3-block">[\s\S]*?<\/div>)(?:\s*(<div class="print-keep print-h3-block">[\s\S]*?<\/div>))?/g,
+    (_m, open: string, head: string, n2: string, n3?: string) =>
+      `${open}${head}\n${n2}${n3 ? `\n${n3}` : ""}</div>`,
+  );
+  // Pass D2：§08 段落注家型（<p><strong>郭象</strong>…）— 連帶後兩段
+  out = out.replace(
+    /(<div class="print-keep print-section-head">)(<h2 id="08-[^"]*">[\s\S]*?<\/h2>\s*<p>(?:(?!<\/p>)[\s\S])*<\/p>)<\/div>\s*(<p>(?:(?!<\/p>)[\s\S])*<\/p>)(?:\s*(<p>(?:(?!<\/p>)[\s\S])*<\/p>))?/g,
+    (_m, open: string, head: string, p2: string, p3?: string) =>
+      `${open}${head}\n${p2}${p3 ? `\n${p3}` : ""}</div>`,
+  );
+  // Pass E：§05 白話 — 再併一段，避免頁末只開譯文開頭
+  out = out.replace(
+    /(<div class="print-keep print-section-head">)(<h2 id="05-[^"]*">[\s\S]*?<\/h2>\s*<p>(?:(?!<\/p>)[\s\S])*<\/p>)<\/div>\s*(<p>(?:(?!<\/p>)[\s\S])*<\/p>)/g,
+    "$1$2\n$3</div>",
+  );
+  // Pass F：§09／§13 — 詮釋正文常在 blockquote 後第二段才展開
+  out = out.replace(
+    /(<div class="print-keep print-section-head">)(<h2 id="(?:09|13)-[^"]*">[\s\S]*?<\/h2>[\s\S]*?<p>(?:(?!<\/p>)[\s\S])*<\/p>)<\/div>\s*(<p>(?:(?!<\/p>)[\s\S])*<\/p>)/g,
+    "$1$2\n$3</div>",
+  );
+  // Pass G：§02／§10–§12／§14 — 若後接續段（非新節），併入避免標題懸頁末
+  out = out.replace(
+    /(<div class="print-keep print-section-head">)(<h2 id="(?:02|10|11|12|14)-[^"]*">[\s\S]*?<\/h2>\s*(?:<p>(?:(?!<\/p>)[\s\S])*<\/p>|<ol>(?:(?!<\/ol>)[\s\S])*<\/ol>|<ul>(?:(?!<\/ul>)[\s\S])*<\/ul>))<\/div>\s*(<p>(?:(?!<\/p>)[\s\S])*<\/p>)/g,
+    "$1$2\n$3</div>",
+  );
+  // 去掉 section-head 內巢狀 h3-block keep（Chrome 巢狀 avoid 常仍拆開）
+  {
+    const parts: string[] = [];
+    const openTag = '<div class="print-keep print-section-head">';
+    let searchFrom = 0;
+    let last = 0;
+    while (true) {
+      const start = out.indexOf(openTag, searchFrom);
+      if (start < 0) break;
+      parts.push(out.slice(last, start));
+      let depth = 0;
+      let i = start;
+      while (i < out.length) {
+        if (out.startsWith("<div", i)) {
+          depth += 1;
+          i = out.indexOf(">", i) + 1;
+          continue;
+        }
+        if (out.startsWith("</div>", i)) {
+          depth -= 1;
+          i += "</div>".length;
+          if (depth === 0) {
+            let block = out.slice(start, i);
+            block = block.replace(
+              /<div class="print-keep print-h3-block">([\s\S]*?)<\/div>/g,
+              "$1",
+            );
+            parts.push(block);
+            last = i;
+            searchFrom = i;
+            break;
+          }
+          continue;
+        }
+        i += 1;
+      }
+      if (depth !== 0) {
+        parts.push(out.slice(start));
+        last = out.length;
+        break;
+      }
+    }
+    parts.push(out.slice(last));
+    out = parts.join("");
+  }
 
   // 修復：結構圖誤包 h3-block
   out = out.replace(
@@ -1496,9 +1574,14 @@ function buildPrintHtml(bodyHtml: string): string {
         break-after: auto;
         page-break-after: auto;
       }
-      blockquote, pre.code, pre.code-diagram, .mermaid, li, table.md-table {
+      blockquote, pre.code, pre.code-diagram, .mermaid, table.md-table {
         break-inside: avoid;
         page-break-inside: avoid;
+      }
+      /* li 勿 avoid：巢狀於 section-head 時 Chrome 反易在清單中間拆頁 */
+      li {
+        break-inside: auto;
+        page-break-inside: auto;
       }
       /* 標題與緊接的下一區塊不分頁（未包在 print-keep 者） */
       h2 + p, h2 + blockquote, h2 + pre, h2 + div, h2 + ul, h2 + ol, h2 + table, h2 + h3,
@@ -1507,9 +1590,27 @@ function buildPrintHtml(bodyHtml: string): string {
         break-before: avoid;
         page-break-before: avoid;
       }
+      /* §02–§15：標題不與後文拆開（搭配 print-section-head） */
+      h2[id^="02-"], h2[id^="03-"], h2[id^="04-"], h2[id^="05-"],
+      h2[id^="06-"], h2[id^="07-"], h2[id^="08-"], h2[id^="09-"],
+      h2[id^="10-"], h2[id^="11-"], h2[id^="12-"], h2[id^="13-"],
+      h2[id^="14-"], h2[id^="15-"] {
+        break-after: avoid !important;
+        page-break-after: avoid !important;
+      }
       .print-keep {
         break-inside: avoid !important;
         page-break-inside: avoid !important;
+      }
+      /* 頁末剩餘不足時整組下移；產 PDF 時若仍懸空再以 .print-force-newpage 強制換頁 */
+      .print-section-head {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+        min-height: 40mm;
+      }
+      .print-force-newpage {
+        break-before: page !important;
+        page-break-before: always !important;
       }
       .print-mindmap > h2,
       .print-structure-diagram > h3,

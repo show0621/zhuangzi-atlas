@@ -61,6 +61,13 @@ def is_section_heading(line: str | None) -> bool:
     return bool(line and re.fullmatch(r"\d{1,2}\.[\u4e00-\u9fff]{2,12}", line))
 
 
+def spaced_section_heading(line: str) -> str | None:
+    """Match '0 9 .  哲  學  分  析' style PDF extraction."""
+    n = re.sub(r"\s+", "", line.replace("\u2060", ""))
+    m = re.fullmatch(r"(\d{1,2})\.([\u4e00-\u9fff]{2,12})", n)
+    return f"{m.group(1)}.{m.group(2)}" if m else None
+
+
 def page_label(pdf_page: int, book_page: int | None) -> str:
     if book_page is not None:
         return f"p.{pdf_page}（書頁 {book_page}）"
@@ -156,6 +163,54 @@ def main() -> int:
             issues.append(
                 (pnum, bp, "mindmap-bibliography-same-page", "心智圖與§17延伸閱讀同頁，應分頁"),
             )
+
+        # 頁末開新節、且下一頁仍接續同節（非新標題）：應整組移到下一頁
+        body_lines = [
+            l.strip()
+            for l in body_without_page_num(text).split("\n")
+            if l.strip()
+        ]
+        last_sec_idx = None
+        last_sec = None
+        for j, line in enumerate(body_lines):
+            sh = spaced_section_heading(line)
+            if sh:
+                num = int(sh.split(".", 1)[0])
+                if 8 <= num <= 15:
+                    last_sec_idx = j
+                    last_sec = sh
+        if last_sec_idx is not None and body_lines and i + 1 < len(reader.pages):
+            after = norm("".join(body_lines[last_sec_idx + 1 :]))
+            near_bottom = last_sec_idx >= max(0, len(body_lines) - 6)
+            if near_bottom and len(after) < 160:
+                next_text = reader.pages[i + 1].extract_text() or ""
+                next_lines = [
+                    l.strip()
+                    for l in body_without_page_num(next_text).split("\n")
+                    if l.strip()
+                ]
+                next_first = next_lines[0] if next_lines else ""
+                next_norm = re.sub(r"\s+", "", next_first.replace("\u2060", ""))
+                next_is_new_heading = bool(
+                    spaced_section_heading(next_first)
+                    or re.match(r"^\d{1,2}\.[\u4e00-\u9fff]", next_norm)
+                    or next_first.startswith("閱讀")
+                    or next_norm.startswith("註：")
+                )
+                # §15 收束後下頁 §16 心智圖屬刻意分頁，不算懸空
+                if last_sec and last_sec.startswith("15.") and re.match(
+                    r"^16\.?心智圖", next_norm
+                ):
+                    next_is_new_heading = True
+                if not next_is_new_heading:
+                    issues.append(
+                        (
+                            pnum,
+                            bp,
+                            "bottom-stranded-section",
+                            f"頁末開§{last_sec}（後接 {len(after)} 字）並跨到下頁，應整組移頁",
+                        ),
+                    )
 
     if not issues:
         print(f"OK — {len(reader.pages)} 頁；未偵測到空白頁、稀疏頁或常見跨頁斷裂。")
