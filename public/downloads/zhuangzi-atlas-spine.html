@@ -4,17 +4,18 @@
   <meta charset="utf-8" />
   <title>莊子全解 — 書脊規格</title>
   <style>
-    @page { size: A4; margin: 16mm; }
+    @page { size: A4; margin: 14mm; }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: "Noto Serif TC", "Source Han Serif TC", "Songti TC", serif;
       color: #1a1a1a;
-      font-size: 11pt;
-      line-height: 1.65;
+      font-size: 10.5pt;
+      line-height: 1.55;
     }
-    h1 { font-size: 16pt; margin: 0 0 0.6em; }
-    .row { display: flex; gap: 18mm; align-items: flex-start; }
+    h1 { font-size: 15pt; margin: 0 0 0.45em; }
+    h2 { font-size: 11pt; margin: 0.65em 0 0.3em; }
+    .row { display: flex; gap: 14mm; align-items: flex-start; }
     .preview-wrap {
       flex: 0 0 auto;
       display: flex;
@@ -22,7 +23,7 @@
       align-items: center;
       gap: 4mm;
     }
-    .preview-label { font-size: 9pt; color: #666; }
+    .preview-label { font-size: 9pt; color: #666; text-align: center; }
     .strip {
       width: 32mm;
       height: 210mm;
@@ -41,15 +42,16 @@
       object-fit: contain;
       object-position: center 12%;
     }
-    table { border-collapse: collapse; width: 100%; margin: 0.8em 0; font-size: 10.5pt; }
-    th, td { border: 1px solid #ccc; padding: 0.35em 0.55em; text-align: left; }
-    th { background: #f3f3f3; width: 38%; }
-    .note { margin-top: 1em; font-size: 9.5pt; color: #444; }
+    table { border-collapse: collapse; width: 100%; margin: 0.35em 0; font-size: 9.8pt; }
+    th, td { border: 1px solid #ccc; padding: 0.28em 0.5em; text-align: left; vertical-align: top; }
+    th { background: #f3f3f3; width: 34%; }
+    .note { margin-top: 0.7em; font-size: 9pt; color: #444; }
     code { font-family: ui-monospace, monospace; font-size: 0.95em; }
+    strong.warn { color: #6b3a0f; }
   </style>
 </head>
 <body>
-  <h1>書脊規格說明｜莊子全解</h1>
+  <h1>書脊規格說明｜莊子全解（單本數位）</h1>
   <div class="row">
     <div class="preview-wrap">
       <div class="strip">
@@ -60,18 +62,28 @@
     <div>
       <table>
         <tr><th>成品尺寸</th><td>菊16開（A5）148 × 210 mm</td></tr>
-        <tr><th>頁數</th><td>450 頁（約 225 張）</td></tr>
-        <tr><th>裝訂</th><td>無線膠裝；雙邊勒口各 90 mm</td></tr>
-        <tr><th>內文紙（估）</th><td>80g 米色輕質 → 書脊設計 <strong>32 mm</strong>（估算 30.3 mm）<br />
-          90g 米色輕質 → 約 <strong>36 mm</strong>（估算 34.8 mm）</td></tr>
-        <tr><th>本檔書脊條</th><td>32 × 210 mm（依 80g 輕質進位）</td></tr>
-        <tr><th>封面展開寬（估）</th><td>80g：約 508 mm<br />90g：約 512 mm<br />（勒口+封面+書脊+封底+勒口，不含出血）</td></tr>
-        <tr><th>書皮</th><td>250g／300g 銅西卡，單面彩印</td></tr>
+        <tr><th>頁數</th><td>約 450 頁（約 225 張）；下單前以最新 PDF 頁腳為準</td></tr>
+        <tr><th>裝訂路線</th><td><strong>平裝膠裝＋雙折口書衣</strong>；勒口各 90 mm（厚書建議 80–100 mm）</td></tr>
+        <tr><th>本檔書脊條</th><td><strong>32 × 210 mm</strong>（依 450 頁／80g 米色輕質估 30.3 mm 後進位）</td></tr>
+        <tr><th>與展開稿</th><td>本條對應展開稿中縫；上機請用<strong>封面展開 PDF 第 1 頁</strong>整幅輸出。</td></tr>
+      </table>
+      <h2>內文書脊／展開對照（請紙樣複核）</h2>
+      <table>
+        <tr><th>80g 米色輕質（本檔）</th><td>書脊 32 mm；展開約 508 mm</td></tr>
+        <tr><th>90g 米色輕質</th><td>書脊約 36 mm；展開約 512 mm（需另出檔）</td></tr>
+        <tr><th>80g 米色道林（0.10）</th><td>書脊約 25 mm；展開約 501 mm（需另出檔）</td></tr>
+        <tr><th>100g 米色道林（0.13）</th><td>書脊約 32 mm；展開約 508 mm（需另出檔）</td></tr>
+      </table>
+      <h2>書衣與霧沙金（單本數位）</h2>
+      <table>
+        <tr><th>外書衣紙</th><td>米色新浪潮（或同級微粗糙米色紙）。<strong class="warn">不要上亮膜／霧膜</strong>。</td></tr>
+        <tr><th>內書皮</th><td>可另用 250g 象牙卡等厚卡膠裝保護內頁；外書衣再包覆並摺成勒口。</td></tr>
+        <tr><th>書名霧沙金</th><td>首選數位燙消光金／霧金；備案為數位直印模擬沙金（勿開傳統鋅版燙金）。</td></tr>
       </table>
       <p class="note">
         估算式：書脊 ≈ (頁數÷2) × 單張厚度 + 膠水 1mm，再進位預留。<br />
-        輕質紙蓬鬆度因廠牌而異，<strong>下單前請印廠以實際紙樣複核書脊</strong>；若改 90g，請改用較寬書脊重出封面。<br />
-        PDF 第 1 頁為可直接貼／拼進封面展開的 1:1 書脊條；列印請選「實際大小／100%」，勿縮放。
+        輕質／道林／新浪潮蓬鬆度因廠牌而異，<strong>下單前請印廠以紙樣複核書脊</strong>；若改紙重，請改書脊寬後重出展開稿與本檔。<br />
+        PDF 第 1 頁為 1:1 書脊條；列印請選「實際大小／100%」，勿縮放。檔名：<code>zhuangzi-atlas-spine.pdf</code>／<code>莊子全解-書脊.pdf</code>
       </p>
     </div>
   </div>
