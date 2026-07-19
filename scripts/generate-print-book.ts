@@ -562,7 +562,13 @@ function mdToHtml(md: string): string {
         out.push("<ul>");
         inUl = true;
       }
-      out.push(`<li>${inlineFormat(ul[1])}</li>`);
+      let item = inlineFormat(ul[1]);
+      // 吸收縮排續行（常見於「1. **標題**」換行後說明）
+      while (i + 1 < lines.length && /^\s{2,}\S/.test(lines[i + 1])) {
+        i += 1;
+        item += `<br />${inlineFormat(lines[i].trim())}`;
+      }
+      out.push(`<li>${item}</li>`);
       i += 1;
       continue;
     }
@@ -579,7 +585,12 @@ function mdToHtml(md: string): string {
         out.push("<ol>");
         inOl = true;
       }
-      out.push(`<li>${inlineFormat(ol[1])}</li>`);
+      let item = inlineFormat(ol[1]);
+      while (i + 1 < lines.length && /^\s{2,}\S/.test(lines[i + 1])) {
+        i += 1;
+        item += `<br />${inlineFormat(lines[i].trim())}`;
+      }
+      out.push(`<li>${item}</li>`);
       i += 1;
       continue;
     }
@@ -599,8 +610,15 @@ function mdToHtml(md: string): string {
 
     if (line.trim() === "") {
       flushPara();
-      closeLists();
       closeBq();
+      // 清單項目之間的空行不應拆成多個 <ol>（否則編號全變成 1.）
+      let j = i + 1;
+      while (j < lines.length && lines[j].trim() === "") j += 1;
+      const next = j < lines.length ? lines[j] : "";
+      const listContinues =
+        (inOl && /^\s*\d+\.\s+/.test(next)) ||
+        (inUl && /^\s*[-*]\s+/.test(next));
+      if (!listContinues) closeLists();
       i += 1;
       continue;
     }
@@ -739,8 +757,24 @@ function wrapPrintKeepBlocks(html: string): string {
 
   // §02–§15：節標題與開頭內容綁定；頁末放不下時整組移到下一頁
   // （避免「09. 哲學分析」只剩標題＋一句「以下為本書現代詮釋」）
-  // Pass A：h2 + blockquote + 首兩段 p（§09／§13；第二段常才是正文展開）
   // 注意：h2 內文必須用 [^<]*，不可用 [\s\S]*?——後者在後接不符時會回溯吞掉整章
+  // Pass A0：h2 + 免責 blockquote + 首個 h3-block（§13 子節型；秋水等）
+  // 若只包 h2+blockquote，CSS keep-with-next 會把標題＋免責留在頁末、13.1 落到下頁
+  out = out.replace(
+    /(?<!<div class="print-keep print-section-head">)(<h2 id="(?:0[2-9]|1[0-5])-[^"]*">[^<]*<\/h2>)\s*(<blockquote>(?:(?!<\/blockquote>)[\s\S])*<\/blockquote>)\s*(<div class="print-keep print-h3-block">[\s\S]*?<\/div>)/g,
+    '<div class="print-keep print-section-head">$1\n$2\n$3</div>',
+  );
+  // Pass A0b：同上，但 h3 尚未包成 h3-block（部分篇章）
+  out = out.replace(
+    /(?<!<div class="print-keep print-section-head">)(<h2 id="(?:0[2-9]|1[0-5])-[^"]*">[^<]*<\/h2>)\s*(<blockquote>(?:(?!<\/blockquote>)[\s\S])*<\/blockquote>)\s*(<h3 id="(?!結構圖)[^"]*">[^<]*<\/h3>\s*<p>(?:(?!<\/p>)[\s\S])*<\/p>)/g,
+    (_m, h2: string, bq: string, h3p: string) =>
+      `<div class="print-keep print-section-head">${h2}\n${bq}\n<div class="print-keep print-h3-block">${h3p}</div></div>`,
+  );
+  // Pass A0c：h2 + 免責 + 清單（§13 條列型）
+  out = out.replace(
+    /(?<!<div class="print-keep print-section-head">)(<h2 id="(?:0[2-9]|1[0-5])-[^"]*">[^<]*<\/h2>)\s*(<blockquote>(?:(?!<\/blockquote>)[\s\S])*<\/blockquote>)\s*(<(?:ul|ol)>(?:(?!<\/(?:ul|ol)>)[\s\S])*<\/(?:ul|ol)>)/g,
+    '<div class="print-keep print-section-head">$1\n$2\n$3</div>',
+  );
   // Pass A：h2 + blockquote + 最多三段 p（第三段常為收束，避免頁末孤兒句）
   out = out.replace(
     /(?<!<div class="print-keep print-section-head">)(<h2 id="(?:0[2-9]|1[0-5])-[^"]*">[^<]*<\/h2>)\s*(<blockquote>(?:(?!<\/blockquote>)[\s\S])*<\/blockquote>)\s*(<p>(?:(?!<\/p>)[\s\S])*<\/p>)(?:\s*(<p>(?:(?!<\/p>)[\s\S])*<\/p>))?(?:\s*(<p>(?:(?!<\/p>)[\s\S])*<\/p>))?/g,
@@ -751,6 +785,11 @@ function wrapPrintKeepBlocks(html: string): string {
   out = out.replace(
     /(?<!<div class="print-keep print-section-head">)(<h2 id="(?:0[2-9]|1[0-5])-[^"]*">[^<]*<\/h2>)\s*(<div class="print-keep print-h3-block">[\s\S]*?<\/div>|<p>(?:(?!<\/p>)[\s\S])*<\/p>|<ul>(?:(?!<\/ul>)[\s\S])*<\/ul>|<ol>(?:(?!<\/ol>)[\s\S])*<\/ol>|<table[\s\S]*?<\/table>)/g,
     '<div class="print-keep print-section-head">$1\n$2</div>',
+  );
+  // Pass B2：僅包到首段時連帶第二段，避免首段與後文脫節（勿再用 min-height 撐空白）
+  out = out.replace(
+    /(<div class="print-keep print-section-head">)(<h2 id="(?:0[2-9]|1[0-5])-[^"]*">[^<]*<\/h2>\s*<p>(?:(?!<\/p>)[\s\S])*<\/p>)<\/div>\s*(<p>(?:(?!<\/p>)[\s\S])*<\/p>)/g,
+    "$1$2\n$3</div>",
   );
   // Pass C：§07 走讀路線過短時，連首個子節一併帶走
   out = out.replace(
@@ -765,6 +804,19 @@ function wrapPrintKeepBlocks(html: string): string {
   // Pass D2：§08 段落注家型（<p><strong>郭象</strong>…）— 連帶下一段（成玄英）
   out = out.replace(
     /(<div class="print-keep print-section-head">)(<h2 id="08-[^"]*">[^<]*<\/h2>\s*<p>(?:(?!<\/p>)[\s\S])*<\/p>)<\/div>\s*(<p>(?:(?!<\/p>)[\s\S])*<\/p>)/g,
+    "$1$2\n$3</div>",
+  );
+  // Pass E：§09／§13 若只有標題＋免責，連帶首個內容塊，避免頁末懸空
+  out = out.replace(
+    /(<div class="print-keep print-section-head">)(<h2 id="(?:09|13)-[^"]*">[^<]*<\/h2>\s*<blockquote>(?:(?!<\/blockquote>)[\s\S])*<\/blockquote>)<\/div>\s*(<div class="print-keep print-h3-block">[\s\S]*?<\/div>)/g,
+    "$1$2\n$3</div>",
+  );
+  out = out.replace(
+    /(<div class="print-keep print-section-head">)(<h2 id="(?:09|13)-[^"]*">[^<]*<\/h2>\s*<blockquote>(?:(?!<\/blockquote>)[\s\S])*<\/blockquote>)<\/div>\s*(<h3 id="(?:09|13)[^"]*">[^<]*<\/h3>\s*<p>(?:(?!<\/p>)[\s\S])*<\/p>)/g,
+    '$1$2\n<div class="print-keep print-h3-block">$3</div></div>',
+  );
+  out = out.replace(
+    /(<div class="print-keep print-section-head">)(<h2 id="(?:09|13)-[^"]*">[^<]*<\/h2>\s*<blockquote>(?:(?!<\/blockquote>)[\s\S])*<\/blockquote>)<\/div>\s*(<(?:ul|ol)>(?:(?!<\/(?:ul|ol)>)[\s\S])*<\/(?:ul|ol)>)/g,
     "$1$2\n$3</div>",
   );
 
@@ -1576,11 +1628,11 @@ function buildPrintHtml(bodyHtml: string): string {
         break-inside: avoid !important;
         page-break-inside: avoid !important;
       }
-      /* 頁末剩餘不足時整組下移；產 PDF 時若仍懸空再以 .print-force-newpage 強制換頁 */
+      /* 頁末剩餘不足時整組下移；產 PDF 時若仍懸空再以 .print-force-newpage 強制換頁。
+         不可設 min-height：會在「標題＋首段」與後續段落之間撐出大片空白。 */
       .print-section-head {
         break-inside: avoid !important;
         page-break-inside: avoid !important;
-        min-height: 40mm;
       }
       .print-force-newpage {
         break-before: page !important;
