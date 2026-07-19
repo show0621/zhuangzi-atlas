@@ -247,13 +247,15 @@ async function tryPuppeteer(htmlPath: string): Promise<string | null> {
 
       await new Promise((r) => setTimeout(r, 800));
 
-      // 心智圖：優先撐滿版心；過高則等比縮小以落入約一頁高度。
+      // 心智圖／結構流程圖：優先撐滿版心；過高則等比縮小。
       // 不改 viewBox（改 viewBox 會弄亂 foreignObject 中文字）。
-      // 字級由 Mermaid themeVariables.fontSize 決定，勿再 CSS 壓小。
       await page.evaluate(`(() => {
-        document.querySelectorAll(".print-mindmap .mermaid svg").forEach((svg) => {
+        const sel =
+          ".print-mindmap .mermaid svg, .print-structure-mermaid .mermaid svg";
+        document.querySelectorAll(sel).forEach((svg) => {
           const parent = svg.parentElement;
           const cw = parent ? parent.clientWidth : 0;
+          const isStructure = Boolean(svg.closest(".print-structure-mermaid"));
           svg.removeAttribute("width");
           svg.removeAttribute("height");
           svg.style.setProperty("display", "block", "important");
@@ -264,12 +266,11 @@ async function tryPuppeteer(htmlPath: string): Promise<string | null> {
           if (!cw || !svg.viewBox || !svg.viewBox.baseVal.width) {
             svg.style.setProperty("width", "100%", "important");
             svg.style.setProperty("height", "auto", "important");
-            svg.style.setProperty("max-height", "155mm", "important");
+            svg.style.setProperty("max-height", isStructure ? "165mm" : "155mm", "important");
             return;
           }
           const vb = svg.viewBox.baseVal;
-          // 與印刷 CSS 一致：心智圖獨頁後約 170mm 高度預算
-          const maxH = Math.round(cw * 1.45);
+          const maxH = Math.round(cw * (isStructure ? 1.5 : 1.45));
           let w = cw;
           let h = (cw * vb.height) / vb.width;
           if (h > maxH) {
