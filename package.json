@@ -25,6 +25,7 @@
     "ebook:print:check": "tsx scripts/generate-print-book.ts && npm run content:validate",
     "ebook:print:all": "npm run ebook:print && npm run ebook:pdf && npm run ebook:docx && npm run ebook:binding && npm run ebook:spine && npm run ebook:wrap && npm run ebook:binding-docx",
     "print:audit": "python3 scripts/audit-print-layout.py",
+    "print:press": "python3 scripts/check-print-press.py",
     "rag:build": "tsx scripts/build-rag-index.ts",
     "indexes:build": "tsx scripts/build-indexes.ts && npm run rag:build",
     "ai:serve": "tsx scripts/local-ai-server.ts",

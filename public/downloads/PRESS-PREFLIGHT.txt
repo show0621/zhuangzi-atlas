@@ -1,0 +1,32 @@
+# 《莊子全解》交印預檢
+
+Chrome→PDF 無法在生成時完成「轉曲」與「CMYK」；本報告標示現況與建議。
+
+## 圖片有效解析度（≥300 dpi）
+  ✓ 內文封面書名: print-cover-title-cursive-opaque.jpg 1536×947px (RGB) @ 寬 118 mm → 331 dpi
+  ✓ 展開封面書名: print-cover-title-cursive-opaque.jpg 1536×947px (RGB) @ 寬 92 mm → 424 dpi
+  ✓ 內文封面作者: cover-author-wenkai.png 548×105px (RGBA) @ 高 5.6 mm → 476 dpi
+  ✓ 展開封面作者: cover-author-wenkai.png 548×105px (RGBA) @ 高 4.6 mm → 580 dpi
+  ✓ 展開前勒口署名: flap-author-name.png 524×168px (RGBA) @ 高 9.0 mm → 474 dpi
+  ✓ 題辭書法: epigraph-calligraphy.png 1532×795px (RGBA) @ 寬 94 mm → 414 dpi
+  ✓ 後記書法: afterword-calligraphy.png 1516×333px (RGBA) @ 寬 126 mm → 306 dpi
+  ✓ 書脊書法（contain 估）: spine-calligraphy.png 267×3307px (RGB) @ 15.5×192.0 mm → 437 dpi
+  → 圖片檢查：通過
+
+## PDF：zhuangzi-atlas-cover-wrap.pdf
+  頁數：2；第 1 頁 MediaBox ≈ 514.0×215.9 mm
+  · 文字：偵測到內嵌字型（可抽取文字）→ **尚未轉曲**；數位印刷通常可直接用內嵌字。若廠方要求外框，請 Acrobat／印廠處理。
+  · 色彩：**RGB／sRGB 管線**（Chrome PDF 典型）。單本數位多可接受；膠印若要求 CMYK 請印廠轉檔。
+  ✓ 出血：第 1 頁約為裁切 508×210 + 四周 3 mm
+
+## PDF：zhuangzi-atlas-print.pdf
+  頁數：455；第 1 頁 MediaBox ≈ 148.2×209.9 mm
+  · 文字：偵測到內嵌字型（可抽取文字）→ **尚未轉曲**；數位印刷通常可直接用內嵌字。若廠方要求外框，請 Acrobat／印廠處理。
+  · 色彩：**RGB／sRGB 管線**（Chrome PDF 典型）。單本數位多可接受；膠印若要求 CMYK 請印廠轉檔。
+  · 出血：內文為成品 148×210 mm（無頁面出血）。膠裝常見做法；版心邊距 ≥14 mm，裁切不易露白。
+
+## 建議對印廠說明
+  1. 字型已內嵌；若必須轉曲請廠方或 Acrobat 處理。
+  2. 檔案為 RGB；數位機台可直接印，膠印請轉 CMYK。
+  3. 封面展開含 3mm 出血；內文為成品尺寸＋安全邊距。
+  4. 封面／書法圖有效解析度請見上方（目標 ≥300 dpi）。

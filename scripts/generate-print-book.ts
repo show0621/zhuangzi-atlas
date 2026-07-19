@@ -1426,7 +1426,8 @@ function buildPrintHtml(bodyHtml: string): string {
     }
     /* 後記書法：去底色＋緊裁後可維持較大字面；multiply 消殘白 */
     .afterword-img {
-      max-width: 132mm;
+      /* 1516px 寬 → 126mm ≈ 306 dpi，滿足印刷 ≥300 dpi */
+      max-width: 126mm;
       background: transparent;
       mix-blend-mode: multiply;
     }
