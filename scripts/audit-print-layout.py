@@ -112,6 +112,16 @@ def main() -> int:
                 (pnum, bp, "sparse-section04", f"§04 原典頁過疏（{len(body)} 字），標題可能與內文割裂"),
             )
 
+        if (
+            first
+            and re.search(r"^07\.?段落解析$", first)
+            and len(body) < SPARSE_CHAR_THRESHOLD
+            and pnum not in FRONT_MATTER_IMAGE_PAGES | BACK_MATTER_IMAGE_PAGES
+        ):
+            issues.append(
+                (pnum, bp, "sparse-section07", f"§07 段落解析頁過疏（{len(body)} 字），子節可能被整塊推到下頁"),
+            )
+
         if last and is_section_heading(last) and "17.延伸閱讀" not in last:
             issues.append((pnum, bp, "orphan-section-heading", f"頁末孤兒標題：{last}"))
 
