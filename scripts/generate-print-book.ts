@@ -878,10 +878,10 @@ function wrapPrintKeepBlocks(html: string): string {
     "$1</div>$2",
   );
 
-  // Pass F：§16 心智圖＋§17 延伸閱讀綁成收尾塊，避免「圖＋標題」獨佔一頁、書目落在下頁
+  // Pass F：§16 心智圖與 §17 僅作相鄰標記，不整包 keep（圖放大後強綁易造成 §17 標題孤兒）
   out = out.replace(
-    /(?<!print-chapter-end">)(<div class="print-keep print-mindmap">[\s\S]*?<\/div>)\s*(<h2 id="17-[^"]*">[^<]*<\/h2>[\s\S]*?)(?=\s*(?:<div class="pagebreak"|<\/article>|$))/g,
-    '<div class="print-keep print-chapter-end">$1\n$2</div>',
+    /(?<!print-chapter-end">)(<div class="print-keep print-mindmap">[\s\S]*?<\/div>)\s*(<h2 id="17-[^"]*">)/g,
+    '<div class="print-chapter-end">$1</div>\n$2',
   );
 
   // 最終安全網：未閉合的 print-h3-block 在下一 h2／pagebreak 前補上 </div>
@@ -1552,11 +1552,10 @@ function buildPrintHtml(bodyHtml: string): string {
         page-break-before: avoid !important;
       }
       a { color: inherit; text-decoration: none; }
-      /* §17 延伸閱讀：與心智圖同組（見 .print-chapter-end）；勿強制新頁 */
-      .print-mindmap + h2[id^="17-"],
+      /* §17 跟在心智圖後自然排版；勿 avoid 以免只黏住標題 */
       .print-chapter-end > h2[id^="17-"] {
-        break-before: avoid !important;
-        page-break-before: avoid !important;
+        break-before: auto;
+        page-break-before: auto;
         margin-top: 0.9em;
       }
       /* 篇名後首節仍與篇名同頁（閱讀提示 blockquote 可夾在中間） */
@@ -1654,22 +1653,44 @@ function buildPrintHtml(bodyHtml: string): string {
         break-after: avoid !important;
         page-break-after: avoid !important;
       }
-      .print-mindmap .mermaid svg {
-        max-height: 72mm;
-        max-width: 100%;
-        width: auto;
-        height: auto;
-      }
-      .print-chapter-end {
+      .print-mindmap {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+        break-before: page !important;
+        page-break-before: always !important;
         break-inside: avoid !important;
         page-break-inside: avoid !important;
       }
-      .print-chapter-end .print-mindmap .mermaid svg {
-        max-height: 62mm;
+      .print-chapter-end {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
       }
-      .print-chapter-end .mermaid {
-        margin: 0.35em 0 0.5em;
-        padding: 0.2em 0;
+      .print-mindmap .mermaid {
+        margin: 0.55em 0 0.75em;
+        padding: 0.3em 0;
+        width: 100% !important;
+        max-width: 100% !important;
+        display: block !important;
+        text-align: center;
+        box-sizing: border-box;
+      }
+      /* 撐滿版心；過高圖以 max-height 限制。字級交給 Mermaid themeVariables。 */
+      .print-mindmap .mermaid svg {
+        display: block !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        height: auto !important;
+        max-height: 170mm;
+      }
+      .print-mindmap .mermaid .nodeLabel,
+      .print-mindmap .mermaid foreignObject > div,
+      .print-mindmap .mermaid foreignObject div {
+        line-height: 1.4 !important;
+        text-align: center !important;
       }
       .print-structure-diagram {
         break-inside: avoid !important;
@@ -1726,7 +1747,53 @@ ${bodyHtml}
       theme: "neutral",
       securityLevel: "loose",
       fontFamily: "Noto Serif TC, serif",
-      flowchart: { useMaxWidth: true, htmlLabels: true, curve: "basis" },
+      themeVariables: {
+        fontSize: "30px",
+        fontFamily: "Noto Serif TC, serif",
+      },
+      flowchart: {
+        useMaxWidth: true,
+        htmlLabels: true,
+        curve: "basis",
+        wrappingWidth: 460,
+        nodeSpacing: 36,
+        rankSpacing: 32,
+        padding: 12,
+      },
+    });
+    document.addEventListener("DOMContentLoaded", () => {
+      const fitMindmaps = () => {
+        document.querySelectorAll(".print-mindmap .mermaid svg").forEach((svg) => {
+          const parent = svg.parentElement;
+          const cw = parent ? parent.clientWidth : 0;
+          svg.removeAttribute("width");
+          svg.removeAttribute("height");
+          svg.style.setProperty("display", "block", "important");
+          svg.style.setProperty("margin-left", "auto", "important");
+          svg.style.setProperty("margin-right", "auto", "important");
+          svg.style.setProperty("max-width", "100%", "important");
+          if (!cw || !svg.viewBox || !svg.viewBox.baseVal.width) {
+            svg.style.setProperty("width", "100%", "important");
+            svg.style.setProperty("height", "auto", "important");
+            return;
+          }
+          const vb = svg.viewBox.baseVal;
+          // 獨頁後可給更高：約 170mm
+          const maxH = Math.round(cw * 1.45);
+          let w = cw;
+          let h = (cw * vb.height) / vb.width;
+          if (h > maxH) {
+            h = maxH;
+            w = (maxH * vb.width) / vb.height;
+          }
+          svg.style.setProperty("width", Math.round(w) + "px", "important");
+          svg.style.setProperty("height", Math.round(h) + "px", "important");
+          svg.style.setProperty("max-height", "none", "important");
+        });
+      };
+      setTimeout(fitMindmaps, 50);
+      setTimeout(fitMindmaps, 400);
+      setTimeout(fitMindmaps, 1200);
     });
   </script>
 </body>

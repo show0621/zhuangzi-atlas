@@ -622,11 +622,10 @@
         page-break-before: avoid !important;
       }
       a { color: inherit; text-decoration: none; }
-      /* §17 延伸閱讀：與心智圖同組（見 .print-chapter-end）；勿強制新頁 */
-      .print-mindmap + h2[id^="17-"],
+      /* §17 跟在心智圖後自然排版；勿 avoid 以免只黏住標題 */
       .print-chapter-end > h2[id^="17-"] {
-        break-before: avoid !important;
-        page-break-before: avoid !important;
+        break-before: auto;
+        page-break-before: auto;
         margin-top: 0.9em;
       }
       /* 篇名後首節仍與篇名同頁（閱讀提示 blockquote 可夾在中間） */
@@ -724,22 +723,44 @@
         break-after: avoid !important;
         page-break-after: avoid !important;
       }
-      .print-mindmap .mermaid svg {
-        max-height: 72mm;
-        max-width: 100%;
-        width: auto;
-        height: auto;
-      }
-      .print-chapter-end {
+      .print-mindmap {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+        break-before: page !important;
+        page-break-before: always !important;
         break-inside: avoid !important;
         page-break-inside: avoid !important;
       }
-      .print-chapter-end .print-mindmap .mermaid svg {
-        max-height: 62mm;
+      .print-chapter-end {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
       }
-      .print-chapter-end .mermaid {
-        margin: 0.35em 0 0.5em;
-        padding: 0.2em 0;
+      .print-mindmap .mermaid {
+        margin: 0.55em 0 0.75em;
+        padding: 0.3em 0;
+        width: 100% !important;
+        max-width: 100% !important;
+        display: block !important;
+        text-align: center;
+        box-sizing: border-box;
+      }
+      /* 撐滿版心；過高圖以 max-height 限制。字級交給 Mermaid themeVariables。 */
+      .print-mindmap .mermaid svg {
+        display: block !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        height: auto !important;
+        max-height: 170mm;
+      }
+      .print-mindmap .mermaid .nodeLabel,
+      .print-mindmap .mermaid foreignObject > div,
+      .print-mindmap .mermaid foreignObject div {
+        line-height: 1.4 !important;
+        text-align: center !important;
       }
       .print-structure-diagram {
         break-inside: avoid !important;
@@ -1005,20 +1026,13 @@
 </ol></div>
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>讀《莊⁠子》，先把它放回戰國與傳本脈絡，再⁠跟⁠著⁠寓⁠言⁠的⁠轉⁠折⁠走；先⁠分⁠辨⁠原⁠典、注⁠家⁠與⁠當⁠代⁠詮⁠釋，再⁠討⁠論⁠它⁠能⁠否⁠照⁠見⁠今⁠日。這種讀法不會立刻給你一句答案，卻能避免讓任何一句話成為新的牢籠。</p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  R[閱讀《莊子》] --&gt; L[分清三層聲音]
-  L --&gt; L1[原典]
-  L --&gt; L2[歷代注家]
-  L --&gt; L3[本書現代詮釋]
-  R --&gt; M[掌握三種說法]
-  M --&gt; M1[寓言]
-  M --&gt; M2[重言]
-  M --&gt; M3[卮言]
-  R --&gt; Q[帶著問題讀]
-  Q --&gt; Q1[自由／是非／養生]
-  Q --&gt; Q2[處世／死生／治道]
-  L3 -.-&gt;|不可偽托為莊子說| L1</div></div>
+  R[&quot;閱讀《莊子》&quot;]
+  R --&gt; L[&quot;分清三層：原典｜注家｜本書詮釋&quot;]
+  L --&gt; M[&quot;掌握三種說法：寓言｜重言｜卮言&quot;]
+  M --&gt; Q[&quot;帶著問題讀：自由／是非／養生&quot;]
+  Q --&gt; T[&quot;處世／死生／治道，皆回扣原文&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <ul>
 <li>郭⁠慶⁠藩《莊⁠子⁠集⁠釋》</li>
@@ -1035,7 +1049,7 @@
 <li>相⁠關⁠人⁠物：莊⁠周、郭⁠象、成⁠玄⁠英、林⁠希⁠逸</li>
 <li>相⁠關⁠名⁠詞：道、自⁠然、無⁠為、成⁠心、寓⁠言、卮⁠言</li>
 <li>相⁠關⁠主⁠題：文⁠本⁠史、自⁠由、是⁠非、死⁠亡、政⁠治</li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <nav class="toc" id="目錄-wrap">
@@ -1398,17 +1412,14 @@
 <blockquote>
 <p><strong>真正的問題不是飛得多高，而是你還在靠什麼才能飛——以及那依賴是否已變成牢籠。</strong></p>
 </blockquote>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  F[何謂自由?] --&gt; D[辨依賴：有待／無待]
-  D --&gt; S[鬆開封閉尺度]
-  S --&gt; S1[小知／小年]
-  S --&gt; S2[大知亦不可執]
-  D --&gt; P[至人無己・神人無功・聖人無名]
-  P --&gt; U[無用之用]
-  U --&gt; X[不被「有用性」徵用]
-  S --&gt; X
-  X --&gt; Y[可遊：不靠單一牢籠才能站立]</div></div>
+  F[&quot;何謂自由？&quot;]
+  F --&gt; D[&quot;辨依賴：有待／無待&quot;]
+  D --&gt; S[&quot;鬆開封閉尺度：小知／小年，大知亦不可執&quot;]
+  S --&gt; P[&quot;至人無己・神人無功・聖人無名&quot;]
+  P --&gt; U[&quot;無用之用 → 不被「有用性」徵用&quot;]
+  U --&gt; Y[&quot;可遊：不靠單一牢籠才能站立&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <div class="print-keep print-h3-block"><h3 id="原典與注疏">原⁠典⁠與⁠注⁠疏</h3>
 <ul>
@@ -1433,7 +1444,7 @@
 <li>相⁠關⁠人⁠物：<a href="content/figures/惠施.md">惠⁠施</a>、<a href="content/figures/許由.md">許⁠由</a>、<a href="content/figures/列禦寇.md">列⁠禦⁠寇</a>、<a href="content/figures/堯.md">堯</a></li>
 <li>相⁠關⁠名⁠詞：<a href="content/terms/無待.md">無⁠待</a>、<a href="content/terms/有待.md">有⁠待</a>、<a href="content/terms/逍遙.md">逍⁠遙</a>、<a href="content/terms/無用之用.md">無⁠用⁠之⁠用</a></li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/焦慮與比較.md">焦⁠慮⁠與⁠比⁠較</a>、<a href="content/themes/自由與無待.md">自⁠由⁠與⁠無⁠待</a>、<a href="content/themes/無用與有用.md">無⁠用⁠與⁠有⁠用</a></li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="齊物論">齊⁠物⁠論</h1>
@@ -1631,17 +1642,14 @@
 </ol></div>
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈齊⁠物⁠論〉讓⁠人⁠看⁠見：困⁠住⁠人⁠的⁠不⁠只⁠是⁠外⁠物，也是把一己尺度誤當全體的成心。齊⁠不⁠是⁠消⁠滅⁠差⁠異，而是在差異裡保留可轉身、可⁠聽⁠見⁠他⁠者⁠的⁠道⁠樞。夢⁠蝶⁠以「有⁠分」收⁠束⁠物⁠化，使⁠全⁠篇⁠既⁠不⁠淪⁠為⁠虛⁠無，也⁠不⁠淪⁠為⁠教⁠條——這正是內篇認識批判的標竿高度。</p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  Q[齊物不是消滅差異] --&gt; C[先鬆成心]
-  C --&gt; A[吾喪我／聽天籟]
-  C --&gt; B[彼是爭辯從何起]
-  B --&gt; P[立道樞]
-  P --&gt; P1[兩行]
-  P --&gt; P2[以明]
-  P --&gt; P3[不執單一尺子]
-  P --&gt; M[物化：有分而不執]
-  M --&gt; R[可轉身、可聽見他者]</div></div>
+  Q[&quot;齊物不是消滅差異&quot;]
+  Q --&gt; C[&quot;先鬆成心：吾喪我／聽天籟&quot;]
+  C --&gt; B[&quot;彼是爭辯從何起 → 立道樞&quot;]
+  B --&gt; P[&quot;兩行｜以明｜不執單一尺子&quot;]
+  P --&gt; M[&quot;物化：有分而不執&quot;]
+  M --&gt; R[&quot;可轉身、可聽見他者&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <ul>
 <li>郭⁠慶⁠藩《莊⁠子⁠集⁠釋》〈齊⁠物⁠論〉</li>
@@ -1658,7 +1666,7 @@
 <li>相⁠關⁠主⁠題：<a href="content/themes/焦慮與比較.md">焦⁠慮⁠與⁠比⁠較</a>、認⁠識、語⁠言、衝⁠突、身⁠分</li>
 </ul></div>
 <div class="print-keep print-h3-block"><h3 id="讀法建議">讀⁠法⁠建⁠議</h3>
-<p>初⁠讀⁠可⁠先⁠通⁠讀⁠全⁠篇，留⁠意⁠南⁠郭⁠子⁠綦「吾⁠喪⁠我」、彼是互生到莊周夢蝶的轉折；再回看第四節節錄與第七節段落關係。進一步研究宜並置郭象的自得、成玄英的遣是非與林希逸對朝三暮四的文勢說明，並⁠以⁠郭⁠慶⁠藩⁠核⁠對⁠字⁠句。跨文化比較或現代應用須標明為後設詮釋。</p></div></div>
+<p>初⁠讀⁠可⁠先⁠通⁠讀⁠全⁠篇，留⁠意⁠南⁠郭⁠子⁠綦「吾⁠喪⁠我」、彼是互生到莊周夢蝶的轉折；再回看第四節節錄與第七節段落關係。進一步研究宜並置郭象的自得、成玄英的遣是非與林希逸對朝三暮四的文勢說明，並⁠以⁠郭⁠慶⁠藩⁠核⁠對⁠字⁠句。跨文化比較或現代應用須標明為後設詮釋。</p></div>
 <div class="pagebreak"></div>
 
 <h1 id="養生主">養⁠生⁠主</h1>
@@ -1849,16 +1857,15 @@
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈養⁠生⁠主〉以刀與牛教人看見生命的節度：有⁠限⁠者⁠不⁠必⁠追⁠逐⁠無⁠限，行⁠動⁠不⁠必⁠硬⁠闖，哀傷也不必演成自我毀傷。養⁠生⁠的⁠最⁠高⁠處，是⁠在⁠變⁠化⁠中⁠不⁠失⁠其⁠生——從⁠緣⁠督⁠到⁠安⁠時，是一條由身體技藝通向死生大變的內篇主線。讀⁠全⁠篇⁠宜⁠記⁠住：庖⁠丁⁠的⁠從⁠容⁠以「怵⁠然⁠為⁠戒」為⁠前⁠提，秦⁠失⁠的⁠淡⁠然⁠以「友」為⁠前⁠提；二⁠者⁠都⁠不⁠是⁠冷⁠漠，而是<strong>在限度內盡其生</strong>。</p>
 <p>若⁠以⁠一⁠句⁠話⁠收⁠束：<strong>知⁠止⁠於⁠有⁠涯，順⁠理⁠於⁠有⁠間，安⁠時⁠於⁠大⁠化。</strong></p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  L[生命有涯] --&gt; E[緣督以為經]
-  E --&gt; T[依乎天理]
-  T --&gt; K[知止／怵然為戒]
-  K --&gt; B[保身・盡年]
-  B --&gt; A[安時處順]
-  A --&gt; N[哀傷可有・抗拒不可逆則耗生]
-  E --&gt; W[拒制度／圈養式「養」]
-  W --&gt; B</div></div>
+  L[&quot;生命有涯&quot;]
+  L --&gt; E[&quot;緣督以為經&quot;]
+  E --&gt; T[&quot;依乎天理 → 知止／怵然為戒&quot;]
+  T --&gt; W[&quot;拒制度／圈養式「養」&quot;]
+  W --&gt; B[&quot;保身・盡年&quot;]
+  B --&gt; A[&quot;安時處順&quot;]
+  A --&gt; N[&quot;哀傷可有・抗拒不可逆則耗生&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <ul>
 <li>郭⁠慶⁠藩《莊⁠子⁠集⁠釋》〈養⁠生⁠主〉</li>
@@ -1875,7 +1882,7 @@
 <li>相⁠關⁠主⁠題：<a href="content/themes/工作與技道.md">工⁠作⁠與⁠技⁠道</a>、有⁠限⁠性、身⁠體、哀⁠傷</li>
 </ul></div>
 <div class="print-keep print-h3-block"><h3 id="讀法建議">讀⁠法⁠建⁠議</h3>
-<p>初⁠讀⁠可⁠先⁠通⁠讀⁠全⁠篇，抓⁠住⁠緣⁠督⁠綱⁠領、庖丁解牛到安時處順的推進；再回看第四節節錄與第七節段落關係。進一步研究宜並置郭象的順中、成玄英的保身義與林希逸對刀十九年的文勢說明，並⁠以⁠郭⁠慶⁠藩⁠核⁠對⁠字⁠句。與〈達⁠生〉梓⁠慶、〈徐⁠無⁠鬼〉匠⁠石⁠等⁠技⁠藝⁠篇⁠可⁠並⁠讀，但⁠本⁠篇⁠重「節⁠度」與「死⁠生」，彼⁠等⁠重「質」與「凝⁠神」。外⁠篇〈養⁠生⁠主〉同⁠名⁠概⁠念⁠若⁠混⁠淆，宜⁠回⁠到⁠內⁠篇⁠此⁠篇⁠之「緣⁠督⁠知⁠止」為⁠準。</p></div></div>
+<p>初⁠讀⁠可⁠先⁠通⁠讀⁠全⁠篇，抓⁠住⁠緣⁠督⁠綱⁠領、庖丁解牛到安時處順的推進；再回看第四節節錄與第七節段落關係。進一步研究宜並置郭象的順中、成玄英的保身義與林希逸對刀十九年的文勢說明，並⁠以⁠郭⁠慶⁠藩⁠核⁠對⁠字⁠句。與〈達⁠生〉梓⁠慶、〈徐⁠無⁠鬼〉匠⁠石⁠等⁠技⁠藝⁠篇⁠可⁠並⁠讀，但⁠本⁠篇⁠重「節⁠度」與「死⁠生」，彼⁠等⁠重「質」與「凝⁠神」。外⁠篇〈養⁠生⁠主〉同⁠名⁠概⁠念⁠若⁠混⁠淆，宜⁠回⁠到⁠內⁠篇⁠此⁠篇⁠之「緣⁠督⁠知⁠止」為⁠準。</p></div>
 <div class="pagebreak"></div>
 
 <h1 id="人間世">人⁠間⁠世</h1>
@@ -2065,17 +2072,14 @@
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈人⁠間⁠世〉不許讀者假裝世界沒有危險，也不讓人以勇敢口號輕率耗損。心⁠齋⁠使⁠人⁠先⁠空⁠出⁠成⁠見，無用之用使生命保有不被吞噬的地方——這是內篇從養生走向政治之前的關鍵一關。顏⁠回⁠與⁠顏⁠闔⁠兩⁠線⁠並⁠置，說⁠明⁠處⁠世⁠沒⁠有⁠萬⁠用⁠公⁠式；櫟⁠社⁠樹⁠與⁠支⁠離⁠疏⁠則⁠揭⁠露「有⁠用」標準如何成為徵用與排除的藉口。</p>
 <p>若⁠以⁠一⁠句⁠話⁠收⁠束：<strong>虛⁠而⁠後⁠聽，聽⁠而⁠後⁠辨，辨⁠而⁠後⁠知⁠何⁠處⁠不⁠可⁠硬⁠闖。</strong></p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  H[亂世如何自處] --&gt; X[心齋：虛而聽]
-  X --&gt; D1[辨風險]
-  X --&gt; D2[辨對方可否聽]
-  X --&gt; D3[留退出與求援]
-  H --&gt; U[無用之用：保全餘地]
-  U --&gt; C[正直亦可自傷]
-  C --&gt; R[有用常被徵用]
-  D1 --&gt; R
-  R --&gt; Y[先保可遊之地，再談勸諫]</div></div>
+  H[&quot;亂世如何自處&quot;]
+  H --&gt; X[&quot;心齋：虛而聽&quot;]
+  X --&gt; D[&quot;辨風險｜辨可否聽｜留退出與求援&quot;]
+  D --&gt; U[&quot;無用之用：保全餘地&quot;]
+  U --&gt; R[&quot;正直亦可自傷；有用常被徵用&quot;]
+  R --&gt; Y[&quot;先保可遊之地，再談勸諫&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <ul>
 <li>郭⁠慶⁠藩《莊⁠子⁠集⁠釋》〈人⁠間⁠世〉</li>
@@ -2092,7 +2096,7 @@
 <li>相⁠關⁠主⁠題：<a href="content/themes/政治與無為.md">政⁠治⁠與⁠無⁠為</a>、權⁠力、勸⁠諫、界⁠線、制⁠度⁠傷⁠害</li>
 </ul></div>
 <div class="print-keep print-h3-block"><h3 id="讀法建議">讀⁠法⁠建⁠議</h3>
-<p>初⁠讀⁠可⁠先⁠通⁠讀⁠全⁠篇，順⁠著⁠顏⁠回⁠使⁠衛、心⁠齋、葉公到無用保全的層層風險；再回看第四節節錄與第七節段落關係。進一步研究宜並置郭象的虛心應物、成玄英對耳心氣次第與近人對無用之用的政治批判，並⁠以⁠郭⁠慶⁠藩⁠核⁠對⁠字⁠句。與〈山⁠木〉材⁠不⁠材、〈德⁠充⁠符〉形⁠殘⁠尊⁠嚴⁠可⁠並⁠讀，形⁠成⁠內⁠篇「保⁠身—形⁠名—德⁠充」的⁠立⁠體⁠圖⁠景。顏⁠回⁠與⁠顏⁠闔⁠兩⁠線⁠宜⁠對⁠讀：前⁠者⁠重⁠仁⁠義⁠之⁠危，後⁠者⁠重⁠周⁠旋⁠之⁠險，皆⁠不⁠可⁠抽⁠成⁠單⁠一⁠口⁠訣。</p></div></div>
+<p>初⁠讀⁠可⁠先⁠通⁠讀⁠全⁠篇，順⁠著⁠顏⁠回⁠使⁠衛、心⁠齋、葉公到無用保全的層層風險；再回看第四節節錄與第七節段落關係。進一步研究宜並置郭象的虛心應物、成玄英對耳心氣次第與近人對無用之用的政治批判，並⁠以⁠郭⁠慶⁠藩⁠核⁠對⁠字⁠句。與〈山⁠木〉材⁠不⁠材、〈德⁠充⁠符〉形⁠殘⁠尊⁠嚴⁠可⁠並⁠讀，形⁠成⁠內⁠篇「保⁠身—形⁠名—德⁠充」的⁠立⁠體⁠圖⁠景。顏⁠回⁠與⁠顏⁠闔⁠兩⁠線⁠宜⁠對⁠讀：前⁠者⁠重⁠仁⁠義⁠之⁠危，後⁠者⁠重⁠周⁠旋⁠之⁠險，皆⁠不⁠可⁠抽⁠成⁠單⁠一⁠口⁠訣。</p></div>
 <div class="pagebreak"></div>
 
 <h1 id="德充符">德⁠充⁠符</h1>
@@ -2286,15 +2290,15 @@
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈德⁠充⁠符〉以⁠形⁠殘⁠者⁠動⁠搖「外⁠形—價⁠值—資⁠格」的⁠連⁠鎖。德⁠充⁠不⁠是⁠掩⁠蓋⁠身⁠體，而是讓人不被社會目光耗盡，同時要求目光本身接受質詢——這⁠是⁠內⁠篇⁠在⁠保⁠身⁠之⁠後，對尊嚴與觀看倫理的深化。王⁠駘、申⁠徒⁠嘉、哀駘它各從不同角度刺破「形⁠先⁠於⁠德」，止水與同異則把問題收於內在安定與觀看方式。</p>
 <p>若⁠以⁠一⁠句⁠話⁠收⁠束：<strong>德⁠充⁠於⁠內，符⁠驗⁠於⁠人，而⁠不⁠以⁠外⁠物⁠奪⁠其⁠心。</strong></p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  Q[人如何被看見] --&gt; W[以外形／刑餘／污名判人]
-  W --&gt; B[偏見]
-  Q --&gt; D[德充為符]
-  D --&gt; S[止水：不為外物奪心]
-  D --&gt; F[才全而德不形]
-  F --&gt; E[尊嚴在德，不在展演外形]
-  E --&gt; I[制度應讓人被聽見，而非只被「包容」]</div></div>
+  Q[&quot;人如何被看見&quot;]
+  Q --&gt; W[&quot;以外形／刑餘／污名判人 → 偏見&quot;]
+  W --&gt; D[&quot;德充為符&quot;]
+  D --&gt; S[&quot;止水：不為外物奪心&quot;]
+  S --&gt; F[&quot;才全而德不形&quot;]
+  F --&gt; E[&quot;尊嚴在德，不在展演外形&quot;]
+  E --&gt; I[&quot;制度應讓人被聽見，而非只被「包容」&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <ul>
 <li>郭⁠慶⁠藩《莊⁠子⁠集⁠釋》〈德⁠充⁠符〉</li>
@@ -2311,7 +2315,7 @@
 <li>相⁠關⁠主⁠題：<a href="content/themes/無用與有用.md">無⁠用⁠與⁠有⁠用</a>、身⁠體、歧⁠視、尊⁠嚴、制⁠度</li>
 </ul></div>
 <div class="print-keep print-h3-block"><h3 id="讀法建議">讀⁠法⁠建⁠議</h3>
-<p>初⁠讀⁠可⁠先⁠通⁠讀⁠全⁠篇，由形殘而德充的諸對話讀到「才⁠全⁠而⁠德⁠不⁠形」；再回看第四節節錄與第七節段落關係。進一步研究宜並置郭象對德充於內、成玄英對忘形與林希逸對寓言機鋒的說明，並⁠以⁠郭⁠慶⁠藩⁠核⁠對⁠字⁠句。與⁠當⁠代⁠身⁠心⁠障⁠礙⁠研⁠究、反⁠歧⁠視⁠法⁠規⁠對⁠讀⁠時，須⁠標⁠明⁠古⁠今⁠語⁠境⁠差⁠異，勿把刑罰寓言直接套於現代障礙者。止⁠水、同⁠異⁠兩⁠段⁠宜⁠與〈齊⁠物⁠論〉並⁠讀，看身體政治如何承接認識批判。</p></div></div>
+<p>初⁠讀⁠可⁠先⁠通⁠讀⁠全⁠篇，由形殘而德充的諸對話讀到「才⁠全⁠而⁠德⁠不⁠形」；再回看第四節節錄與第七節段落關係。進一步研究宜並置郭象對德充於內、成玄英對忘形與林希逸對寓言機鋒的說明，並⁠以⁠郭⁠慶⁠藩⁠核⁠對⁠字⁠句。與⁠當⁠代⁠身⁠心⁠障⁠礙⁠研⁠究、反⁠歧⁠視⁠法⁠規⁠對⁠讀⁠時，須⁠標⁠明⁠古⁠今⁠語⁠境⁠差⁠異，勿把刑罰寓言直接套於現代障礙者。止⁠水、同⁠異⁠兩⁠段⁠宜⁠與〈齊⁠物⁠論〉並⁠讀，看身體政治如何承接認識批判。</p></div>
 <div class="pagebreak"></div>
 
 <h1 id="大宗師">大⁠宗⁠師</h1>
@@ -2512,15 +2516,14 @@
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈大⁠宗⁠師〉以⁠道⁠取⁠代⁠外⁠在⁠權⁠威，以⁠真⁠人、坐忘與死生之化鬆開自我固著。它⁠要⁠人⁠學⁠的⁠不⁠是⁠冷⁠漠，而是在不可控變化中仍能不失其通——這⁠是⁠內⁠篇⁠在⁠德⁠充⁠之⁠後，對終極依歸與喪失的正面回答。子桑戶之喪與子祀子輿之病，是⁠全⁠文⁠情⁠感⁠試⁠金⁠石：若⁠讀⁠成⁠薄⁠情，便⁠誤⁠讀；若⁠讀⁠成⁠無⁠哀，亦⁠誤⁠讀。</p>
 <p>若⁠以⁠一⁠句⁠話⁠收⁠束：<strong>以⁠道⁠為⁠師，以⁠化⁠為⁠友，以安時處順收死生之大變。</strong></p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  D[以道為宗師] --&gt; Z[真人]
-  Z --&gt; S[坐忘：放下名功執我]
-  D --&gt; H[死生之化]
-  H --&gt; X[相忘於江湖]
-  X --&gt; A[安時而不失情]
-  A --&gt; N[非教人薄情]
-  N --&gt; R[哀可有・執不可僵]</div></div>
+  D[&quot;以道為宗師&quot;]
+  D --&gt; Z[&quot;真人 → 坐忘：放下名功執我&quot;]
+  Z --&gt; H[&quot;死生之化&quot;]
+  H --&gt; X[&quot;相忘於江湖&quot;]
+  X --&gt; A[&quot;安時而不失情&quot;]
+  A --&gt; R[&quot;哀可有・執不可僵（非教人薄情）&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <ul>
 <li>郭⁠慶⁠藩《莊⁠子⁠集⁠釋》〈大⁠宗⁠師〉</li>
@@ -2537,7 +2540,7 @@
 <li>相⁠關⁠主⁠題：<a href="content/themes/死亡與喪親.md">死⁠亡⁠與⁠喪⁠親</a>、友⁠誼、身⁠分</li>
 </ul></div>
 <div class="print-keep print-h3-block"><h3 id="讀法建議">讀⁠法⁠建⁠議</h3>
-<p>初⁠讀⁠可⁠先⁠通⁠讀⁠全⁠篇，由⁠道⁠有⁠情⁠有⁠信、真⁠人⁠之⁠息⁠到⁠坐⁠忘、死⁠生⁠之⁠化；再回看第四節節錄與第七節段落關係。進一步研究宜並置郭象對獨化、成玄英對坐忘工夫與林希逸對死生寓言的文勢說明，並⁠以⁠郭⁠慶⁠藩⁠核⁠對⁠字⁠句。與〈至⁠樂〉鼓⁠盆、〈養⁠生⁠主〉安⁠時⁠處⁠順⁠並⁠讀，可形成內篇死生觀的完整輪廓。子桑戶之喪與孟孫才之喪若並讀，可⁠見⁠莊⁠子⁠如⁠何⁠破「哭⁠儀⁠即⁠真⁠情」的⁠兩⁠端⁠執⁠著。</p></div></div>
+<p>初⁠讀⁠可⁠先⁠通⁠讀⁠全⁠篇，由⁠道⁠有⁠情⁠有⁠信、真⁠人⁠之⁠息⁠到⁠坐⁠忘、死⁠生⁠之⁠化；再回看第四節節錄與第七節段落關係。進一步研究宜並置郭象對獨化、成玄英對坐忘工夫與林希逸對死生寓言的文勢說明，並⁠以⁠郭⁠慶⁠藩⁠核⁠對⁠字⁠句。與〈至⁠樂〉鼓⁠盆、〈養⁠生⁠主〉安⁠時⁠處⁠順⁠並⁠讀，可形成內篇死生觀的完整輪廓。子桑戶之喪與孟孫才之喪若並讀，可⁠見⁠莊⁠子⁠如⁠何⁠破「哭⁠儀⁠即⁠真⁠情」的⁠兩⁠端⁠執⁠著。</p></div>
 <div class="pagebreak"></div>
 
 <h1 id="應帝王">應⁠帝⁠王</h1>
@@ -2725,15 +2728,14 @@
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈應⁠帝⁠王〉以⁠無⁠心⁠若⁠鏡⁠收⁠束⁠內⁠篇：從⁠逍⁠遙⁠的⁠無⁠待、齊⁠物⁠的⁠兩⁠行，到⁠治⁠理⁠時⁠不⁠強⁠加⁠私⁠智。渾沌之死留下最尖銳的提醒：改⁠善⁠他⁠人⁠之⁠前，先問自己是否正在把他變成自己——這是內七篇政治寓言的句點。壺⁠子⁠破⁠巫、連⁠叔⁠立⁠神⁠人、鏡⁠喻⁠立⁠應⁠物、渾⁠沌⁠破⁠強⁠加，四⁠層⁠遞⁠進，缺⁠一⁠層⁠都⁠易⁠誤⁠讀⁠無⁠為。</p>
 <p>若⁠以⁠一⁠句⁠話⁠收⁠束：<strong>應⁠物⁠若⁠鏡，無⁠容⁠私⁠意；勿⁠以⁠善⁠名，鑿⁠人⁠七⁠竅。</strong></p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  P[政治如何不傷物] --&gt; M[破全知幻覺]
-  M --&gt; J[用心若鏡：應而不藏]
-  J --&gt; N[順物自然・應而不傷]
-  P --&gt; H[以善名強制塑形]
-  H --&gt; C[渾沌鑿竅之戒]
-  C --&gt; R[控制常以關懷之名傷害]
-  N --&gt; R</div></div>
+  P[&quot;政治如何不傷物&quot;]
+  P --&gt; M[&quot;破全知幻覺&quot;]
+  M --&gt; J[&quot;用心若鏡：應而不藏&quot;]
+  J --&gt; N[&quot;順物自然・應而不傷&quot;]
+  N --&gt; C[&quot;渾沌鑿竅之戒&quot;]
+  C --&gt; R[&quot;控制常以關懷之名傷害&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <ul>
 <li>郭⁠慶⁠藩《莊⁠子⁠集⁠釋》〈應⁠帝⁠王〉</li>
@@ -2750,7 +2752,7 @@
 <li>相⁠關⁠主⁠題：<a href="content/themes/政治與無為.md">政⁠治⁠與⁠無⁠為</a>、管⁠理、差⁠異、改⁠革</li>
 </ul></div>
 <div class="print-keep print-h3-block"><h3 id="讀法建議">讀⁠法⁠建⁠議</h3>
-<p>初⁠讀⁠可⁠先⁠通⁠讀⁠全⁠篇，由⁠明⁠王⁠之⁠治、應物無私到渾沌七日而死；再回看第四節節錄與第七節段落關係。進一步研究宜並置郭象對無心應物、成玄英對渾沌義與近人對鑿竅寓言的政治解讀，並⁠以⁠郭⁠慶⁠藩⁠核⁠對⁠字⁠句。外⁠篇〈在⁠宥〉「無⁠攖⁠人⁠心」、〈秋⁠水〉天⁠人⁠之⁠分⁠可⁠延⁠伸⁠此⁠線，但⁠內⁠篇⁠結⁠局⁠最⁠尖⁠銳。讀⁠畢⁠內⁠七⁠篇，宜⁠回⁠頭⁠從〈逍⁠遙⁠遊〉無⁠待⁠一⁠路⁠追⁠至⁠渾⁠沌，看個人工夫如何匯入政治警戒。</p></div></div>
+<p>初⁠讀⁠可⁠先⁠通⁠讀⁠全⁠篇，由⁠明⁠王⁠之⁠治、應物無私到渾沌七日而死；再回看第四節節錄與第七節段落關係。進一步研究宜並置郭象對無心應物、成玄英對渾沌義與近人對鑿竅寓言的政治解讀，並⁠以⁠郭⁠慶⁠藩⁠核⁠對⁠字⁠句。外⁠篇〈在⁠宥〉「無⁠攖⁠人⁠心」、〈秋⁠水〉天⁠人⁠之⁠分⁠可⁠延⁠伸⁠此⁠線，但⁠內⁠篇⁠結⁠局⁠最⁠尖⁠銳。讀⁠畢⁠內⁠七⁠篇，宜⁠回⁠頭⁠從〈逍⁠遙⁠遊〉無⁠待⁠一⁠路⁠追⁠至⁠渾⁠沌，看個人工夫如何匯入政治警戒。</p></div>
 <div class="pagebreak"></div>
 
 <h1 id="駢拇">駢⁠拇</h1>
@@ -2965,15 +2967,14 @@
 </ol></div>
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈駢⁠拇〉由⁠身⁠體⁠多⁠餘⁠之⁠物，寫⁠出⁠仁⁠義⁠外⁠加⁠的⁠危⁠險；以「不⁠失⁠其⁠性⁠命⁠之⁠情」安⁠頓⁠差⁠異；再⁠以⁠伯⁠夷⁠盜⁠跖⁠證⁠明：殉名與殉利可以同樣殘生。讀者帶走的不是反道德口號，而⁠是⁠辨⁠識「加⁠法⁠德⁠性」何⁠時⁠變⁠成⁠贅⁠疣，以及如何在不得已用德之後，學⁠會⁠無⁠為⁠而⁠止。</p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  Q[德性從何溢出] --&gt; A[性命之情為本]
-  A --&gt; B[仁義多方若成贅疣]
-  B --&gt; C[矯性之累]
-  C --&gt; D[死名與死利：傷性同]
-  A --&gt; E[正正：各安其分]
-  E --&gt; F[無為而止於性]
-  D --&gt; F</div></div>
+  Q[&quot;德性從何溢出&quot;]
+  Q --&gt; A[&quot;性命之情為本&quot;]
+  A --&gt; B[&quot;仁義多方若成贅疣 → 矯性之累&quot;]
+  B --&gt; D[&quot;死名與死利：傷性同&quot;]
+  D --&gt; E[&quot;正正：各安其分&quot;]
+  E --&gt; F[&quot;無為而止於性&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <ul>
 <li>郭⁠慶⁠藩《莊⁠子⁠集⁠釋》〈駢⁠拇〉；王⁠先⁠謙《莊⁠子⁠集⁠解》〈駢⁠拇〉。</li>
@@ -2988,7 +2989,7 @@
 <li>相⁠關⁠人⁠物：<a href="content/figures/莊周.md">莊⁠周</a>、<a href="content/figures/孔子.md">孔⁠子</a>、盜⁠跖、伯⁠夷</li>
 <li>相⁠關⁠名⁠詞：<a href="content/terms/道.md">道</a>、成⁠心、無⁠為、性⁠命⁠之⁠情</li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/政治與無為.md">政⁠治⁠與⁠無⁠為</a>、<a href="content/themes/焦慮與比較.md">焦⁠慮⁠與⁠比⁠較</a>、<a href="content/themes/工作與技道.md">工⁠作⁠與⁠技⁠道</a></li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="馬蹄">馬⁠蹄</h1>
@@ -3201,15 +3202,14 @@
 </ol></div>
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈馬⁠蹄〉以馬之真性衡量伯樂之治，以埴木之性拆穿規矩自豪，指出治天下之過在於把人當材料；赫胥氏之民則顯示另一種「成⁠功」：能⁠安⁠然⁠遊⁠嬉，而⁠非⁠更⁠被⁠整⁠形。讀⁠本⁠篇，是⁠為⁠了⁠給「我⁠善⁠治」加上死亡率與失性的附註，並⁠追⁠問：我⁠們⁠稱⁠讚⁠的，究⁠竟⁠是⁠誰⁠的⁠善、誰⁠的⁠治？</p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  Q[「我善治」為誰之善] --&gt; T[真性]
-  T --&gt; G[規矩鉤繩強物就範]
-  G --&gt; C[失性與傷亡]
-  Q --&gt; P[把人當可塑材料]
-  P --&gt; C
-  T --&gt; S[素樸／各適其性]
-  S --&gt; R[治術需先問是否傷真]</div></div>
+  Q[&quot;「我善治」為誰之善&quot;]
+  Q --&gt; T[&quot;真性／素樸／各適其性&quot;]
+  T --&gt; G[&quot;規矩鉤繩強物就範&quot;]
+  G --&gt; C[&quot;失性與傷亡&quot;]
+  C --&gt; P[&quot;把人當可塑材料&quot;]
+  P --&gt; R[&quot;治術需先問是否傷真&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <ul>
 <li>郭⁠慶⁠藩《莊⁠子⁠集⁠釋》〈馬⁠蹄〉；王⁠先⁠謙《莊⁠子⁠集⁠解》〈馬⁠蹄〉。</li>
@@ -3224,7 +3224,7 @@
 <li>相⁠關⁠人⁠物：<a href="content/figures/莊周.md">莊⁠周</a>、<a href="content/figures/庖丁.md">庖⁠丁</a>、伯⁠樂</li>
 <li>相⁠關⁠名⁠詞：<a href="content/terms/道.md">道</a>、無⁠為、真⁠性、規⁠矩⁠鉤⁠繩</li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/政治與無為.md">政⁠治⁠與⁠無⁠為</a>、<a href="content/themes/工作與技道.md">工⁠作⁠與⁠技⁠道</a>、<a href="content/themes/無用與有用.md">無⁠用⁠與⁠有⁠用</a></li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="胠篋">胠⁠篋</h1>
@@ -3433,14 +3433,15 @@
 </ol></div>
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈胠⁠篋〉由⁠鎖⁠箱⁠被⁠整⁠件⁠扛⁠走，寫到田成子連聖知之法一併盜走；又證明盜業可徵用全部德目，故云聖人不死則大盜不止。其⁠尖⁠銳⁠處⁠在⁠於：防⁠盜⁠與⁠尚⁠聖，若⁠不⁠考⁠慮⁠可⁠盜⁠用⁠性，便⁠可⁠能⁠為⁠巨⁠盜⁠服⁠務。讀⁠者⁠帶⁠走⁠的，是一套對知識與德目進行「物⁠流⁠分⁠析」的⁠眼⁠光。</p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  Q[防盜之知會否資盜] --&gt; K[世俗之知可被整遷]
-  K --&gt; D[為大盜積]
-  D --&gt; S[聖知之法亦可盜]
-  S --&gt; V[德目可轉移：勇義仁皆可被用]
-  V --&gt; C[聖人不死，大盜不止]
-  C --&gt; R[警惕偶像化之知，非否定辨識]</div></div>
+  Q[&quot;防盜之知會否資盜&quot;]
+  Q --&gt; K[&quot;世俗之知可被整遷&quot;]
+  K --&gt; D[&quot;為大盜積&quot;]
+  D --&gt; S[&quot;聖知之法亦可盜&quot;]
+  S --&gt; V[&quot;德目可轉移：勇義仁皆可被用&quot;]
+  V --&gt; C[&quot;聖人不死，大盜不止&quot;]
+  C --&gt; R[&quot;警惕偶像化之知，非否定辨識&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <ul>
 <li>郭⁠慶⁠藩《莊⁠子⁠集⁠釋》〈胠⁠篋〉；王⁠先⁠謙《莊⁠子⁠集⁠解》〈胠⁠篋〉。</li>
@@ -3455,7 +3456,7 @@
 <li>相⁠關⁠人⁠物：<a href="content/figures/莊周.md">莊⁠周</a>、<a href="content/figures/孔子.md">孔⁠子</a>、盜⁠跖、田⁠成⁠子</li>
 <li>相⁠關⁠名⁠詞：<a href="content/terms/道.md">道</a>、無⁠為、聖⁠知⁠之⁠法、絕⁠聖⁠棄⁠知</li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/政治與無為.md">政⁠治⁠與⁠無⁠為</a>、<a href="content/themes/工作與技道.md">工⁠作⁠與⁠技⁠道</a>、<a href="content/themes/焦慮與比較.md">焦⁠慮⁠與⁠比⁠較</a></li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="在宥">在⁠宥</h1>
@@ -3613,16 +3614,14 @@
 </ol></div>
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈在⁠宥〉以「在⁠宥⁠天⁠下」取⁠代「治⁠天⁠下」，要求不得已臨莅者以無為安性命之情；崔⁠瞿、廣⁠成⁠子、鴻⁠蒙⁠三⁠層⁠對⁠話，由⁠勿⁠攖⁠人⁠心、而⁠抱⁠神⁠以⁠靜、而⁠浮⁠遊⁠觀⁠無⁠妄，層⁠層⁠卸⁠下⁠治⁠術⁠妄⁠想。讀⁠本⁠篇，是⁠學⁠習⁠把「我⁠要⁠治」改⁠成「我⁠是⁠否⁠正⁠在⁠攪⁠動」。從政治宣言到身心工夫再到「何⁠知」，全篇呈現無為的立體結構，而⁠非⁠單⁠一⁠政⁠策⁠口⁠號。</p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  Q[安天下還是治天下] --&gt; A[在宥：安性命之情]
-  A --&gt; B[無為・不得已而後應]
-  B --&gt; C[慎無攖人心]
-  C --&gt; D[抱神以靜，形將自正]
-  Q --&gt; T[以焦慮整形對方]
-  T --&gt; H[淫其性／遷其德]
-  H --&gt; R[先停不必要的攪動]
-  D --&gt; R</div></div>
+  Q[&quot;安天下還是治天下&quot;]
+  Q --&gt; A[&quot;在宥：安性命之情&quot;]
+  A --&gt; B[&quot;無為・不得已而後應&quot;]
+  B --&gt; C[&quot;慎無攖人心&quot;]
+  C --&gt; D[&quot;抱神以靜，形將自正&quot;]
+  D --&gt; R[&quot;先停不必要的攪動（勿以焦慮整形對方）&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <ul>
 <li>郭⁠慶⁠藩《莊⁠子⁠集⁠釋》〈在⁠宥〉；王⁠先⁠謙《莊⁠子⁠集⁠解》〈在⁠宥〉。</li>
@@ -3636,7 +3635,7 @@
 <li>相⁠關⁠人⁠物：<a href="content/figures/孔子.md">孔⁠子</a></li>
 <li>相⁠關⁠名⁠詞：<a href="content/terms/道.md">道</a>、<a href="content/terms/真人.md">真⁠人</a></li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/政治與無為.md">政⁠治⁠與⁠無⁠為</a></li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="天地">天⁠地</h1>
@@ -3795,14 +3794,13 @@
 </ol></div>
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈天⁠地〉由「其⁠化⁠均」立⁠帝⁠道⁠綱⁠領，用寓言檢驗聰明能否配天，再以漢陰抱甕揭示機心傷純白，終以忘物忘己入於天收束。讀者帶走的不是反技術口號，而⁠是：效率若不能安住精神與均平之德，便⁠難⁠稱⁠帝⁠王⁠之⁠德。子⁠貢⁠與⁠丈⁠人⁠的⁠對⁠照、孔⁠子「治⁠內⁠治⁠外」的⁠評⁠語，使本篇始終保持開放張力，而非給出簡單的拒械結論。</p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  T[天地化均] --&gt; J[君原於德而成於天]
-  J --&gt; M[機心：效率算計]
-  M --&gt; P[純白不備・神不定]
-  J --&gt; W[忘物・忘天・忘己]
-  W --&gt; R[入於天：技不奪心]
-  P --&gt; R</div></div>
+  T[&quot;天地化均&quot;]
+  T --&gt; J[&quot;君原於德而成於天&quot;]
+  J --&gt; M[&quot;機心：效率算計 → 純白不備&quot;]
+  M --&gt; W[&quot;忘物・忘天・忘己&quot;]
+  W --&gt; R[&quot;入於天：技不奪心&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <ul>
 <li>郭⁠慶⁠藩《莊⁠子⁠集⁠釋》〈天⁠地〉；王⁠先⁠謙《莊⁠子⁠集⁠解》〈天⁠地〉。</li>
@@ -3817,7 +3815,7 @@
 <li>相⁠關⁠人⁠物：<a href="content/figures/孔子.md">孔⁠子</a></li>
 <li>相⁠關⁠名⁠詞：<a href="content/terms/道.md">道</a></li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/政治與無為.md">政⁠治⁠與⁠無⁠為</a>、<a href="content/themes/工作與技道.md">工⁠作⁠與⁠技⁠道</a></li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="天道">天⁠道</h1>
@@ -3993,14 +3991,14 @@
 </ol></div>
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈天⁠道〉以「運⁠而⁠無⁠所⁠積」形⁠容⁠天、帝、聖⁠之⁠道，以⁠虛⁠靜⁠恬⁠淡⁠為⁠帝⁠王⁠所⁠休；辨上下有為無為與本末之序；終⁠以⁠輪⁠扁⁠斫⁠輪，說明最要緊的知往往隨人而亡、不⁠能⁠盡⁠在⁠書⁠中。讀⁠者⁠可⁠同⁠時⁠學⁠兩⁠件⁠事：讓⁠制⁠度⁠能⁠運⁠轉⁠而⁠不⁠壅，以⁠及⁠對⁠言⁠傳⁠保⁠持⁠謙⁠遜。</p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  D[天道運而無所積] --&gt; V[虛靜恬淡]
-  V --&gt; G[上無為／下有為]
-  G --&gt; O[本末：道德先於形名賞罰]
-  O --&gt; K[默會之知]
-  K --&gt; B[書為糟粕・數不可盡傳]
-  B --&gt; R[制度不壅，知有可傳／不可傳之分]</div></div>
+  D[&quot;天道運而無所積&quot;]
+  D --&gt; V[&quot;虛靜恬淡&quot;]
+  V --&gt; G[&quot;上無為／下有為&quot;]
+  G --&gt; O[&quot;本末：道德先於形名賞罰&quot;]
+  O --&gt; K[&quot;默會之知｜書為糟粕&quot;]
+  K --&gt; R[&quot;制度不壅，知有可傳／不可傳之分&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <ul>
 <li>郭⁠慶⁠藩《莊⁠子⁠集⁠釋》〈天⁠道〉；王⁠先⁠謙《莊⁠子⁠集⁠解》〈天⁠道〉。</li>
@@ -4014,7 +4012,7 @@
 <li>相⁠關⁠人⁠物：輪⁠扁、桓⁠公、堯、舜、<a href="content/figures/孔子.md">孔⁠子</a>、<a href="content/figures/庖丁.md">庖⁠丁</a>、<a href="content/figures/許由.md">許⁠由</a>（拒⁠名⁠傳⁠統⁠可⁠互⁠參）</li>
 <li>相⁠關⁠名⁠詞：<a href="content/terms/道.md">道</a>、無⁠所⁠積、虛⁠靜⁠恬⁠淡、本⁠末、斫⁠輪⁠之⁠數</li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/政治與無為.md">政⁠治⁠與⁠無⁠為</a>、<a href="content/themes/工作與技道.md">工⁠作⁠與⁠技⁠道</a></li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="天運">天⁠運</h1>
@@ -4184,14 +4182,14 @@
 </ol></div>
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈天⁠運〉由⁠天⁠之⁠運⁠轉⁠設⁠問，經⁠樂⁠與⁠禮⁠的⁠時⁠效⁠之⁠喻，指出錯置時代的制度如推舟於陸；再⁠以⁠六⁠經⁠為⁠陳⁠跡、以⁠烏⁠鵲⁠孺⁠等⁠與⁠化，教⁠人⁠從⁠生⁠命⁠變⁠化⁠中⁠找⁠回「所⁠以⁠跡」。讀⁠者⁠帶⁠走⁠的⁠是⁠時⁠變⁠意⁠識：能⁠運，才⁠能⁠治；能⁠與⁠化，才⁠能⁠化⁠人。孔⁠子⁠從⁠遊⁠說⁠失⁠敗⁠到「得⁠之」，顯⁠示⁠經⁠典⁠與⁠仁⁠義⁠仍⁠可⁠用，但⁠須⁠從⁠履⁠而⁠非⁠跡、從化而非固執中重新理解。</p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  T[天其運乎：時變] --&gt; L[禮樂有時效]
-  L --&gt; C[芻狗：未陳／已陳]
-  C --&gt; M[錯置：推舟於陸]
-  M --&gt; J[六經＝陳跡≠所以跡]
-  J --&gt; H[與化為人]
-  H --&gt; R[應時而不固守已陳]</div></div>
+  T[&quot;天其運乎：時變&quot;]
+  T --&gt; L[&quot;禮樂有時效&quot;]
+  L --&gt; C[&quot;芻狗：未陳／已陳&quot;]
+  C --&gt; M[&quot;錯置：推舟於陸&quot;]
+  M --&gt; J[&quot;六經＝陳跡 ≠ 所以跡&quot;]
+  J --&gt; R[&quot;與化為人：應時而不固守已陳&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <ul>
 <li>郭⁠慶⁠藩《莊⁠子⁠集⁠釋》〈天⁠運〉；王⁠先⁠謙《莊⁠子⁠集⁠解》〈天⁠運〉。</li>
@@ -4205,7 +4203,7 @@
 <li>相⁠關⁠人⁠物：<a href="content/figures/孔子.md">孔⁠子</a></li>
 <li>相⁠關⁠名⁠詞：<a href="content/terms/道.md">道</a>、<a href="content/terms/物化.md">物⁠化</a>、<a href="content/terms/齊物.md">齊⁠物</a></li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/政治與無為.md">政⁠治⁠與⁠無⁠為</a></li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="刻意">刻⁠意</h1>
@@ -4383,13 +4381,14 @@
 </ol></div>
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈刻⁠意〉列⁠出⁠五⁠種⁠偏⁠尚⁠之⁠士，揭⁠示⁠高⁠行⁠亦⁠可⁠成⁠嗜⁠好；以⁠淡⁠然⁠無⁠極⁠翻⁠轉⁠刻⁠意；再以水之清平與純粹不雜，標⁠出⁠養⁠神⁠之⁠道。短⁠篇⁠的⁠力⁠量⁠在⁠於：它⁠讓⁠讀⁠者⁠在⁠各⁠種「正⁠確⁠人⁠生」之⁠間，認出那把意刻傷的共同手法，並⁠指⁠向<a href="content/terms/真人.md">真⁠人</a>式⁠的⁠純⁠素⁠修⁠養。</p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  K[刻意尚行] --&gt; B[五士偏尚皆可成嗜]
-  B --&gt; F[淡然無極]
-  F --&gt; S[養神先於養形]
-  S --&gt; P[純粹不雜・平易恬淡]
-  P --&gt; R[高行若不役於人設，方可近道]</div></div>
+  K[&quot;刻意尚行&quot;]
+  K --&gt; B[&quot;五士偏尚皆可成嗜&quot;]
+  B --&gt; F[&quot;淡然無極&quot;]
+  F --&gt; S[&quot;養神先於養形&quot;]
+  S --&gt; P[&quot;純粹不雜・平易恬淡&quot;]
+  P --&gt; R[&quot;高行若不役於人設，方可近道&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <ul>
 <li>郭⁠慶⁠藩《莊⁠子⁠集⁠釋》〈刻⁠意〉；王⁠先⁠謙《莊⁠子⁠集⁠解》〈刻⁠意〉。</li>
@@ -4403,7 +4402,7 @@
 <li>相⁠關⁠人⁠物：<a href="content/figures/孔子.md">孔⁠子</a>、彭⁠祖、<a href="content/terms/真人.md">真⁠人</a>（概⁠念）</li>
 <li>相⁠關⁠名⁠詞：<a href="content/terms/真人.md">真⁠人</a>、<a href="content/terms/心齋.md">心⁠齋</a>、刻⁠意⁠尚⁠行、養⁠神、純⁠粹⁠不⁠雜</li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/焦慮與比較.md">焦⁠慮⁠與⁠比⁠較</a>、<a href="content/themes/工作與技道.md">工⁠作⁠與⁠技⁠道</a></li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="繕性">繕⁠性</h1>
@@ -4615,16 +4614,14 @@
 </ol></div>
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈繕⁠性〉追⁠問：修⁠身⁠何⁠時⁠會⁠變⁠成⁠傷⁠身？答⁠案⁠不⁠在⁠取⁠消⁠一⁠切⁠學⁠問，而⁠在⁠使⁠知⁠識、仁⁠義⁠與⁠禮⁠制⁠不⁠離⁠恬⁠淡、不⁠失⁠其⁠初。它⁠把「自⁠然」提出為對文明與自我塑造的持續校正，並以知恬交相養避免簡單的反智或崇智。</p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  Q[如何「修」性而不傷性] --&gt; A[性命之初]
-  A --&gt; B[俗學／名教／成心增飾]
-  B --&gt; C[失性]
-  A --&gt; D[以知養恬]
-  D --&gt; E[知恬交相養]
-  E --&gt; F[不失其初]
-  F --&gt; R[少傷害、能應變]
-  C --&gt; R</div></div>
+  Q[&quot;如何「修」性而不傷性&quot;]
+  Q --&gt; A[&quot;性命之初&quot;]
+  A --&gt; B[&quot;俗學／名教／成心增飾 → 失性&quot;]
+  B --&gt; D[&quot;以知養恬｜知恬交相養&quot;]
+  D --&gt; F[&quot;不失其初&quot;]
+  F --&gt; R[&quot;少傷害、能應變&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <ul>
 <li>郭⁠慶⁠藩《莊⁠子⁠集⁠釋》、王⁠先⁠謙《莊⁠子⁠集⁠解》〈繕⁠性〉。</li>
@@ -4639,7 +4636,7 @@
 <li>相⁠關⁠人⁠物：<a href="content/figures/莊周.md">莊⁠周</a>、<a href="content/figures/孔子.md">孔⁠子</a></li>
 <li>相⁠關⁠名⁠詞：<a href="content/terms/道.md">道</a>、成⁠心、<a href="content/terms/坐忘.md">坐⁠忘</a>、無⁠為、性⁠命⁠之⁠初</li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/焦慮與比較.md">焦⁠慮⁠與⁠比⁠較</a>、<a href="content/themes/工作與技道.md">工⁠作⁠與⁠技⁠道</a>、<a href="content/themes/自由與無待.md">自⁠由⁠與⁠無⁠待</a></li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="秋水">秋⁠水</h1>
@@ -4832,14 +4829,15 @@
 </ol></div>
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈秋⁠水〉由⁠河⁠伯⁠見⁠海，教⁠人⁠放⁠下「所⁠見⁠即⁠全⁠體」的⁠自⁠多；由⁠多⁠重⁠視⁠角⁠與⁠夔⁠蚿⁠之⁠喻，辨⁠識⁠限⁠制⁠的⁠來⁠源；再⁠以⁠天⁠人⁠之⁠辨，防⁠止⁠人⁠為⁠尺⁠度⁠毀⁠傷⁠生⁠命。其⁠要⁠點⁠不⁠是⁠拒⁠絕⁠判⁠斷，而是在判斷中保有尺度感、修⁠正⁠力⁠與⁠分⁠際。作⁠為⁠外⁠篇⁠旗⁠艦，它⁠把<a href="content/terms/逍遙.md">逍⁠遙</a>的⁠小⁠大⁠之⁠辯、<a href="content/terms/齊物.md">齊⁠物</a>的⁠觀⁠點⁠轉⁠換，落實為可實踐的生命智慧。</p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  Q[判斷從哪把尺子來] --&gt; S[尺度相對]
-  S --&gt; H[自多之慚：承認有限]
-  H --&gt; V[道／物／俗多視角]
-  V --&gt; F[有分：不可強齊]
-  F --&gt; T[無以人滅天]
-  T --&gt; R[謙抑而可修正的判斷]</div></div>
+  Q[&quot;判斷從哪把尺子來&quot;]
+  Q --&gt; S[&quot;尺度相對&quot;]
+  S --&gt; H[&quot;自多之慚：承認有限&quot;]
+  H --&gt; V[&quot;道／物／俗多視角&quot;]
+  V --&gt; F[&quot;有分：不可強齊&quot;]
+  F --&gt; T[&quot;無以人滅天&quot;]
+  T --&gt; R[&quot;謙抑而可修正的判斷&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <ul>
 <li>郭⁠慶⁠藩《莊⁠子⁠集⁠釋》〈秋⁠水〉；王⁠先⁠謙《莊⁠子⁠集⁠解》〈秋⁠水〉。</li>
@@ -4853,7 +4851,7 @@
 <li>相⁠關⁠人⁠物：<a href="content/figures/莊周.md">莊⁠周</a>、<a href="content/figures/惠施.md">惠⁠施</a>、<a href="content/figures/孔子.md">孔⁠子</a></li>
 <li>相⁠關⁠名⁠詞：<a href="content/terms/道.md">道</a>、<a href="content/terms/齊物.md">齊⁠物</a>、<a href="content/terms/逍遙.md">逍⁠遙</a>、<a href="content/terms/真人.md">真⁠人</a></li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/政治與無為.md">政⁠治⁠與⁠無⁠為</a>、<a href="content/themes/焦慮與比較.md">焦⁠慮⁠與⁠比⁠較</a>、<a href="content/themes/自由與無待.md">自⁠由⁠與⁠無⁠待</a></li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="至樂">至⁠樂</h1>
@@ -5004,13 +5002,14 @@
 </ol></div>
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈至⁠樂〉以⁠提⁠問⁠而⁠非⁠答⁠案⁠開⁠場，經⁠髑⁠髏、鼓⁠盆⁠與⁠神⁠龜，指出最高的樂不在占有更多，而⁠在⁠不⁠讓⁠名、死與尊榮奪走生命的活動餘地。它⁠不⁠取⁠消⁠哀⁠情，而要求在哀情中看見大化。三⁠則⁠故⁠事⁠由⁠夢、喪、仕⁠三⁠線⁠交⁠織，共⁠同⁠回⁠答「奚⁠為⁠奚⁠據」：安⁠頓⁠不⁠在⁠外⁠求⁠名⁠壽，而在能否於變化中仍保有可游之生。</p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  Q[何為至樂] --&gt; N[名利壽考未必安生]
-  N --&gt; D[死生換位・察其始終]
-  D --&gt; A[哀而不執]
-  A --&gt; G[曳尾塗中：自主勝虛榮]
-  G --&gt; R[安時而不失真]</div></div>
+  Q[&quot;何為至樂&quot;]
+  Q --&gt; N[&quot;名利壽考未必安生&quot;]
+  N --&gt; D[&quot;死生換位・察其始終&quot;]
+  D --&gt; A[&quot;哀而不執&quot;]
+  A --&gt; G[&quot;曳尾塗中：自主勝虛榮&quot;]
+  G --&gt; R[&quot;安時而不失真&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <ul>
 <li>郭⁠慶⁠藩《莊⁠子⁠集⁠釋》、王⁠先⁠謙《莊⁠子⁠集⁠解》〈至⁠樂〉。</li>
@@ -5026,7 +5025,7 @@
 <li>相⁠關⁠人⁠物：<a href="content/figures/莊周.md">莊⁠周</a>、<a href="content/figures/惠施.md">惠⁠施</a></li>
 <li>相⁠關⁠名⁠詞：<a href="content/terms/道.md">道</a>、<a href="content/terms/無用之用.md">無⁠用⁠之⁠用</a></li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/死亡與喪親.md">死⁠亡⁠與⁠喪⁠親</a></li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="達生">達⁠生</h1>
@@ -5208,14 +5207,15 @@
 </ol></div>
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈達⁠生〉以⁠技⁠藝⁠故⁠事⁠說⁠生⁠命⁠哲⁠學：承⁠認⁠命⁠限，不⁠被⁠利⁠害⁠牽⁠引，虛⁠心⁠觀⁠物，才⁠能⁠使⁠形⁠與⁠神、技⁠與⁠材⁠相⁠合。其⁠通⁠達⁠不⁠是⁠神⁠奇⁠掌⁠控，而是少受無謂損耗後的從容準確。與<a href="content/figures/庖丁.md">庖⁠丁</a>、<a href="content/terms/真人.md">真⁠人</a>的⁠修⁠養⁠理⁠想⁠可⁠成⁠讀⁠法⁠鏈，但⁠本⁠篇⁠更⁠接⁠地⁠氣，直⁠指⁠日⁠常⁠技⁠藝。</p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  D[達生] --&gt; L[知不可控・不務無奈何]
-  L --&gt; C[凝神忘形]
-  C --&gt; T[技進乎道・以天合天]
-  T --&gt; W[不以利害傷神]
-  W --&gt; S[去勝負擾心]
-  S --&gt; R[通達生命：不以外物役神]</div></div>
+  D[&quot;達生&quot;]
+  D --&gt; L[&quot;知不可控・不務無奈何&quot;]
+  L --&gt; C[&quot;凝神忘形&quot;]
+  C --&gt; T[&quot;技進乎道・以天合天&quot;]
+  T --&gt; W[&quot;不以利害傷神&quot;]
+  W --&gt; S[&quot;去勝負擾心&quot;]
+  S --&gt; R[&quot;通達生命：不以外物役神&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <ul>
 <li>郭⁠慶⁠藩《莊⁠子⁠集⁠釋》、王⁠先⁠謙《莊⁠子⁠集⁠解》〈達⁠生〉。</li>
@@ -5229,7 +5229,7 @@
 <li>相⁠關⁠人⁠物：<a href="content/figures/庖丁.md">庖⁠丁</a>、<a href="content/figures/孔子.md">孔⁠子</a>、<a href="content/figures/列禦寇.md">列⁠禦⁠寇</a>（蹈⁠水⁠傳⁠統⁠可⁠互⁠參）</li>
 <li>相⁠關⁠名⁠詞：<a href="content/terms/心齋.md">心⁠齋</a>、<a href="content/terms/真人.md">真⁠人</a>、達⁠生、以⁠天⁠合⁠天</li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/工作與技道.md">工⁠作⁠與⁠技⁠道</a>、<a href="content/themes/焦慮與比較.md">焦⁠慮⁠與⁠比⁠較</a></li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="山木">山⁠木</h1>
@@ -5406,14 +5406,15 @@
 </ol></div>
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈山⁠木〉以一樹一雁破除成功與避害的簡單公式。真正的處世不在固定選材或不材，而⁠在⁠隨⁠境⁠調⁠整、不⁠失⁠所⁠依，並不把自保手段當成全部人生。它⁠使<a href="content/terms/無用之用.md">無⁠用⁠之⁠用</a>從口號變為<strong>需不斷校準的實踐</strong>。</p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  Q[材或不材能否保命] --&gt; R[皆相對・皆可累]
-  R --&gt; M[處乎其間]
-  M --&gt; S[公式仍未免累]
-  S --&gt; X[虛己以遊世]
-  X --&gt; D[乘道德而遊]
-  D --&gt; Y[不為物役・隨時校準]</div></div>
+  Q[&quot;材或不材能否保命&quot;]
+  Q --&gt; R[&quot;皆相對・皆可累&quot;]
+  R --&gt; M[&quot;處乎其間&quot;]
+  M --&gt; S[&quot;公式仍未免累&quot;]
+  S --&gt; X[&quot;虛己以遊世&quot;]
+  X --&gt; D[&quot;乘道德而遊&quot;]
+  D --&gt; Y[&quot;不為物役・隨時校準&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <ul>
 <li>郭⁠慶⁠藩《莊⁠子⁠集⁠釋》、王⁠先⁠謙《莊⁠子⁠集⁠解》〈山⁠木〉。</li>
@@ -5427,7 +5428,7 @@
 <li>相⁠關⁠人⁠物：<a href="content/figures/莊周.md">莊⁠周</a>、<a href="content/figures/孔子.md">孔⁠子</a>、<a href="content/figures/顏回.md">顏⁠回</a>、<a href="content/figures/惠施.md">惠⁠施</a></li>
 <li>相⁠關⁠名⁠詞：<a href="content/terms/無用之用.md">無⁠用⁠之⁠用</a>、<a href="content/terms/無待.md">無⁠待</a>、<a href="content/terms/逍遙.md">逍⁠遙</a>、<a href="content/terms/物化.md">物⁠化</a></li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/無用與有用.md">無⁠用⁠與⁠有⁠用</a>、<a href="content/themes/自由與無待.md">自⁠由⁠與⁠無⁠待</a></li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="田子方">田⁠子⁠方</h1>
@@ -5634,14 +5635,14 @@
 </ol></div>
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈田⁠子⁠方〉用⁠師⁠道、訪⁠客⁠與⁠畫⁠工⁠故⁠事，拆⁠解「看⁠起⁠來⁠正⁠確」的⁠誘⁠惑。德、禮⁠與⁠技⁠藝⁠若⁠能⁠返⁠本⁠於⁠心、事⁠與⁠物，便⁠可⁠成⁠真；若⁠只⁠供⁠名⁠位⁠與⁠展⁠示，便⁠失⁠其⁠神。全篇由宮廷到畫室再到问道，層⁠層⁠說⁠明：真⁠不⁠是⁠一⁠種⁠姿⁠態，而是一種不為名役的行動結構。</p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  Q[何謂真] --&gt; F[禮・貌・名若為展示]
-  F --&gt; L[失真・分心]
-  Q --&gt; T[為心與事服務]
-  T --&gt; C[忘形凝神]
-  C --&gt; R[真交往／真畫者]
-  R --&gt; N[非反禮，反飾與名役]</div></div>
+  Q[&quot;何謂真&quot;]
+  Q --&gt; F[&quot;禮・貌・名若為展示 → 失真・分心&quot;]
+  F --&gt; T[&quot;為心與事服務&quot;]
+  T --&gt; C[&quot;忘形凝神&quot;]
+  C --&gt; R[&quot;真交往／真畫者&quot;]
+  R --&gt; N[&quot;非反禮，反飾與名役&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <ul>
 <li>郭⁠慶⁠藩《莊⁠子⁠集⁠釋》、王⁠先⁠謙《莊⁠子⁠集⁠解》〈田⁠子⁠方〉。</li>
@@ -5656,7 +5657,7 @@
 <li>相⁠關⁠人⁠物：<a href="content/figures/莊周.md">莊⁠周</a>、<a href="content/figures/孔子.md">孔⁠子</a>、<a href="content/figures/顏回.md">顏⁠回</a>、<a href="content/figures/庖丁.md">庖⁠丁</a>、老⁠聃、田⁠子⁠方、溫⁠伯⁠雪⁠子</li>
 <li>相⁠關⁠名⁠詞：<a href="content/terms/道.md">道</a>、<a href="content/terms/心齋.md">心⁠齋</a>、<a href="content/terms/坐忘.md">坐⁠忘</a>、寓⁠言、<a href="content/terms/卮言.md">卮⁠言</a>、真</li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/工作與技道.md">工⁠作⁠與⁠技⁠道</a>、<a href="content/themes/焦慮與比較.md">焦⁠慮⁠與⁠比⁠較</a>、<a href="content/themes/自由與無待.md">自⁠由⁠與⁠無⁠待</a></li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="知北遊">知⁠北⁠遊</h1>
@@ -5814,15 +5815,14 @@
 </ol></div>
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈知⁠北⁠遊〉從⁠沉⁠默⁠與⁠否⁠定⁠起⁠步，最⁠後⁠說⁠道⁠在⁠最⁠卑⁠微⁠之⁠處，又⁠以「大⁠美⁠不⁠言」安⁠頓⁠於⁠感⁠通。其⁠要⁠義⁠是：道⁠不⁠可⁠被⁠思⁠慮、處⁠所⁠和⁠方⁠法⁠據⁠為⁠己⁠有；真正的知需帶著不知的開放，並在萬物日用中不斷校正自己。全⁠篇⁠由「知」之⁠寓⁠言⁠人⁠物⁠貫⁠穿，把⁠認⁠識⁠論、本體論與倫理學壓縮在同一問答鏈中，是⁠外⁠篇⁠道⁠論⁠的⁠重⁠要⁠樞⁠紐。</p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  Q[如何求道] --&gt; P[占有式提問：求法／求處]
-  P --&gt; F[不得]
-  Q --&gt; U[不知之知]
-  U --&gt; D[道無所不在]
-  D --&gt; B[螻蟻至屎溺]
-  U --&gt; S[大美不言]
-  S --&gt; R[破執言與執法，虛心應物]</div></div>
+  Q[&quot;如何求道&quot;]
+  Q --&gt; P[&quot;占有式提問：求法／求處 → 不得&quot;]
+  P --&gt; U[&quot;不知之知&quot;]
+  U --&gt; D[&quot;道無所不在：螻蟻至屎溺&quot;]
+  D --&gt; S[&quot;大美不言&quot;]
+  S --&gt; R[&quot;破執言與執法，虛心應物&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <ul>
 <li>郭⁠慶⁠藩《莊⁠子⁠集⁠釋》、王⁠先⁠謙《莊⁠子⁠集⁠解》〈知⁠北⁠遊〉。</li>
@@ -5837,7 +5837,7 @@
 <li>相⁠關⁠人⁠物：<a href="content/figures/莊周.md">莊⁠周</a>、<a href="content/figures/孔子.md">孔⁠子</a></li>
 <li>相⁠關⁠名⁠詞：<a href="content/terms/道.md">道</a>、<a href="content/terms/齊物.md">齊⁠物</a>、<a href="content/terms/真人.md">真⁠人</a></li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/工作與技道.md">工⁠作⁠與⁠技⁠道</a></li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="庚桑楚">庚⁠桑⁠楚</h1>
@@ -6011,15 +6011,14 @@
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈庚⁠桑⁠楚〉由畏壘之譽寫到南榮趎之急，再⁠收⁠於⁠道、德、形、名：它⁠問⁠的⁠不⁠是「如⁠何⁠更⁠快⁠得⁠道」，而⁠是「如何在求道與治世時仍能衛生」。真⁠正⁠的⁠關⁠鍵⁠句⁠是：<strong>全⁠汝⁠形，抱⁠汝⁠生，無⁠使⁠汝⁠思⁠慮⁠營⁠營。</strong></p>
 <p>若⁠以⁠一⁠句⁠話⁠收⁠束：<strong>先讓生命不被名聲與急切掏空，道⁠才⁠可⁠能⁠被⁠尊⁠崇，而⁠不⁠是⁠被⁠當⁠成⁠績⁠效⁠項⁠目。</strong></p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  Q[保生還是績效化得道] --&gt; H[衛生之經]
-  H --&gt; A[全形抱生]
-  A --&gt; B[無思慮營營]
-  Q --&gt; L[道／德／形／名層次]
-  L --&gt; N[名譽祭祀化之危]
-  N --&gt; R[先保生，再談聲譽與功]
-  B --&gt; R</div></div>
+  Q[&quot;保生還是績效化得道&quot;]
+  Q --&gt; H[&quot;衛生之經：全形抱生&quot;]
+  H --&gt; B[&quot;無思慮營營&quot;]
+  B --&gt; L[&quot;道／德／形／名層次&quot;]
+  L --&gt; N[&quot;名譽祭祀化之危&quot;]
+  N --&gt; R[&quot;先保生，再談聲譽與功&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <div class="print-keep print-h3-block"><h3 id="原典與注疏">原⁠典⁠與⁠注⁠疏</h3>
 <ul>
@@ -6040,7 +6039,7 @@
 <li>相⁠關⁠人⁠物：<a href="content/figures/老聃.md">老⁠聃</a>、庚⁠桑⁠楚、南⁠榮⁠趎</li>
 <li>相⁠關⁠名⁠詞：衛⁠生⁠之⁠經、全⁠形⁠抱⁠生、<a href="content/terms/道.md">道</a>、<a href="content/terms/性命之情.md">性⁠命⁠之⁠情</a>、形、名</li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/工作與技道.md">工⁠作⁠與⁠技⁠道</a>、<a href="content/themes/名與利.md">名⁠與⁠利</a>、<a href="content/themes/焦慮與比較.md">焦⁠慮⁠與⁠比⁠較</a></li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="徐無鬼">徐⁠無⁠鬼</h1>
@@ -6248,14 +6247,15 @@
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈徐⁠無⁠鬼〉從⁠魏⁠武⁠侯⁠的⁠聽⁠言，寫⁠到⁠匠⁠石⁠的⁠運⁠斤，再⁠落⁠到⁠莊⁠子⁠失⁠惠⁠施⁠之⁠質：它追問的是<strong>誰配被賞、誰⁠配⁠被⁠言、誰⁠配⁠作⁠為⁠對⁠手</strong>。警⁠句「狗⁠不⁠以⁠善⁠吠⁠為⁠良，人⁠不⁠以⁠善⁠言⁠為⁠賢」必⁠須⁠與「吾⁠無⁠以⁠為⁠質⁠矣」連⁠讀，才不致變成只會罵人的口號。全⁠篇⁠三⁠線——宮⁠廷⁠用⁠人、工⁠匠⁠技⁠藝、哲⁠學⁠辯⁠難——同⁠歸⁠於「質」：沒⁠有⁠可⁠對⁠之⁠體，言⁠與⁠技⁠皆⁠空⁠轉。</p>
 <p>若⁠以⁠一⁠句⁠話⁠收⁠束：<strong>沒⁠有⁠可⁠對⁠之⁠質，再⁠華⁠麗⁠的⁠言⁠與⁠再⁠高⁠的⁠技，都⁠只⁠是⁠空⁠轉。</strong></p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  Q[如何用人與相交] --&gt; S[不以善言為賢]
-  S --&gt; T[真賞]
-  T --&gt; Z[質：可對之體]
-  Z --&gt; J[運斤成風：有質才有技]
-  J --&gt; W[質亡則技歇]
-  W --&gt; R[真人之過：反省政治與賞識]</div></div>
+  Q[&quot;如何用人與相交&quot;]
+  Q --&gt; S[&quot;不以善言為賢&quot;]
+  S --&gt; T[&quot;真賞&quot;]
+  T --&gt; Z[&quot;質：可對之體&quot;]
+  Z --&gt; J[&quot;運斤成風：有質才有技&quot;]
+  J --&gt; W[&quot;質亡則技歇&quot;]
+  W --&gt; R[&quot;真人之過：反省政治與賞識&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <div class="print-keep print-h3-block"><h3 id="原典與注疏">原⁠典⁠與⁠注⁠疏</h3>
 <ul>
@@ -6279,7 +6279,7 @@
 <li>相⁠關⁠主⁠題：<a href="content/themes/政治與無為.md">政⁠治⁠與⁠無⁠為</a>、<a href="content/themes/工作與技道.md">工⁠作⁠與⁠技⁠道</a>、知⁠人、友⁠誼⁠與⁠辯⁠難</li>
 </ul></div>
 <div class="print-keep print-h3-block"><h3 id="讀法建議">讀⁠法⁠建⁠議</h3>
-<p>初⁠讀⁠宜⁠通⁠讀⁠全⁠篇，勿⁠只⁠摘「狗⁠不⁠以⁠善⁠吠⁠為⁠良」；須讀到匠石運斤與悼惠施，才⁠見⁠全⁠篇⁠文⁠勢。與〈天⁠下〉惠⁠施⁠條、〈齊⁠物⁠論〉辯⁠論⁠傳⁠統、〈德⁠充⁠符〉不⁠以⁠形⁠取⁠人⁠可⁠並⁠讀。研⁠究⁠層⁠次⁠宜⁠並⁠置⁠郭⁠慶⁠藩、林⁠希⁠逸⁠對「質」的⁠說⁠明，並⁠標⁠明⁠雜⁠篇⁠編⁠纂⁠性。匠⁠石⁠段⁠與〈徐⁠無⁠鬼〉外〈列⁠御⁠寇〉等⁠技⁠藝⁠寓⁠言⁠可⁠對⁠照，但本篇獨特處在宮廷用人與悼友並置。</p></div></div>
+<p>初⁠讀⁠宜⁠通⁠讀⁠全⁠篇，勿⁠只⁠摘「狗⁠不⁠以⁠善⁠吠⁠為⁠良」；須讀到匠石運斤與悼惠施，才⁠見⁠全⁠篇⁠文⁠勢。與〈天⁠下〉惠⁠施⁠條、〈齊⁠物⁠論〉辯⁠論⁠傳⁠統、〈德⁠充⁠符〉不⁠以⁠形⁠取⁠人⁠可⁠並⁠讀。研⁠究⁠層⁠次⁠宜⁠並⁠置⁠郭⁠慶⁠藩、林⁠希⁠逸⁠對「質」的⁠說⁠明，並⁠標⁠明⁠雜⁠篇⁠編⁠纂⁠性。匠⁠石⁠段⁠與〈徐⁠無⁠鬼〉外〈列⁠御⁠寇〉等⁠技⁠藝⁠寓⁠言⁠可⁠對⁠照，但本篇獨特處在宮廷用人與悼友並置。</p></div>
 <div class="pagebreak"></div>
 
 <h1 id="則陽">則⁠陽</h1>
@@ -6477,13 +6477,14 @@
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈則⁠陽〉以⁠遊⁠楚⁠求⁠言⁠起，經⁠太⁠公⁠調⁠之⁠理，落⁠在⁠蠻⁠觸⁠之⁠戰⁠的⁠鏡⁠子⁠上：它⁠逼⁠問⁠國⁠君⁠與⁠讀⁠者——<strong>你以為自己在守整個天下，是否其實只在守蝸牛的一角？</strong> 名⁠實⁠與⁠尺⁠度⁠一⁠明，許⁠多「不⁠可⁠讓」會⁠重⁠新⁠變⁠得⁠可⁠商⁠量；真⁠正⁠不⁠可⁠讓⁠的，應⁠是⁠生⁠命⁠與⁠基⁠本⁠之⁠實，而⁠非⁠膨⁠脹⁠的⁠名。則⁠陽⁠之⁠求、接⁠輿⁠之⁠暢、戴⁠晉⁠人⁠之⁠諷，三⁠層⁠共⁠同⁠完⁠成「名⁠可⁠動⁠人，亦⁠可⁠殺⁠人」的⁠立⁠體⁠論⁠證。</p>
 <p>若⁠以⁠一⁠句⁠話⁠收⁠束：<strong>先⁠改⁠尺⁠子，再⁠決⁠定⁠是⁠否⁠值⁠得⁠一⁠戰。</strong></p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  Q[政治與名言的尺度] --&gt; W[蝸角蠻觸]
-  W --&gt; N[名實可動人亦可殺人]
-  N --&gt; Y[言有足／不足]
-  Y --&gt; D[道與言之分]
-  D --&gt; R[先改尺子，再判勝負]</div></div>
+  Q[&quot;政治與名言的尺度&quot;]
+  Q --&gt; W[&quot;蝸角蠻觸&quot;]
+  W --&gt; N[&quot;名實可動人亦可殺人&quot;]
+  N --&gt; Y[&quot;言有足／不足&quot;]
+  Y --&gt; D[&quot;道與言之分&quot;]
+  D --&gt; R[&quot;先改尺子，再判勝負&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <div class="print-keep print-h3-block"><h3 id="原典與注疏">原⁠典⁠與⁠注⁠疏</h3>
 <ul>
@@ -6507,7 +6508,7 @@
 <li>相⁠關⁠主⁠題：<a href="content/themes/焦慮與比較.md">焦⁠慮⁠與⁠比⁠較</a>、<a href="content/themes/政治與無為.md">政⁠治⁠與⁠無⁠為</a>、戰⁠爭、語⁠言⁠與⁠政⁠治</li>
 </ul></div>
 <div class="print-keep print-h3-block"><h3 id="讀法建議">讀⁠法⁠建⁠議</h3>
-<p>初⁠讀⁠宜⁠抓⁠住⁠則⁠陽—太⁠公⁠調—蝸⁠角⁠三⁠層⁠推⁠進，勿⁠只⁠記⁠蠻⁠觸⁠之⁠戰⁠為⁠笑⁠話。與〈秋⁠水〉河⁠伯⁠見⁠海、〈齊⁠物⁠論〉彼⁠是、〈逍⁠遙⁠遊〉小⁠大⁠之⁠辯⁠並⁠讀，可⁠見⁠莊⁠學「尺⁠度」主⁠題⁠的⁠一⁠條⁠長⁠線。研⁠究⁠時⁠並⁠置⁠郭⁠象、林希逸對蝸角諫諍結構的說明，並⁠以⁠郭⁠慶⁠藩⁠核⁠對⁠字⁠句。則陽見接輿與戴晉人見魏王，宜⁠對⁠讀：前⁠者⁠寫⁠名⁠之⁠暢，後⁠者⁠寫⁠名⁠之⁠殺。</p></div></div>
+<p>初⁠讀⁠宜⁠抓⁠住⁠則⁠陽—太⁠公⁠調—蝸⁠角⁠三⁠層⁠推⁠進，勿⁠只⁠記⁠蠻⁠觸⁠之⁠戰⁠為⁠笑⁠話。與〈秋⁠水〉河⁠伯⁠見⁠海、〈齊⁠物⁠論〉彼⁠是、〈逍⁠遙⁠遊〉小⁠大⁠之⁠辯⁠並⁠讀，可⁠見⁠莊⁠學「尺⁠度」主⁠題⁠的⁠一⁠條⁠長⁠線。研⁠究⁠時⁠並⁠置⁠郭⁠象、林希逸對蝸角諫諍結構的說明，並⁠以⁠郭⁠慶⁠藩⁠核⁠對⁠字⁠句。則陽見接輿與戴晉人見魏王，宜⁠對⁠讀：前⁠者⁠寫⁠名⁠之⁠暢，後⁠者⁠寫⁠名⁠之⁠殺。</p></div>
 <div class="pagebreak"></div>
 
 <h1 id="外物">外⁠物</h1>
@@ -6680,14 +6681,13 @@
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈外⁠物〉以「不⁠可⁠必」為⁠綱，以⁠任⁠公⁠子⁠寫⁠條⁠件⁠與⁠等⁠待，以⁠發⁠冢⁠寫⁠工⁠具⁠被⁠盜，以⁠忘⁠筌⁠寫⁠得⁠而⁠後⁠能⁠捨。它既戒對外物的擔保幻想，也戒對言語與器具的戀物。末⁠句「安得夫忘言之人而與之言」說⁠明：忘⁠言⁠不⁠是⁠封⁠閉，而是為了重新打開真正的交談。</p>
 <p>若⁠以⁠一⁠句⁠話⁠收⁠束：<strong>外⁠物⁠強⁠求⁠不⁠到，言⁠語⁠執⁠著⁠不⁠得；魚⁠與⁠意⁠才⁠是⁠方⁠向，筌⁠與⁠言⁠只⁠是⁠路⁠過⁠的⁠工⁠具。</strong></p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  Q[外物與言意] --&gt; U[外物不可必]
-  U --&gt; C[條件・等待・工具可被劫持]
-  Q --&gt; Y[得魚忘筌]
-  Y --&gt; W[得意忘言]
-  W --&gt; R[戒戀物／執言]
-  R --&gt; O[忘言以再開交談]</div></div>
+  Q[&quot;外物與言意&quot;]
+  Q --&gt; U[&quot;外物不可必：條件・工具可被劫持&quot;]
+  U --&gt; Y[&quot;得魚忘筌 → 得意忘言&quot;]
+  Y --&gt; R[&quot;戒戀物／執言&quot;]
+  R --&gt; O[&quot;忘言以再開交談&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <div class="print-keep print-h3-block"><h3 id="原典與注疏">原⁠典⁠與⁠注⁠疏</h3>
 <ul>
@@ -6708,7 +6708,7 @@
 <li>相⁠關⁠人⁠物：<a href="content/figures/莊周.md">莊⁠周</a>、<a href="content/figures/惠施.md">惠⁠施</a>、任⁠公⁠子</li>
 <li>相⁠關⁠名⁠詞：外⁠物、不⁠可⁠必、筌⁠蹄、得⁠意⁠忘⁠言、<a href="content/terms/寓言.md">寓⁠言</a></li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/語言與真實.md">語⁠言⁠與⁠真⁠實</a>、<a href="content/themes/無用與有用.md">無⁠用⁠與⁠有⁠用</a>、<a href="content/themes/名與利.md">名⁠與⁠利</a></li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="寓言">寓⁠言</h1>
@@ -6880,16 +6880,13 @@
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈寓⁠言〉以「寓⁠言⁠十⁠九、重⁠言⁠十⁠七、卮⁠言⁠日⁠出，和⁠以⁠天⁠倪」自我揭示莊子式說話方法，再⁠用「言⁠無⁠言」的弔詭防止讀者把策略讀成油滑，最⁠後⁠以⁠陽⁠子⁠居、曾⁠子⁠等⁠故⁠事⁠驗⁠收：語言與處境如何改寫人的自我與親養尺度。</p>
 <p>若⁠以⁠一⁠句⁠話⁠收⁠束：<strong>會⁠說⁠話，不是把人說服到無路可退，而是讓人還有路可以自己走過來。</strong></p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  Q[語言如何鬆動成見] --&gt; A[寓言：寄託]
-  Q --&gt; B[重言：止爭]
-  Q --&gt; C[卮言：應時]
-  A --&gt; H[和以天倪]
-  B --&gt; H
-  C --&gt; H
-  H --&gt; R[留路而非逼死對方]
-  R --&gt; N[說話倫理，非油滑策略]</div></div>
+  Q[&quot;語言如何鬆動成見&quot;]
+  Q --&gt; A[&quot;寓言：寄託｜重言：止爭｜卮言：應時&quot;]
+  A --&gt; H[&quot;和以天倪&quot;]
+  H --&gt; R[&quot;留路而非逼死對方&quot;]
+  R --&gt; N[&quot;說話倫理，非油滑策略&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <div class="print-keep print-h3-block"><h3 id="原典與注疏">原⁠典⁠與⁠注⁠疏</h3>
 <ul>
@@ -6910,7 +6907,7 @@
 <li>相⁠關⁠人⁠物：<a href="content/figures/莊周.md">莊⁠周</a>、<a href="content/figures/老聃.md">老⁠聃</a>、<a href="content/figures/惠施.md">惠⁠施</a>、陽⁠子⁠居、曾⁠子</li>
 <li>相⁠關⁠名⁠詞：<a href="content/terms/寓言.md">寓⁠言</a>、<a href="content/terms/重言.md">重⁠言</a>、<a href="content/terms/卮言.md">卮⁠言</a>、天⁠倪、得⁠意⁠忘⁠言（參〈外⁠物〉）</li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/語言與真實.md">語⁠言⁠與⁠真⁠實</a>、<a href="content/themes/名與利.md">名⁠與⁠利</a></li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="讓王">讓⁠王</h1>
@@ -7080,16 +7077,12 @@
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈讓⁠王〉以⁠一⁠連⁠串⁠讓⁠國、去⁠邠、安⁠貧、辭⁠祿⁠的⁠故⁠事，反⁠覆⁠演⁠練「道⁠之⁠真⁠以⁠治⁠身，其⁠緒⁠餘⁠以⁠為⁠國⁠家，其⁠土⁠苴⁠以⁠治⁠天⁠下」的⁠價⁠值⁠序，並⁠以「不⁠以⁠所⁠用⁠養⁠害⁠所⁠養」點出手段與目的的顛倒危機。作為可能偏晚的道家彙編，它不宜被誇大為莊周本人的制度方案，卻⁠仍⁠尖⁠銳⁠地⁠質⁠問：你⁠的「大⁠事⁠業」是⁠否⁠正⁠在⁠消⁠耗⁠你⁠的⁠生？</p>
 <p>若⁠以⁠一⁠句⁠話⁠收⁠束：<strong>先⁠能⁠護⁠住⁠可⁠活、可⁠尊⁠的⁠生⁠命，其餘功業才談得上是餘事，而⁠不⁠是⁠獻⁠祭。</strong></p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  Q[位與生何者為本] --&gt; Z[尊生輕位]
-  Z --&gt; D[道之真以治身]
-  D --&gt; X[天下為緒餘]
-  X --&gt; C{是否傷所養}
-  C --&gt;|顛倒手段目的| L[讓／辭／去]
-  C --&gt;|可安| K[受而不役]
-  L --&gt; R[不以所用養害所養]
-  K --&gt; R</div></div>
+  Q[&quot;位與生何者為本？ → 尊生輕位&quot;]
+  Q --&gt; D[&quot;道之真以治身｜天下為緒餘&quot;]
+  D --&gt; R[&quot;不以所用養害所養&quot;]
+  R --&gt; C[&quot;傷所養 → 讓／辭／去&lt;br/&gt;可安 → 受而不役&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <div class="print-keep print-h3-block"><h3 id="原典與注疏">原⁠典⁠與⁠注⁠疏</h3>
 <ul>
@@ -7110,7 +7103,7 @@
 <li>相⁠關⁠人⁠物：<a href="content/figures/許由.md">許⁠由</a>、<a href="content/figures/堯.md">堯</a>、<a href="content/figures/列禦寇.md">列⁠禦⁠寇</a>、原⁠憲、曾⁠子、顏⁠闔</li>
 <li>相⁠關⁠名⁠詞：尊⁠生、<a href="content/terms/性命之情.md">性⁠命⁠之⁠情</a>、<a href="content/terms/無用之用.md">無⁠用⁠之⁠用</a>、<a href="content/terms/無為.md">無⁠為</a></li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/名與利.md">名⁠與⁠利</a>、<a href="content/themes/政治與無為.md">政⁠治⁠與⁠無⁠為</a></li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="盜跖">盜⁠跖</h1>
@@ -7282,13 +7275,13 @@
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈盜⁠跖〉以⁠誇⁠飾⁠辯⁠難⁠讓「盜」審「聖」，把⁠仁⁠義、聖王與名士的聲譽經濟逼到牆角，並⁠以「無⁠病⁠而⁠自⁠灸」「料⁠虎⁠頭、編⁠虎⁠鬚」回刺說教者的自傷式道德。作⁠為⁠雜⁠篇⁠戲⁠劇⁠體，它必須帶著文類說明書閱讀：其⁠貢⁠獻⁠是⁠爆⁠破⁠偽⁠善，其風險是把爆破誤當成新的信仰。</p>
 <p>若⁠以⁠一⁠句⁠話⁠收⁠束：<strong>先別急著崇拜罵得最兇的人；先⁠看⁠被⁠罵⁠的「名」是⁠否⁠真⁠的⁠在⁠遮⁠掩⁠傷⁠害——以及罵本身是否又在製造新的傷害。</strong></p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  Q[仁義聲譽的背面] --&gt; N[名實錯位]
-  N --&gt; H[偽善可被極言爆破]
-  H --&gt; S[說教亦可能自傷]
-  S --&gt; W[無病自灸]
-  W --&gt; R[讀為戲劇反詰，勿奉為新信仰]</div></div>
+  Q[&quot;仁義聲譽的背面&quot;]
+  Q --&gt; N[&quot;名實錯位&quot;]
+  N --&gt; H[&quot;偽善可被極言爆破&quot;]
+  H --&gt; S[&quot;說教亦可能自傷｜無病自灸&quot;]
+  S --&gt; R[&quot;讀為戲劇反詰，勿奉為新信仰&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <div class="print-keep print-h3-block"><h3 id="原典與注疏">原⁠典⁠與⁠注⁠疏</h3>
 <ul>
@@ -7309,7 +7302,7 @@
 <li>相⁠關⁠人⁠物：<a href="content/figures/孔子.md">孔⁠子</a>、<a href="content/figures/盜跖.md">盜⁠跖</a>、柳⁠下⁠季</li>
 <li>相⁠關⁠名⁠詞：名、仁⁠義、巧⁠偽、<a href="content/terms/無為.md">無⁠為</a></li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/名與利.md">名⁠與⁠利</a>、<a href="content/themes/語言與真實.md">語⁠言⁠與⁠真⁠實</a>、<a href="content/themes/政治與無為.md">政⁠治⁠與⁠無⁠為</a></li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="說劍">說⁠劍</h1>
@@ -7478,13 +7471,14 @@
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈說⁠劍〉寫⁠趙⁠文⁠王⁠好⁠劍⁠成⁠癖，莊⁠子⁠以⁠天⁠子、諸⁠侯、庶⁠人⁠三⁠劍⁠重⁠新⁠分⁠級，把⁠鬥⁠雞⁠式⁠私⁠搏⁠貶⁠下⁠去，把⁠治⁠理⁠尺⁠度⁠抬⁠上⁠來，終⁠使⁠君⁠主⁠疏⁠遠⁠劍⁠士。作為偏宮廷辭令的雜篇作品，它示範如何順慾望而轉慾望，也⁠留⁠下「更⁠大⁠的⁠劍」可⁠能⁠被⁠歌⁠頌⁠的⁠陰⁠影。</p>
 <p>若⁠以⁠一⁠句⁠話⁠收⁠束：<strong>先別急著搶走別人手上的劍；先⁠問⁠他⁠以⁠為⁠自⁠己⁠在⁠耍⁠的，究⁠竟⁠是⁠哪⁠一⁠把——以及那一把到底配不配得上他真正的責任。</strong></p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  Q[慾望如何被勸說] --&gt; T[順勢轉譯]
-  T --&gt; S[三劍尺度]
-  S --&gt; P[私搏 vs 治理責任]
-  P --&gt; R[更大舞台亦有陰影]
-  R --&gt; E[說服倫理：改尺度，非只迎合]</div></div>
+  Q[&quot;慾望如何被勸說&quot;]
+  Q --&gt; T[&quot;順勢轉譯&quot;]
+  T --&gt; S[&quot;三劍尺度&quot;]
+  S --&gt; P[&quot;私搏 vs 治理責任&quot;]
+  P --&gt; R[&quot;更大舞台亦有陰影&quot;]
+  R --&gt; E[&quot;說服倫理：改尺度，非只迎合&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <div class="print-keep print-h3-block"><h3 id="原典與注疏">原⁠典⁠與⁠注⁠疏</h3>
 <ul>
@@ -7505,7 +7499,7 @@
 <li>相⁠關⁠人⁠物：<a href="content/figures/莊周.md">莊⁠周</a>、趙⁠文⁠王、太⁠子</li>
 <li>相⁠關⁠名⁠詞：<a href="content/terms/無為.md">無⁠為</a>、<a href="content/terms/無用之用.md">無⁠用⁠之⁠用</a></li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/政治與無為.md">政⁠治⁠與⁠無⁠為</a>、<a href="content/themes/工作與技道.md">工⁠作⁠與⁠技⁠道</a></li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="漁父">漁⁠父</h1>
@@ -7757,14 +7751,13 @@
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈漁⁠父〉以水濱隱者考問杏壇聖人，把⁠全⁠篇⁠壓⁠到⁠一⁠個⁠字：<strong>真</strong>。真⁠被⁠定⁠義⁠為⁠精⁠誠⁠之⁠至；其⁠對⁠立⁠面⁠不⁠是「禮」本⁠身，而⁠是⁠失⁠誠⁠之⁠飾、強⁠作⁠之⁠態、以及把美德做成表演的生活方式。「法⁠天⁠貴⁠真，不⁠拘⁠於⁠俗」要⁠求⁠人⁠把⁠尺⁠度⁠從「是⁠否⁠合⁠俗⁠儀」轉⁠回「是⁠否⁠仍⁠受⁠於⁠天、能⁠否⁠動⁠人」。</p>
 <p>若⁠以⁠一⁠句⁠話⁠收⁠束：<strong>禮⁠可⁠以⁠學⁠習，真⁠無⁠法⁠假⁠裝；當⁠儀⁠文⁠開⁠始⁠替⁠代⁠精⁠誠，文⁠明⁠就⁠只⁠剩⁠下⁠聲⁠響。</strong></p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  Q[禮與真] --&gt; F[飾禮樂 → 苦心勞形]
-  F --&gt; C[危其真]
-  Q --&gt; Z[真者精誠之至]
-  Z --&gt; T[法天貴真]
-  T --&gt; R[儀文服務精誠，而非取代]
-  C --&gt; R</div></div>
+  Q[&quot;禮與真&quot;]
+  Q --&gt; F[&quot;飾禮樂 → 苦心勞形 → 危其真&quot;]
+  F --&gt; Z[&quot;真者精誠之至&quot;]
+  Z --&gt; T[&quot;法天貴真&quot;]
+  T --&gt; R[&quot;儀文服務精誠，而非取代&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <div class="print-keep print-h3-block"><h3 id="原典與注疏">原⁠典⁠與⁠注⁠疏</h3>
 <ul>
@@ -7785,7 +7778,7 @@
 <li>相⁠關⁠人⁠物：<a href="content/figures/孔子.md">孔⁠子</a>、<a href="content/figures/顏回.md">顏⁠回</a>、<a href="content/figures/莊周.md">莊⁠周</a></li>
 <li>相⁠關⁠名⁠詞：<a href="content/terms/道.md">道</a>、<a href="content/terms/無為.md">無⁠為</a>、精⁠誠、真</li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/政治與無為.md">政⁠治⁠與⁠無⁠為</a>、<a href="content/themes/語言與真實.md">語⁠言⁠與⁠真⁠實</a>、<a href="content/themes/焦慮與比較.md">焦⁠慮⁠與⁠比⁠較</a></li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="列御寇">列⁠御⁠寇</h1>
@@ -8044,14 +8037,13 @@
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈列⁠御⁠寇〉用三組強場景寫同一個問題：人⁠如⁠何⁠被「名」養⁠活、驅⁠使、甚⁠至⁠死⁠後⁠繼⁠續⁠塑⁠造。列⁠子⁠段⁠教「虛⁠而⁠遨⁠遊」——如⁠不⁠繫⁠之⁠舟；曹⁠商⁠段⁠揭「求⁠寵⁠的⁠價⁠格」；將⁠死⁠段⁠把⁠棺⁠槨⁠交⁠還⁠天⁠地。合⁠起⁠來，它⁠不⁠是⁠教⁠人⁠變⁠冷⁠漠，而是教人<strong>別把餵養當自己，別⁠把⁠賞⁠車⁠當⁠成⁠就，別把厚葬當最後的我</strong>。</p>
 <p>若⁠以⁠一⁠句⁠話⁠收⁠束：<strong>能⁠遊⁠者，不⁠是⁠從⁠未⁠被⁠名⁠碰⁠到⁠的⁠人，而⁠是⁠被⁠碰⁠到⁠仍⁠能⁠保⁠持⁠虛、不⁠讓⁠纜⁠繩⁠繫⁠住⁠船⁠的⁠人。</strong></p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  Q[名與供養來時] --&gt; V{心能否保持虛}
-  V --&gt;|否| B[被繫：勞憂・求寵・偏葬]
-  V --&gt;|是| X[虛而遨遊・不繫之舟]
-  X --&gt; D[天地為棺槨]
-  D --&gt; R[被碰到仍可不被餵養結構綁死]
-  B --&gt; R</div></div>
+  Q[&quot;名與供養來時&quot;]
+  Q --&gt; X[&quot;虛而遨遊・不繫之舟&quot;]
+  X --&gt; B[&quot;被繫：勞憂・求寵・偏葬&quot;]
+  B --&gt; D[&quot;天地為棺槨&quot;]
+  D --&gt; R[&quot;被碰到仍可不被餵養結構綁死&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <div class="print-keep print-h3-block"><h3 id="原典與注疏">原⁠典⁠與⁠注⁠疏</h3>
 <ul>
@@ -8072,7 +8064,7 @@
 <li>相⁠關⁠人⁠物：<a href="content/figures/列禦寇.md">列⁠禦⁠寇</a>、<a href="content/figures/莊周.md">莊⁠周</a>、<a href="content/figures/惠施.md">惠⁠施</a></li>
 <li>相⁠關⁠名⁠詞：<a href="content/terms/逍遙.md">逍⁠遙</a>、<a href="content/terms/無用之用.md">無⁠用⁠之⁠用</a>、<a href="content/terms/物化.md">物⁠化</a>、虛</li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/死亡與喪親.md">死⁠亡⁠與⁠喪⁠親</a>、<a href="content/themes/無用與有用.md">無⁠用⁠與⁠有⁠用</a>、<a href="content/themes/自由與無待.md">自⁠由⁠與⁠無⁠待</a></li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="天下">天⁠下</h1>
@@ -8422,15 +8414,15 @@
 <div class="print-keep print-section-head"><h2 id="15-本篇總結">15. 本⁠篇⁠總⁠結</h2>
 <p>〈天⁠下〉以「道⁠術⁠將⁠為⁠天⁠下⁠裂」為⁠總⁠綱，把《莊⁠子》收束成一幅有判準的先秦思想地圖：墨⁠之⁠苦、宋⁠尹⁠之⁠救、慎⁠到⁠之⁠公⁠而⁠缺、關⁠老⁠之⁠至⁠極、莊⁠周⁠之⁠寓⁠重⁠卮、惠⁠施⁠之⁠強⁠物⁠弱⁠德。它⁠讓⁠讀⁠者⁠明⁠白——全⁠書⁠的⁠荒⁠唐⁠謬⁠悠，不⁠是⁠隨⁠便；而⁠是⁠在⁠沈⁠濁⁠之⁠世，為⁠了⁠逼⁠近⁠那⁠個「小⁠大⁠精⁠粗，其⁠運⁠無⁠乎⁠不⁠在」的⁠整⁠全，所採取的言說與生存方式。</p>
 <p>若⁠以⁠一⁠句⁠話⁠收⁠束：<strong>裂⁠不⁠可⁠怕，可怕的是把一察當成天下；而⁠莊⁠學⁠的⁠回⁠應，是⁠畫⁠出⁠裂⁠縫，並發明能在裂縫中仍與天地精神往來的語言。</strong></p></div>
-<div class="print-keep print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
+<div class="print-chapter-end"><div class="print-keep print-mindmap"><h2 id="16-心智圖">16. 心⁠智⁠圖</h2>
 <div class="mermaid">flowchart TB
-  Q[如何對待道術之裂] --&gt; A[承認各有一察]
-  A --&gt; B[拒一察焉以自好]
-  B --&gt; C[近關老之虛後]
-  C --&gt; D[寓言／重言／卮言]
-  D --&gt; E[與天地精神往來]
-  E --&gt; F[與世俗處而不弱於德]
-  F --&gt; R[整全不是學派百科相加]</div></div>
+  Q[&quot;如何對待道術之裂&quot;]
+  Q --&gt; A[&quot;承認各有一察&quot;]
+  A --&gt; B[&quot;拒一察焉以自好&quot;]
+  B --&gt; C[&quot;近關老之虛後｜寓言／重言／卮言&quot;]
+  C --&gt; E[&quot;與天地精神往來&quot;]
+  E --&gt; F[&quot;與世俗處而不弱於德&quot;]
+  F --&gt; R[&quot;整全不是學派百科相加&quot;]</div></div></div>
 <h2 id="17-延伸閱讀">17. 延⁠伸⁠閱⁠讀</h2>
 <div class="print-keep print-h3-block"><h3 id="原典與注疏">原⁠典⁠與⁠注⁠疏</h3>
 <ul>
@@ -8453,7 +8445,7 @@
 <li>相⁠關⁠名⁠詞：<a href="content/terms/道.md">道</a>、<a href="content/terms/卮言.md">卮⁠言</a>、<a href="content/terms/齊物.md">齊⁠物</a>、<a href="content/terms/無為.md">無⁠為</a>、<a href="content/terms/逍遙.md">逍⁠遙</a></li>
 <li>相⁠關⁠主⁠題：<a href="content/themes/政治與無為.md">政⁠治⁠與⁠無⁠為</a>、<a href="content/themes/自由與無待.md">自⁠由⁠與⁠無⁠待</a>、<a href="content/themes/語言與真實.md">語⁠言⁠與⁠真⁠實</a></li>
 <li>相⁠關⁠地⁠圖：<a href="content/maps/思想地圖.md">思⁠想⁠地⁠圖</a>（道⁠術⁠分⁠裂⁠譜⁠系）</li>
-</ul></div></div>
+</ul></div>
 <div class="pagebreak"></div>
 
 <h1 id="後記">後⁠記</h1>
@@ -8493,7 +8485,53 @@
       theme: "neutral",
       securityLevel: "loose",
       fontFamily: "Noto Serif TC, serif",
-      flowchart: { useMaxWidth: true, htmlLabels: true, curve: "basis" },
+      themeVariables: {
+        fontSize: "30px",
+        fontFamily: "Noto Serif TC, serif",
+      },
+      flowchart: {
+        useMaxWidth: true,
+        htmlLabels: true,
+        curve: "basis",
+        wrappingWidth: 460,
+        nodeSpacing: 36,
+        rankSpacing: 32,
+        padding: 12,
+      },
+    });
+    document.addEventListener("DOMContentLoaded", () => {
+      const fitMindmaps = () => {
+        document.querySelectorAll(".print-mindmap .mermaid svg").forEach((svg) => {
+          const parent = svg.parentElement;
+          const cw = parent ? parent.clientWidth : 0;
+          svg.removeAttribute("width");
+          svg.removeAttribute("height");
+          svg.style.setProperty("display", "block", "important");
+          svg.style.setProperty("margin-left", "auto", "important");
+          svg.style.setProperty("margin-right", "auto", "important");
+          svg.style.setProperty("max-width", "100%", "important");
+          if (!cw || !svg.viewBox || !svg.viewBox.baseVal.width) {
+            svg.style.setProperty("width", "100%", "important");
+            svg.style.setProperty("height", "auto", "important");
+            return;
+          }
+          const vb = svg.viewBox.baseVal;
+          // 獨頁後可給更高：約 170mm
+          const maxH = Math.round(cw * 1.45);
+          let w = cw;
+          let h = (cw * vb.height) / vb.width;
+          if (h > maxH) {
+            h = maxH;
+            w = (maxH * vb.width) / vb.height;
+          }
+          svg.style.setProperty("width", Math.round(w) + "px", "important");
+          svg.style.setProperty("height", Math.round(h) + "px", "important");
+          svg.style.setProperty("max-height", "none", "important");
+        });
+      };
+      setTimeout(fitMindmaps, 50);
+      setTimeout(fitMindmaps, 400);
+      setTimeout(fitMindmaps, 1200);
     });
   </script>
 </body>
