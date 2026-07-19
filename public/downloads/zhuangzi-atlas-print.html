@@ -237,9 +237,10 @@
       color: var(--ink);
     }
     .print-structure-mermaid .mermaid svg {
-      max-height: 140mm;
-      width: auto;
+      max-width: 100%;
+      width: 100%;
       height: auto;
+      max-height: 160mm;
     }
     .print-bibliography {
       break-inside: auto;
@@ -774,9 +775,13 @@
         page-break-inside: avoid !important;
       }
       .print-structure-mermaid .mermaid svg {
-        max-height: 145mm !important;
-        width: auto;
-        height: auto;
+        display: block !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        height: auto !important;
+        max-height: 165mm !important;
       }
       img.calligraphy-img,
       .epigraph-page,
@@ -8101,16 +8106,15 @@
                 ↓
             惠施等辯者（強於物而弱於德）</code></pre></div>
 <div class="print-keep print-structure-mermaid"><p class="structure-mermaid-label">結構流程圖</p>
-<div class="mermaid">flowchart TD
-  ALL[古之道術：整全] --&gt;|天下裂| PART[各得一察以自好]
-  PART --&gt; MO[墨翟禽滑釐：生不歌死無服／兼愛非樂]
-  PART --&gt; SY[宋鈃尹文：禁攻寢兵／情欲寡淺]
-  PART --&gt; PT[彭蒙田駢慎到：公而不黨／棄知去己]
-  PART --&gt; LL[關尹老聃：在己無居／以弱為美]
-  PART --&gt; ZZ[莊周：寓言重言卮言]
-  PART --&gt; HS[惠施：歷物之意／弱於德強於物]
-  ZZ -.-&gt;|自我定位最親| ALL
-  LL -.-&gt;|道家近親| ALL</div>
+<div class="mermaid">flowchart TB
+  ALL[&quot;古之道術：整全&quot;]
+  ALL --&gt;|天下裂| PART[&quot;各得一察以自好&quot;]
+  PART --&gt; MO[&quot;墨翟禽滑釐&lt;br/&gt;兼愛非樂&quot;]
+  PART --&gt; SY[&quot;宋鈃尹文&lt;br/&gt;禁攻寢兵&quot;]
+  PART --&gt; PT[&quot;彭田慎&lt;br/&gt;棄知去己&quot;]
+  MO --&gt; LL[&quot;關尹老聃&lt;br/&gt;以弱為美&quot;]
+  SY --&gt; ZZ[&quot;莊周&lt;br/&gt;寓言重言卮言&quot;]
+  PT --&gt; HS[&quot;惠施&lt;br/&gt;弱於德強於物&quot;]</div>
 <p>總⁠括⁠一⁠句：<strong>先⁠畫「全」，再⁠量「偏」，最⁠後⁠用⁠莊⁠周⁠文⁠體⁠說⁠明「如⁠何⁠說⁠那⁠個⁠全」。</strong></p></div><div class="print-keep print-section-head"><h2 id="04-原典">04. 原⁠典</h2>
 <blockquote>
 <p><strong>版⁠本⁠依⁠據</strong>：郭⁠慶⁠藩《莊⁠子⁠集⁠釋》所⁠據⁠通⁠行⁠本；以⁠下⁠為⁠必⁠要⁠引⁠用，非⁠全⁠篇⁠逐⁠字⁠抄⁠錄。</p>
@@ -8500,10 +8504,13 @@
       },
     });
     document.addEventListener("DOMContentLoaded", () => {
-      const fitMindmaps = () => {
-        document.querySelectorAll(".print-mindmap .mermaid svg").forEach((svg) => {
+      const fitPrintDiagrams = () => {
+        const sel =
+          ".print-mindmap .mermaid svg, .print-structure-mermaid .mermaid svg";
+        document.querySelectorAll(sel).forEach((svg) => {
           const parent = svg.parentElement;
           const cw = parent ? parent.clientWidth : 0;
+          const isStructure = Boolean(svg.closest(".print-structure-mermaid"));
           svg.removeAttribute("width");
           svg.removeAttribute("height");
           svg.style.setProperty("display", "block", "important");
@@ -8516,8 +8523,8 @@
             return;
           }
           const vb = svg.viewBox.baseVal;
-          // 獨頁後可給更高：約 170mm
-          const maxH = Math.round(cw * 1.45);
+          // 心智圖／結構流程圖獨頁：高度預算約 165–170mm
+          const maxH = Math.round(cw * (isStructure ? 1.5 : 1.45));
           let w = cw;
           let h = (cw * vb.height) / vb.width;
           if (h > maxH) {
@@ -8529,9 +8536,9 @@
           svg.style.setProperty("max-height", "none", "important");
         });
       };
-      setTimeout(fitMindmaps, 50);
-      setTimeout(fitMindmaps, 400);
-      setTimeout(fitMindmaps, 1200);
+      setTimeout(fitPrintDiagrams, 50);
+      setTimeout(fitPrintDiagrams, 400);
+      setTimeout(fitPrintDiagrams, 1200);
     });
   </script>
 </body>

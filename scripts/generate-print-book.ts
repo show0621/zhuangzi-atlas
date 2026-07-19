@@ -1167,9 +1167,10 @@ function buildPrintHtml(bodyHtml: string): string {
       color: var(--ink);
     }
     .print-structure-mermaid .mermaid svg {
-      max-height: 140mm;
-      width: auto;
+      max-width: 100%;
+      width: 100%;
       height: auto;
+      max-height: 160mm;
     }
     .print-bibliography {
       break-inside: auto;
@@ -1704,9 +1705,13 @@ function buildPrintHtml(bodyHtml: string): string {
         page-break-inside: avoid !important;
       }
       .print-structure-mermaid .mermaid svg {
-        max-height: 145mm !important;
-        width: auto;
-        height: auto;
+        display: block !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        height: auto !important;
+        max-height: 165mm !important;
       }
       img.calligraphy-img,
       .epigraph-page,
@@ -1762,10 +1767,13 @@ ${bodyHtml}
       },
     });
     document.addEventListener("DOMContentLoaded", () => {
-      const fitMindmaps = () => {
-        document.querySelectorAll(".print-mindmap .mermaid svg").forEach((svg) => {
+      const fitPrintDiagrams = () => {
+        const sel =
+          ".print-mindmap .mermaid svg, .print-structure-mermaid .mermaid svg";
+        document.querySelectorAll(sel).forEach((svg) => {
           const parent = svg.parentElement;
           const cw = parent ? parent.clientWidth : 0;
+          const isStructure = Boolean(svg.closest(".print-structure-mermaid"));
           svg.removeAttribute("width");
           svg.removeAttribute("height");
           svg.style.setProperty("display", "block", "important");
@@ -1778,8 +1786,8 @@ ${bodyHtml}
             return;
           }
           const vb = svg.viewBox.baseVal;
-          // 獨頁後可給更高：約 170mm
-          const maxH = Math.round(cw * 1.45);
+          // 心智圖／結構流程圖獨頁：高度預算約 165–170mm
+          const maxH = Math.round(cw * (isStructure ? 1.5 : 1.45));
           let w = cw;
           let h = (cw * vb.height) / vb.width;
           if (h > maxH) {
@@ -1791,9 +1799,9 @@ ${bodyHtml}
           svg.style.setProperty("max-height", "none", "important");
         });
       };
-      setTimeout(fitMindmaps, 50);
-      setTimeout(fitMindmaps, 400);
-      setTimeout(fitMindmaps, 1200);
+      setTimeout(fitPrintDiagrams, 50);
+      setTimeout(fitPrintDiagrams, 400);
+      setTimeout(fitPrintDiagrams, 1200);
     });
   </script>
 </body>
