@@ -10,7 +10,7 @@ DOWNLOADS_DIR = ROOT / "public" / "downloads"
 ASSET_V = "publish-v26-mindmap-enlarge-701c"
 PAGES_BASE = "https://show0621.github.io/zhuangzi-atlas"
 SITE_VERSION = "1.0.0"
-PRINT_PAGES_HINT = "約 445 頁"
+PRINT_PAGES_HINT = "約 448 頁"
 
 
 def pages_url(filename: str) -> str:
