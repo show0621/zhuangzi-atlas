@@ -74,7 +74,7 @@ def sidebar_nav() -> None:
         st.page_link("pages/5_地圖與百科.py", label="地圖／百科", icon="🗺️")
         st.divider()
         st.markdown("**下載最新印刷套件**")
-        _v = "release-v3-701c"
+        _v = "all-review-v7-701c"
         _b = "https://show0621.github.io/zhuangzi-atlas"
         st.markdown(
             f"- [完整書 PDF]({_b}/downloads/zhuangzi-atlas-print.pdf?v={_v})\n"
