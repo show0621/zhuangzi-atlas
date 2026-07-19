@@ -706,28 +706,30 @@ function wrapPrintKeepBlocks(html: string): string {
     (_, diagram, summary) => diagram.replace(/<\/div>\s*$/, `\n${summary}</div>`),
   );
 
-  // 修復：§04 誤開未閉合的 print-h3-block（會讓 h2 標題孤兒、原典整段無法分頁）
+  // 清掉殘留／未閉合的 print-h3-block（舊版誤開會把整節綁成不可拆塊 → 頁首只剩標題大片留白）
   out = out.replace(
-    /(<h2 id="04-[^"]*">[\s\S]*?<\/h2>\s*<blockquote>[\s\S]*?<\/blockquote>\s*)<div class="print-keep print-h3-block">/g,
+    /<div class="print-keep print-h3-block">([\s\S]*?)<\/div>/g,
     "$1",
   );
+  out = out.replace(/<div class="print-keep print-h3-block">/g, "");
 
-  // §04 原典：各 h3 + blockquote 獨立成塊（避免整段原典被單一 print-keep 綁死）
+  // 各 h3 只與緊接的「一個」內容塊成對，且必須閉合。
+  // 不可用 [\s\S]*? + lookahead：lookahead 失敗時會跨過多個 </blockquote> 吞掉整節。
   out = out.replace(
-    /(?<!<div class="print-keep print-h3-block">)(<h3 id="[^"]*">[\s\S]*?<\/h3>)\s*(<blockquote>[\s\S]*?<\/blockquote>)(?=\s*(?:<h3|<h2 id="05-))/g,
+    /(?<!<div class="print-keep print-h3-block">)(<h3 id="(?!結構圖)[^"]*">[\s\S]*?<\/h3>)\s*(<blockquote>(?:(?!<\/blockquote>)[\s\S])*<\/blockquote>|<ul>(?:(?!<\/ul>)[\s\S])*<\/ul>|<ol>(?:(?!<\/ol>)[\s\S])*<\/ol>|<p>(?:(?!<\/p>)[\s\S])*<\/p>)/g,
     '<div class="print-keep print-h3-block">$1\n$2</div>',
   );
 
   // §04 標題 + 版本說明與首段原典同頁
   out = out.replace(
-    /(<h2 id="04-[^"]*">[\s\S]*?<\/h2>\s*<blockquote>[\s\S]*?<\/blockquote>)(?=\s*<div class="print-keep print-h3-block">)/g,
+    /(<h2 id="04-[^"]*">[\s\S]*?<\/h2>\s*<blockquote>(?:(?!<\/blockquote>)[\s\S])*<\/blockquote>)(?=\s*<div class="print-keep print-h3-block">)/g,
     '<div class="print-keep print-section-head">$1</div>',
   );
 
-  // h3 + list（延伸閱讀；排除「結構圖」）
+  // §07：標題 + 走讀路線句與首個子節同頁（避免頁上只剩兩行）
   out = out.replace(
-    /(?<!<div class="print-keep print-h3-block">)(<h3 id="(?!結構圖)[^"]*">[\s\S]*?<\/h3>)\s*(<(?:ul|ol)>[\s\S]*?<\/(?:ul|ol)>)/g,
-    '<div class="print-keep print-h3-block">$1\n$2</div>',
+    /(<h2 id="07-[^"]*">[\s\S]*?<\/h2>\s*<p>(?:(?!<\/p>)[\s\S])*<\/p>)(?=\s*<div class="print-keep print-h3-block">)/g,
+    '<div class="print-keep print-section-head">$1</div>',
   );
 
   // 修復：結構圖誤包 h3-block
@@ -783,6 +785,31 @@ function wrapPrintKeepBlocks(html: string): string {
     /(<div class="print-keep print-mindmap"><h2 id="16-[^"]*">[\s\S]*?<\/h2>\s*<pre class="code code-diagram">[\s\S]*?<\/pre>)(?:\s*<\/div>)*(\s*<h2 id="17-)/g,
     "$1</div>$2",
   );
+
+  // 最終安全網：未閉合的 print-h3-block 在下一 h2／pagebreak 前補上 </div>
+  {
+    let fixed = "";
+    let rest = out;
+    const openTag = '<div class="print-keep print-h3-block">';
+    while (rest.includes(openTag)) {
+      const i = rest.indexOf(openTag);
+      fixed += rest.slice(0, i);
+      rest = rest.slice(i + openTag.length);
+      const close = rest.indexOf("</div>");
+      const nextH2 = rest.search(/<h2\b|<div class="pagebreak"/);
+      if (nextH2 !== -1 && (close === -1 || close > nextH2)) {
+        fixed += `${openTag}${rest.slice(0, nextH2)}</div>`;
+        rest = rest.slice(nextH2);
+      } else if (close !== -1) {
+        fixed += `${openTag}${rest.slice(0, close + "</div>".length)}`;
+        rest = rest.slice(close + "</div>".length);
+      } else {
+        fixed += `${openTag}${rest}</div>`;
+        rest = "";
+      }
+    }
+    out = fixed + rest;
+  }
 
   assertPrintKeepBalance(out);
   return out;
