@@ -251,8 +251,8 @@ async function tryPuppeteer(htmlPath: string): Promise<string | null> {
       // 不改 viewBox（改 viewBox 會弄亂 foreignObject 中文字）
       await page.evaluate(`(() => {
         document.querySelectorAll(".print-mindmap .mermaid svg").forEach((svg) => {
-          const parent = svg.parentElement as HTMLElement | null;
-          const cw = parent?.clientWidth || 0;
+          const parent = svg.parentElement;
+          const cw = parent ? parent.clientWidth : 0;
           svg.removeAttribute("width");
           svg.removeAttribute("height");
           svg.style.display = "block";
