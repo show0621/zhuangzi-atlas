@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 import sys
+import unicodedata
 from pathlib import Path
 
 from pypdf import PdfReader
@@ -18,10 +19,13 @@ BACK_MATTER_IMAGE_PAGES: set[int] = set()
 SPARSE_CHAR_THRESHOLD = 120
 # 僅圖表頁（心智圖 SVG）可低於此值
 MINDMAP_OK_PATTERNS = (r"16\.?心智圖", r"flowchart", r"→", r"\[")
+# 結構圖 ASCII 頁／Mermaid 分頁：字數少但圖佔版面，不算過疏
+STRUCTURE_OK_PATTERNS = (r"結構圖", r"結構流程圖", r"岸邊相遇", r"↓")
 
 
 def norm(s: str) -> str:
-    return re.sub(r"\s+", "", s.replace("\u2060", ""))
+    # NFKC：pdf 抽取偶發康熙部首（⼼→心、⽼→老）
+    return unicodedata.normalize("NFKC", re.sub(r"\s+", "", s.replace("\u2060", "")))
 
 
 def body_without_page_num(text: str) -> str:
@@ -61,6 +65,13 @@ def is_section_heading(line: str | None) -> bool:
     return bool(line and re.fullmatch(r"\d{1,2}\.[\u4e00-\u9fff]{2,12}", line))
 
 
+def spaced_section_heading(line: str) -> str | None:
+    """Match '0 9 .  哲  學  分  析' style PDF extraction."""
+    n = norm(line)
+    m = re.fullmatch(r"(\d{1,2})\.([\u4e00-\u9fff]{2,12})", n)
+    return f"{m.group(1)}.{m.group(2)}" if m else None
+
+
 def page_label(pdf_page: int, book_page: int | None) -> str:
     if book_page is not None:
         return f"p.{pdf_page}（書頁 {book_page}）"
@@ -91,6 +102,7 @@ def main() -> int:
             len(body) < SPARSE_CHAR_THRESHOLD
             and pnum not in FRONT_MATTER_IMAGE_PAGES | BACK_MATTER_IMAGE_PAGES
             and not any(re.search(p, n) for p in MINDMAP_OK_PATTERNS)
+            and not any(re.search(p, n) for p in STRUCTURE_OK_PATTERNS)
         ):
             issues.append((pnum, bp, "sparse-page", f"內容過疏（{len(body)} 字）"))
 
@@ -132,18 +144,13 @@ def main() -> int:
                 issues.append((pnum, bp, "mindmap-split", "心智圖內容延續自上一頁標題"))
 
             prev_n = norm(prev)
-            if re.search(r"16\.?心智圖", prev_n) and re.search(r"17\.?延伸閱讀", n):
-                issues.append(
-                    (pnum, bp, "mindmap-bibliography-same-page", "心智圖與§17延伸閱讀同頁"),
-                )
 
-            # 結構圖僅 ASCII 在上一頁、mermaid 在下一頁（非刻意分頁）
-            if re.search(r"結構圖", prev_n) and not re.search(r"04\.?原典", prev_n):
-                if ("flowchart" in n or re.search(r"[A-Z]\[", text)) and not re.search(
-                    r"結構圖", n
-                ):
+            # 結構圖標題在頁末、圖卻在下頁（真斷裂）。
+            # ASCII 文字圖與 Mermaid 刻意分頁：上頁有「結構圖」正文、下頁為流程圖——允許。
+            if prev_last and re.search(r"結構圖$", prev_last):
+                if "flowchart" in n or re.search(r"[A-Z]\[|→", text):
                     issues.append(
-                        (pnum, bp, "structure-diagram-split", "結構圖 ASCII 與流程圖割裂"),
+                        (pnum, bp, "structure-diagram-split", "結構圖標題與圖表跨頁割裂"),
                     )
 
         if last and last in ("原典與注疏", "今注今譯與研究", "本專案內交叉引用"):
@@ -156,6 +163,58 @@ def main() -> int:
             issues.append(
                 (pnum, bp, "mindmap-bibliography-same-page", "心智圖與§17延伸閱讀同頁，應分頁"),
             )
+
+        # 頁末開新節、且下一頁仍接續同節（非新標題）：應整組移到下一頁
+        body_lines = [
+            l.strip()
+            for l in body_without_page_num(text).split("\n")
+            if l.strip()
+        ]
+        last_sec_idx = None
+        last_sec = None
+        for j, line in enumerate(body_lines):
+            sh = spaced_section_heading(line)
+            if sh:
+                num = int(sh.split(".", 1)[0])
+                if 8 <= num <= 15:
+                    last_sec_idx = j
+                    last_sec = sh
+        if last_sec_idx is not None and body_lines and i + 1 < len(reader.pages):
+            after = norm("".join(body_lines[last_sec_idx + 1 :]))
+            near_bottom = last_sec_idx >= max(0, len(body_lines) - 6)
+            if near_bottom and len(after) < 160:
+                next_text = reader.pages[i + 1].extract_text() or ""
+                next_lines = [
+                    l.strip()
+                    for l in body_without_page_num(next_text).split("\n")
+                    if l.strip()
+                ]
+                next_first = next_lines[0] if next_lines else ""
+                next_norm = norm(next_first)
+                next_is_new_heading = bool(
+                    spaced_section_heading(next_first)
+                    or re.match(r"^\d{1,2}\.[\u4e00-\u9fff]", next_norm)
+                    or next_first.startswith("閱讀")
+                    or next_norm.startswith("註：")
+                    or re.match(r"^16\.?心智圖", next_norm)
+                )
+                # §15 完整收在頁末、下頁為心智圖：允許；僅當總結正文跨頁才警示
+                if (
+                    last_sec
+                    and last_sec.startswith("15.")
+                    and re.match(r"^16\.?心智圖", next_norm)
+                ):
+                    next_is_new_heading = True
+                # 與 find-bottom-strands 對齊：僅標「標題後所剩無幾」的嚴重懸空
+                if not next_is_new_heading and len(after) < 80:
+                    issues.append(
+                        (
+                            pnum,
+                            bp,
+                            "bottom-stranded-section",
+                            f"頁末開§{last_sec}（後接 {len(after)} 字）並跨到下頁，應整組移頁",
+                        ),
+                    )
 
     if not issues:
         print(f"OK — {len(reader.pages)} 頁；未偵測到空白頁、稀疏頁或常見跨頁斷裂。")
