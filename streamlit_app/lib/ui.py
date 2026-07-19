@@ -63,6 +63,8 @@ def setup_page(title: str, icon: str = "📜") -> None:
 
 
 def sidebar_nav() -> None:
+    from lib.assets import ASSET_V, PAGES_BASE, SITE_VERSION, pages_url, read_bytes
+
     with st.sidebar:
         st.markdown("### 莊子全解")
         st.caption("手機請點左上角 ≡ 開啟選單")
@@ -74,12 +76,31 @@ def sidebar_nav() -> None:
         st.page_link("pages/5_地圖與百科.py", label="地圖／百科", icon="🗺️")
         st.divider()
         st.markdown("**下載最新印刷套件**")
-        _v = "all-review-v7-701c"
-        _b = "https://show0621.github.io/zhuangzi-atlas"
-        st.markdown(
-            f"- [完整書 PDF]({_b}/downloads/zhuangzi-atlas-print.pdf?v={_v})\n"
-            f"- [封面展開（上機）]({_b}/downloads/zhuangzi-atlas-cover-wrap.pdf?v={_v})\n"
-            f"- [下載總頁]({_b}/download/?v={_v})"
-        )
+        st.caption(f"版本 `{ASSET_V}`")
+        pdf = read_bytes("zhuangzi-atlas-print.pdf")
+        wrap = read_bytes("zhuangzi-atlas-cover-wrap.pdf")
+        if pdf is not None:
+            st.download_button(
+                "完整書 PDF",
+                data=pdf,
+                file_name="zhuangzi-atlas-print.pdf",
+                mime="application/pdf",
+                use_container_width=True,
+                key="sidebar-print-pdf",
+            )
+        else:
+            st.markdown(f"- [完整書 PDF]({pages_url('zhuangzi-atlas-print.pdf')})")
+        if wrap is not None:
+            st.download_button(
+                "封面展開（上機）",
+                data=wrap,
+                file_name="zhuangzi-atlas-cover-wrap.pdf",
+                mime="application/pdf",
+                use_container_width=True,
+                key="sidebar-wrap-pdf",
+            )
+        else:
+            st.markdown(f"- [封面展開（上機）]({pages_url('zhuangzi-atlas-cover-wrap.pdf')})")
+        st.markdown(f"- [下載總頁]({PAGES_BASE}/download/?v={ASSET_V})")
         st.divider()
-        st.caption("內容來源：content/　版本 V0.3 draft")
+        st.caption(f"內容來源：content/　版本 V{SITE_VERSION}")

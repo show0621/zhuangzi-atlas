@@ -1,6 +1,6 @@
 # 莊子全解 — 印刷成冊說明
 
-> 內容狀態：0.3.0 **draft**（尚未達 review／published）。上機前請先完成編輯審定與 ISBN。
+> 內容狀態：1.0.0 **draft**（尚未達 review／published）。上機前請先完成編輯審定與 ISBN。
 
 ## 檔案
 

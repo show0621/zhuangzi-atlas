@@ -166,6 +166,34 @@ async function stampPrintedPageNumbers(
   return Buffer.from(await doc.save());
 }
 
+type StrandTarget = { norm: string; ordinal: number };
+
+/** 掃描 PDF：頁末開節且下頁續同節 → 回傳需強制換頁的 h2（norm + 出現序） */
+function findBottomStrands(pdfBytes: Buffer | Uint8Array): StrandTarget[] {
+  fs.mkdirSync(OUT_DIR, { recursive: true });
+  const tmp = path.join(OUT_DIR, `_strand-${Date.now()}.pdf`);
+  fs.writeFileSync(tmp, pdfBytes);
+  try {
+    const script = path.join(process.cwd(), "scripts", "find-bottom-strands.py");
+    const result = spawnSync("python3", [script, tmp], {
+      encoding: "utf8",
+      timeout: 120_000,
+    });
+    if (result.status !== 0) {
+      console.warn("strand 掃描失敗：", (result.stderr || "").slice(0, 300));
+      return [];
+    }
+    const line = (result.stdout || "").trim().split("\n").filter(Boolean).pop() || "[]";
+    const parsed = JSON.parse(line) as StrandTarget[];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (err) {
+    console.warn("strand 掃描例外：", err instanceof Error ? err.message : err);
+    return [];
+  } finally {
+    if (fs.existsSync(tmp)) fs.unlinkSync(tmp);
+  }
+}
+
 async function tryPuppeteer(htmlPath: string): Promise<string | null> {
   const browserPath = findBrowser();
   if (!browserPath) {
@@ -219,7 +247,7 @@ async function tryPuppeteer(htmlPath: string): Promise<string | null> {
 
       await new Promise((r) => setTimeout(r, 800));
 
-      // 移除書脊殘頁；為目錄目標插入可抽取標記
+      // 移除書脊殘頁（勿進正文 PDF）
       await page.evaluate(`(() => {
         document.querySelectorAll(".spine-page").forEach((el) => {
           let prev = el.previousElementSibling;
@@ -230,7 +258,56 @@ async function tryPuppeteer(htmlPath: string): Promise<string | null> {
           }
           el.remove();
         });
+      })()`);
 
+      // 頁末懸空節標題：Chrome 常忽略 break-inside，改以強制換頁整組下移
+      for (let pass = 1; pass <= 4; pass += 1) {
+        const layoutPdf = await page.pdf(PDF_OPTS);
+        const strands = findBottomStrands(layoutPdf);
+        if (strands.length === 0) {
+          if (pass === 1) console.log("頁末懸空節標題：無");
+          else console.log(`頁末懸空節標題：第 ${pass - 1} 輪強制換頁後已清零`);
+          break;
+        }
+        console.log(
+          `頁末懸空節標題：第 ${pass} 輪強制換頁 ${strands.length} 處` +
+            `（例：${strands
+              .slice(0, 5)
+              .map((s) => s.norm)
+              .join("、")}）`,
+        );
+        const applied = await page.evaluate(`((targets) => {
+          const norm = (s) =>
+            String(s || "")
+              .replace(/[\\s\\u2060\\u200b]+/g, "")
+              .normalize("NFKC");
+          const counts = Object.create(null);
+          let n = 0;
+          document.querySelectorAll("h2").forEach((h2) => {
+            const key = norm(h2.textContent);
+            const ord = counts[key] || 0;
+            counts[key] = ord + 1;
+            const hit = targets.some((t) => t.norm === key && t.ordinal === ord);
+            if (!hit) return;
+            const wrap = h2.closest(".print-section-head");
+            (wrap || h2).classList.add("print-force-newpage");
+            n += 1;
+          });
+          return n;
+        })(${JSON.stringify(strands)})`);
+        if (!applied) {
+          console.warn("強制換頁未匹配到 DOM 標題，停止迭代。");
+          break;
+        }
+        if (pass === 4) {
+          const left = findBottomStrands(await page.pdf(PDF_OPTS));
+          if (left.length)
+            console.warn(`頁末懸空節標題：仍剩 ${left.length} 處（已達迭代上限）`);
+        }
+      }
+
+      // 為目錄目標插入可抽取標記
+      await page.evaluate(`(() => {
         document.querySelectorAll(".toc-pdf-marker").forEach((el) => el.remove());
 
         const resolveTarget = (id) => {
