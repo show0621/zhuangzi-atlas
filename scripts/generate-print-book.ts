@@ -878,6 +878,12 @@ function wrapPrintKeepBlocks(html: string): string {
     "$1</div>$2",
   );
 
+  // Pass F：§16 心智圖＋§17 延伸閱讀綁成收尾塊，避免「圖＋標題」獨佔一頁、書目落在下頁
+  out = out.replace(
+    /(?<!print-chapter-end">)(<div class="print-keep print-mindmap">[\s\S]*?<\/div>)\s*(<h2 id="17-[^"]*">[^<]*<\/h2>[\s\S]*?)(?=\s*(?:<div class="pagebreak"|<\/article>|$))/g,
+    '<div class="print-keep print-chapter-end">$1\n$2</div>',
+  );
+
   // 最終安全網：未閉合的 print-h3-block 在下一 h2／pagebreak 前補上 </div>
   {
     let fixed = "";
@@ -1546,11 +1552,12 @@ function buildPrintHtml(bodyHtml: string): string {
         page-break-before: avoid !important;
       }
       a { color: inherit; text-decoration: none; }
-      /* 書籍節次：§17 延伸閱讀為收尾區，必須新頁（不緊接心智圖） */
-      h2[id^="17-"] {
-        break-before: page !important;
-        page-break-before: always !important;
-        margin-top: 0;
+      /* §17 延伸閱讀：與心智圖同組（見 .print-chapter-end）；勿強制新頁 */
+      .print-mindmap + h2[id^="17-"],
+      .print-chapter-end > h2[id^="17-"] {
+        break-before: avoid !important;
+        page-break-before: avoid !important;
+        margin-top: 0.9em;
       }
       /* 篇名後首節仍與篇名同頁（閱讀提示 blockquote 可夾在中間） */
       h1 + h2[id^="01-"],
@@ -1648,9 +1655,21 @@ function buildPrintHtml(bodyHtml: string): string {
         page-break-after: avoid !important;
       }
       .print-mindmap .mermaid svg {
-        max-height: 150mm;
+        max-height: 72mm;
+        max-width: 100%;
         width: auto;
         height: auto;
+      }
+      .print-chapter-end {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      .print-chapter-end .print-mindmap .mermaid svg {
+        max-height: 62mm;
+      }
+      .print-chapter-end .mermaid {
+        margin: 0.35em 0 0.5em;
+        padding: 0.2em 0;
       }
       .print-structure-diagram {
         break-inside: avoid !important;

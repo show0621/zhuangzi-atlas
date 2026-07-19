@@ -159,10 +159,31 @@ def main() -> int:
         if last and re.search(r"結構圖$", last):
             issues.append((pnum, bp, "orphan-structure-heading", "頁末僅見「結構圖」，圖表可能在下一頁"))
 
-        if re.search(r"16\.?心智圖", n) and re.search(r"17\.?延伸閱讀", n):
-            issues.append(
-                (pnum, bp, "mindmap-bibliography-same-page", "心智圖與§17延伸閱讀同頁，應分頁"),
-            )
+        # §16 心智圖獨佔一頁、下頁才是 §17：可同頁時不應硬拆（概念圖多半精簡）
+        if (
+            re.search(r"16\.?心智圖", n)
+            and not re.search(r"17\.?延伸閱讀", n)
+            and len(body) < SPARSE_CHAR_THRESHOLD
+            and i + 1 < len(reader.pages)
+        ):
+            next_n = norm(reader.pages[i + 1].extract_text() or "")
+            if re.search(r"17\.?延伸閱讀", next_n):
+                issues.append(
+                    (pnum, bp, "mindmap-alone-before-refs", "心智圖獨佔一頁、延伸閱讀在下頁，宜同頁"),
+                )
+
+        # §17 標題與書目跨頁（標題黏在心智圖頁、正文幾乎沒有）
+        if (
+            re.search(r"17\.?延伸閱讀", n)
+            and re.search(r"16\.?心智圖", n)
+            and len(body) < 160
+            and i + 1 < len(reader.pages)
+        ):
+            next_n = norm(reader.pages[i + 1].extract_text() or "")
+            if re.search(r"郭慶藩|莊子集釋|交叉引用|相關篇章", next_n):
+                issues.append(
+                    (pnum, bp, "refs-heading-orphan", "§17標題與延伸閱讀正文跨頁，宜整組同頁"),
+                )
 
         # 頁末開新節、且下一頁仍接續同節（非新標題）：應整組移到下一頁
         body_lines = [
