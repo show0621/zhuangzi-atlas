@@ -286,7 +286,7 @@ async function writeDocx(spineImg: string): Promise<void> {
             spacing: { after: 200 },
             children: [
               new TextRun({
-                text: `書脊條（設計 ${SPINE_W}×${SPINE_H} mm，菊16開／241頁／80g輕質估）`,
+                text: `書脊條（設計 ${SPINE_W}×${SPINE_H} mm，菊16開／${DEFAULT_PAGE_COUNT}頁／80g輕質估）`,
                 bold: true,
                 size: 24,
                 font: "Microsoft JhengHei",

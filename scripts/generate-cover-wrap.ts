@@ -409,7 +409,7 @@ function specHtml(): string {
     <tr><th>展開順序（印刷面左→右）</th><td>後勒口 → 封底 → 書脊 → 封面 → 前勒口</td></tr>
     <tr><th>成品</th><td>菊16開（A5）${TRIM_W} × ${TRIM_H} mm</td></tr>
     <tr><th>勒口</th><td>各 ${FLAP_MM} mm</td></tr>
-    <tr><th>書脊（本檔）</th><td>${SPINE_W} mm（241 頁／80g 米色輕質估算 ${SPINE_DESIGN.spineMm.toFixed(1)} mm 後進位）</td></tr>
+    <tr><th>書脊（本檔）</th><td>${SPINE_W} mm（${DEFAULT_PAGE_COUNT} 頁／80g 米色輕質估算 ${SPINE_DESIGN.spineMm.toFixed(1)} mm 後進位）</td></tr>
     <tr><th>90g 對照</th><td>書脊約 ${SPINE_DESIGN_90G.designMm} mm；展開寬約 ${wrap90} mm（需另出檔）</td></tr>
     <tr><th>本檔裁切尺寸</th><td>${WRAP_W} × ${TRIM_H} mm</td></tr>
     <tr><th>含出血頁面</th><td>${WRAP_W + BLEED * 2} × ${TRIM_H + BLEED * 2} mm（四周各 ${BLEED} mm）</td></tr>
