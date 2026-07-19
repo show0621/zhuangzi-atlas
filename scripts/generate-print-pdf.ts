@@ -249,22 +249,22 @@ async function tryPuppeteer(htmlPath: string): Promise<string | null> {
 
       // 心智圖：優先撐滿版心；過高則等比縮小以落入約一頁高度。
       // 不改 viewBox（改 viewBox 會弄亂 foreignObject 中文字）。
-      // 節點變寬靠 Mermaid wrappingWidth，避免「SVG 全寬但框仍細條」。
+      // 字級由 Mermaid themeVariables.fontSize 決定，勿再 CSS 壓小。
       await page.evaluate(`(() => {
         document.querySelectorAll(".print-mindmap .mermaid svg").forEach((svg) => {
           const parent = svg.parentElement;
           const cw = parent ? parent.clientWidth : 0;
           svg.removeAttribute("width");
           svg.removeAttribute("height");
-          svg.style.display = "block";
-          svg.style.marginLeft = "auto";
-          svg.style.marginRight = "auto";
-          svg.style.maxWidth = "100%";
-          svg.style.transform = "";
+          svg.style.setProperty("display", "block", "important");
+          svg.style.setProperty("margin-left", "auto", "important");
+          svg.style.setProperty("margin-right", "auto", "important");
+          svg.style.setProperty("max-width", "100%", "important");
+          svg.style.setProperty("transform", "");
           if (!cw || !svg.viewBox || !svg.viewBox.baseVal.width) {
-            svg.style.width = "100%";
-            svg.style.height = "auto";
-            svg.style.maxHeight = "none";
+            svg.style.setProperty("width", "100%", "important");
+            svg.style.setProperty("height", "auto", "important");
+            svg.style.setProperty("max-height", "155mm", "important");
             return;
           }
           const vb = svg.viewBox.baseVal;
@@ -275,9 +275,9 @@ async function tryPuppeteer(htmlPath: string): Promise<string | null> {
             h = maxH;
             w = (maxH * vb.width) / vb.height;
           }
-          svg.style.width = Math.round(w) + "px";
-          svg.style.height = Math.round(h) + "px";
-          svg.style.maxHeight = "none";
+          svg.style.setProperty("width", Math.round(w) + "px", "important");
+          svg.style.setProperty("height", Math.round(h) + "px", "important");
+          svg.style.setProperty("max-height", "none", "important");
         });
       })()`);
 

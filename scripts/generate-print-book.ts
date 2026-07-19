@@ -1674,8 +1674,9 @@ function buildPrintHtml(bodyHtml: string): string {
         text-align: center;
         box-sizing: border-box;
       }
-      /* 心智圖：優先撐滿版心；過高圖以 max-height 限制（PDF 腳本另有智慧縮放）。
-         節點寬度由 Mermaid wrappingWidth 控制，避免框內過早換行成細條。 */
+      /* 心智圖：撐滿版心；過高圖以 max-height 限制。
+         節點寬靠 Mermaid wrappingWidth；字級交給 themeVariables.fontSize，
+         勿再以較小 font-size !important 覆寫（會造成「框大字小」）。 */
       .print-mindmap .mermaid svg {
         display: block !important;
         margin-left: auto !important;
@@ -1688,7 +1689,6 @@ function buildPrintHtml(bodyHtml: string): string {
       .print-mindmap .mermaid .nodeLabel,
       .print-mindmap .mermaid foreignObject > div,
       .print-mindmap .mermaid foreignObject div {
-        font-size: 17px !important;
         line-height: 1.4 !important;
         text-align: center !important;
       }
@@ -1748,17 +1748,17 @@ ${bodyHtml}
       securityLevel: "loose",
       fontFamily: "Noto Serif TC, serif",
       themeVariables: {
-        fontSize: "26px",
+        fontSize: "28px",
         fontFamily: "Noto Serif TC, serif",
       },
       flowchart: {
         useMaxWidth: true,
         htmlLabels: true,
         curve: "basis",
-        wrappingWidth: 380,
-        nodeSpacing: 44,
-        rankSpacing: 40,
-        padding: 16,
+        wrappingWidth: 420,
+        nodeSpacing: 40,
+        rankSpacing: 36,
+        padding: 14,
       },
     });
     document.addEventListener("DOMContentLoaded", () => {
@@ -1768,17 +1768,16 @@ ${bodyHtml}
           const cw = parent ? parent.clientWidth : 0;
           svg.removeAttribute("width");
           svg.removeAttribute("height");
-          svg.style.display = "block";
-          svg.style.marginLeft = "auto";
-          svg.style.marginRight = "auto";
-          svg.style.maxWidth = "100%";
+          svg.style.setProperty("display", "block", "important");
+          svg.style.setProperty("margin-left", "auto", "important");
+          svg.style.setProperty("margin-right", "auto", "important");
+          svg.style.setProperty("max-width", "100%", "important");
           if (!cw || !svg.viewBox || !svg.viewBox.baseVal.width) {
-            svg.style.width = "100%";
-            svg.style.height = "auto";
+            svg.style.setProperty("width", "100%", "important");
+            svg.style.setProperty("height", "auto", "important");
             return;
           }
           const vb = svg.viewBox.baseVal;
-          // 約 155mm：避免直向長圖撐破頁面造成空白頁／標題孤兒
           const maxH = Math.round(cw * 1.28);
           let w = cw;
           let h = (cw * vb.height) / vb.width;
@@ -1786,9 +1785,9 @@ ${bodyHtml}
             h = maxH;
             w = (maxH * vb.width) / vb.height;
           }
-          svg.style.width = Math.round(w) + "px";
-          svg.style.height = Math.round(h) + "px";
-          svg.style.maxHeight = "none";
+          svg.style.setProperty("width", Math.round(w) + "px", "important");
+          svg.style.setProperty("height", Math.round(h) + "px", "important");
+          svg.style.setProperty("max-height", "none", "important");
         });
       };
       setTimeout(fitMindmaps, 50);
