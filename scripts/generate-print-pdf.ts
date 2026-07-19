@@ -261,7 +261,7 @@ async function tryPuppeteer(htmlPath: string): Promise<string | null> {
       })()`);
 
       // 頁末懸空節標題：Chrome 常忽略 break-inside，改以強制換頁整組下移
-      for (let pass = 1; pass <= 3; pass += 1) {
+      for (let pass = 1; pass <= 4; pass += 1) {
         const layoutPdf = await page.pdf(PDF_OPTS);
         const strands = findBottomStrands(layoutPdf);
         if (strands.length === 0) {
@@ -299,7 +299,7 @@ async function tryPuppeteer(htmlPath: string): Promise<string | null> {
           console.warn("強制換頁未匹配到 DOM 標題，停止迭代。");
           break;
         }
-        if (pass === 3) {
+        if (pass === 4) {
           const left = findBottomStrands(await page.pdf(PDF_OPTS));
           if (left.length)
             console.warn(`頁末懸空節標題：仍剩 ${left.length} 處（已達迭代上限）`);

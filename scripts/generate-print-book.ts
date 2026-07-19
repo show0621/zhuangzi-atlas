@@ -680,11 +680,11 @@ function wrapPrintKeepBlocks(html: string): string {
 
   // §16 心智圖 + diagram（mermaid 或 ASCII；略過已包裝者；閉合由下方 normalizer 統一）
   out = out.replace(
-    /(?<!<div class="print-keep print-mindmap">)(<h2 id="16-[^"]*">[\s\S]*?<\/h2>)\s*(<div class="mermaid">[\s\S]*?<\/div>)(?=\s*(?:<h2|<div class="pagebreak"|$))/g,
+    /(?<!<div class="print-keep print-mindmap">)(<h2 id="16-[^"]*">[^<]*<\/h2>)\s*(<div class="mermaid">[\s\S]*?<\/div>)(?=\s*(?:<h2|<div class="pagebreak"|$))/g,
     '<div class="print-keep print-mindmap">$1\n$2',
   );
   out = out.replace(
-    /(?<!<div class="print-keep print-mindmap">)(<h2 id="16-[^"]*">[\s\S]*?<\/h2>)\s*(<pre class="code code-diagram">[\s\S]*?<\/pre>)/g,
+    /(?<!<div class="print-keep print-mindmap">)(<h2 id="16-[^"]*">[^<]*<\/h2>)\s*(<pre class="code code-diagram">[\s\S]*?<\/pre>)/g,
     '<div class="print-keep print-mindmap">$1\n$2',
   );
 
@@ -722,93 +722,33 @@ function wrapPrintKeepBlocks(html: string): string {
 
   // §02–§15：節標題與開頭內容綁定；頁末放不下時整組移到下一頁
   // （避免「09. 哲學分析」只剩標題＋一句「以下為本書現代詮釋」）
-  // Pass A：h2 + blockquote + 首段 p（§09／§13 常見）
+  // Pass A：h2 + blockquote + 首兩段 p（§09／§13；第二段常才是正文展開）
+  // 注意：h2 內文必須用 [^<]*，不可用 [\s\S]*?——後者在後接不符時會回溯吞掉整章
   out = out.replace(
-    /(?<!<div class="print-keep print-section-head">)(<h2 id="(?:0[2-9]|1[0-5])-[^"]*">[\s\S]*?<\/h2>)\s*(<blockquote>(?:(?!<\/blockquote>)[\s\S])*<\/blockquote>)\s*(<p>(?:(?!<\/p>)[\s\S])*<\/p>)/g,
-    '<div class="print-keep print-section-head">$1\n$2\n$3</div>',
+    /(?<!<div class="print-keep print-section-head">)(<h2 id="(?:0[2-9]|1[0-5])-[^"]*">[^<]*<\/h2>)\s*(<blockquote>(?:(?!<\/blockquote>)[\s\S])*<\/blockquote>)\s*(<p>(?:(?!<\/p>)[\s\S])*<\/p>)(?:\s*(<p>(?:(?!<\/p>)[\s\S])*<\/p>))?/g,
+    (_m, h2: string, bq: string, p1: string, p2?: string) =>
+      `<div class="print-keep print-section-head">${h2}\n${bq}\n${p1}${p2 ? `\n${p2}` : ""}</div>`,
   );
   // Pass B：其餘尚未包裝的 h2 + 緊接首塊（p／list／table／已包 h3-block）
   out = out.replace(
-    /(?<!<div class="print-keep print-section-head">)(<h2 id="(?:0[2-9]|1[0-5])-[^"]*">[\s\S]*?<\/h2>)\s*(<div class="print-keep print-h3-block">[\s\S]*?<\/div>|<p>(?:(?!<\/p>)[\s\S])*<\/p>|<ul>(?:(?!<\/ul>)[\s\S])*<\/ul>|<ol>(?:(?!<\/ol>)[\s\S])*<\/ol>|<table[\s\S]*?<\/table>)/g,
+    /(?<!<div class="print-keep print-section-head">)(<h2 id="(?:0[2-9]|1[0-5])-[^"]*">[^<]*<\/h2>)\s*(<div class="print-keep print-h3-block">[\s\S]*?<\/div>|<p>(?:(?!<\/p>)[\s\S])*<\/p>|<ul>(?:(?!<\/ul>)[\s\S])*<\/ul>|<ol>(?:(?!<\/ol>)[\s\S])*<\/ol>|<table[\s\S]*?<\/table>)/g,
     '<div class="print-keep print-section-head">$1\n$2</div>',
   );
   // Pass C：§07 走讀路線過短時，連首個子節一併帶走
   out = out.replace(
-    /(<div class="print-keep print-section-head">)(<h2 id="07-[^"]*">[\s\S]*?<\/h2>\s*<p>(?:(?!<\/p>)[\s\S])*<\/p>)<\/div>\s*(<div class="print-keep print-h3-block">[\s\S]*?<\/div>)/g,
+    /(<div class="print-keep print-section-head">)(<h2 id="07-[^"]*">[^<]*<\/h2>\s*<p>(?:(?!<\/p>)[\s\S])*<\/p>)<\/div>\s*(<div class="print-keep print-h3-block">[\s\S]*?<\/div>)/g,
     "$1$2\n$3</div>",
   );
-  // Pass D：§08 h3 注家型 — 標題 + 前三位（郭象／成玄英／林希逸）
+  // Pass D：§08 h3 注家型 — 標題 + 前兩位（避免頁末只開郭象）
   out = out.replace(
-    /(<div class="print-keep print-section-head">)(<h2 id="08-[^"]*">[\s\S]*?<\/h2>\s*<div class="print-keep print-h3-block">[\s\S]*?<\/div>)<\/div>\s*(<div class="print-keep print-h3-block">[\s\S]*?<\/div>)(?:\s*(<div class="print-keep print-h3-block">[\s\S]*?<\/div>))?/g,
-    (_m, open: string, head: string, n2: string, n3?: string) =>
-      `${open}${head}\n${n2}${n3 ? `\n${n3}` : ""}</div>`,
-  );
-  // Pass D2：§08 段落注家型（<p><strong>郭象</strong>…）— 連帶後兩段
-  out = out.replace(
-    /(<div class="print-keep print-section-head">)(<h2 id="08-[^"]*">[\s\S]*?<\/h2>\s*<p>(?:(?!<\/p>)[\s\S])*<\/p>)<\/div>\s*(<p>(?:(?!<\/p>)[\s\S])*<\/p>)(?:\s*(<p>(?:(?!<\/p>)[\s\S])*<\/p>))?/g,
-    (_m, open: string, head: string, p2: string, p3?: string) =>
-      `${open}${head}\n${p2}${p3 ? `\n${p3}` : ""}</div>`,
-  );
-  // Pass E：§05 白話 — 再併一段，避免頁末只開譯文開頭
-  out = out.replace(
-    /(<div class="print-keep print-section-head">)(<h2 id="05-[^"]*">[\s\S]*?<\/h2>\s*<p>(?:(?!<\/p>)[\s\S])*<\/p>)<\/div>\s*(<p>(?:(?!<\/p>)[\s\S])*<\/p>)/g,
+    /(<div class="print-keep print-section-head">)(<h2 id="08-[^"]*">[^<]*<\/h2>\s*<div class="print-keep print-h3-block">[\s\S]*?<\/div>)<\/div>\s*(<div class="print-keep print-h3-block">[\s\S]*?<\/div>)/g,
     "$1$2\n$3</div>",
   );
-  // Pass F：§09／§13 — 詮釋正文常在 blockquote 後第二段才展開
+  // Pass D2：§08 段落注家型（<p><strong>郭象</strong>…）— 連帶下一段（成玄英）
   out = out.replace(
-    /(<div class="print-keep print-section-head">)(<h2 id="(?:09|13)-[^"]*">[\s\S]*?<\/h2>[\s\S]*?<p>(?:(?!<\/p>)[\s\S])*<\/p>)<\/div>\s*(<p>(?:(?!<\/p>)[\s\S])*<\/p>)/g,
+    /(<div class="print-keep print-section-head">)(<h2 id="08-[^"]*">[^<]*<\/h2>\s*<p>(?:(?!<\/p>)[\s\S])*<\/p>)<\/div>\s*(<p>(?:(?!<\/p>)[\s\S])*<\/p>)/g,
     "$1$2\n$3</div>",
   );
-  // Pass G：§02／§10–§12／§14 — 若後接續段（非新節），併入避免標題懸頁末
-  out = out.replace(
-    /(<div class="print-keep print-section-head">)(<h2 id="(?:02|10|11|12|14)-[^"]*">[\s\S]*?<\/h2>\s*(?:<p>(?:(?!<\/p>)[\s\S])*<\/p>|<ol>(?:(?!<\/ol>)[\s\S])*<\/ol>|<ul>(?:(?!<\/ul>)[\s\S])*<\/ul>))<\/div>\s*(<p>(?:(?!<\/p>)[\s\S])*<\/p>)/g,
-    "$1$2\n$3</div>",
-  );
-  // 去掉 section-head 內巢狀 h3-block keep（Chrome 巢狀 avoid 常仍拆開）
-  {
-    const parts: string[] = [];
-    const openTag = '<div class="print-keep print-section-head">';
-    let searchFrom = 0;
-    let last = 0;
-    while (true) {
-      const start = out.indexOf(openTag, searchFrom);
-      if (start < 0) break;
-      parts.push(out.slice(last, start));
-      let depth = 0;
-      let i = start;
-      while (i < out.length) {
-        if (out.startsWith("<div", i)) {
-          depth += 1;
-          i = out.indexOf(">", i) + 1;
-          continue;
-        }
-        if (out.startsWith("</div>", i)) {
-          depth -= 1;
-          i += "</div>".length;
-          if (depth === 0) {
-            let block = out.slice(start, i);
-            block = block.replace(
-              /<div class="print-keep print-h3-block">([\s\S]*?)<\/div>/g,
-              "$1",
-            );
-            parts.push(block);
-            last = i;
-            searchFrom = i;
-            break;
-          }
-          continue;
-        }
-        i += 1;
-      }
-      if (depth !== 0) {
-        parts.push(out.slice(start));
-        last = out.length;
-        break;
-      }
-    }
-    parts.push(out.slice(last));
-    out = parts.join("");
-  }
 
   // 修復：結構圖誤包 h3-block
   out = out.replace(
@@ -822,29 +762,29 @@ function wrapPrintKeepBlocks(html: string): string {
 
   // 修復：§16 心智圖 — 確保恰有一層 print-mindmap 閉合（避免多餘 </div>）
   out = out.replace(
-    /(<div class="print-keep print-mindmap"><h2 id="16-[^"]*">[\s\S]*?<\/h2>\s*<div class="mermaid">[\s\S]*?<\/div>)(?:\s*<\/div>)*(\s*<h2 id="17-)/g,
+    /(<div class="print-keep print-mindmap"><h2 id="16-[^"]*">[^<]*<\/h2>\s*<div class="mermaid">[\s\S]*?<\/div>)(?:\s*<\/div>)*(\s*<h2 id="17-)/g,
     "$1</div>$2",
   );
   out = out.replace(
-    /(<div class="print-keep print-mindmap"><h2 id="16-[^"]*">[\s\S]*?<\/h2>\s*<pre class="code code-diagram">[\s\S]*?<\/pre>)(?:\s*<\/div>)*(\s*<h2 id="17-)/g,
+    /(<div class="print-keep print-mindmap"><h2 id="16-[^"]*">[^<]*<\/h2>\s*<pre class="code code-diagram">[\s\S]*?<\/pre>)(?:\s*<\/div>)*(\s*<h2 id="17-)/g,
     "$1</div>$2",
   );
 
   // 修復：§03 結構圖 — 確保 structure-diagram 恰有一層閉合
   out = out.replace(
-    /(<div class="print-keep print-structure-diagram"><h3 id="結構圖">[\s\S]*?<\/h3>\s*<pre class="code code-diagram">[\s\S]*?<\/pre>(?:\s*<div class="mermaid">[\s\S]*?<\/div>)?)(?:\s*<\/div>)*(\s*<h2 id=")/g,
+    /(<div class="print-keep print-structure-diagram"><h3 id="結構圖">[^<]*<\/h3>\s*<pre class="code code-diagram">[\s\S]*?<\/pre>(?:\s*<div class="mermaid">[\s\S]*?<\/div>)?)(?:\s*<\/div>)?(\s*<h2 id=")/g,
     "$1</div>$2",
   );
 
   // 修復：完全未包裝的 §16 + diagram
   out = out.replace(
-    /(?<!<div class="print-keep print-mindmap">)(<h2 id="16-[^"]*">[\s\S]*?<\/h2>\s*(?:<div class="mermaid">[\s\S]*?<\/div>|<pre class="code code-diagram">[\s\S]*?<\/pre>))\s*(<h2 id="17-)/g,
+    /(?<!<div class="print-keep print-mindmap">)(<h2 id="16-[^"]*">[^<]*<\/h2>\s*(?:<div class="mermaid">[\s\S]*?<\/div>|<pre class="code code-diagram">[\s\S]*?<\/pre>))\s*(<h2 id="17-)/g,
     '<div class="print-keep print-mindmap">$1</div>\n$2',
   );
 
   // 修復：mermaid 後首個 h3 誤留孤兒 </div>
   out = out.replace(
-    /(<h2 id="17-[^"]*">[\s\S]*?<\/h2>\s*)(<h3 id="[^"]*">[\s\S]*?<\/h3>\s*<(?:ul|ol)>[\s\S]*?<\/(?:ul|ol)>)<\/div>(?=\s*(?:<div class="print-keep print-h3-block">|<h3|<div class="pagebreak"|$))/g,
+    /(<h2 id="17-[^"]*">[^<]*<\/h2>\s*)(<h3 id="[^"]*">[\s\S]*?<\/h3>\s*<(?:ul|ol)>[\s\S]*?<\/(?:ul|ol)>)<\/div>(?=\s*(?:<div class="print-keep print-h3-block">|<h3|<div class="pagebreak"|$))/g,
     '$1<div class="print-keep print-h3-block">$2</div>',
   );
 
@@ -856,11 +796,11 @@ function wrapPrintKeepBlocks(html: string): string {
 
   // 最終：§16 mermaid 區塊僅保留一層 print-mindmap 閉合
   out = out.replace(
-    /(<div class="print-keep print-mindmap"><h2 id="16-[^"]*">[\s\S]*?<\/h2>\s*<div class="mermaid">[\s\S]*?<\/div>)(?:\s*<\/div>)*(\s*<h2 id="17-)/g,
+    /(<div class="print-keep print-mindmap"><h2 id="16-[^"]*">[^<]*<\/h2>\s*<div class="mermaid">[\s\S]*?<\/div>)(?:\s*<\/div>)*(\s*<h2 id="17-)/g,
     "$1</div>$2",
   );
   out = out.replace(
-    /(<div class="print-keep print-mindmap"><h2 id="16-[^"]*">[\s\S]*?<\/h2>\s*<pre class="code code-diagram">[\s\S]*?<\/pre>)(?:\s*<\/div>)*(\s*<h2 id="17-)/g,
+    /(<div class="print-keep print-mindmap"><h2 id="16-[^"]*">[^<]*<\/h2>\s*<pre class="code code-diagram">[\s\S]*?<\/pre>)(?:\s*<\/div>)*(\s*<h2 id="17-)/g,
     "$1</div>$2",
   );
 

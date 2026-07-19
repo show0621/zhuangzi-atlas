@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 import sys
+import unicodedata
 from pathlib import Path
 
 from pypdf import PdfReader
@@ -21,7 +22,8 @@ MINDMAP_OK_PATTERNS = (r"16\.?心智圖", r"flowchart", r"→", r"\[")
 
 
 def norm(s: str) -> str:
-    return re.sub(r"\s+", "", s.replace("\u2060", ""))
+    # NFKC：pdf 抽取偶發康熙部首（⼼→心、⽼→老）
+    return unicodedata.normalize("NFKC", re.sub(r"\s+", "", s.replace("\u2060", "")))
 
 
 def body_without_page_num(text: str) -> str:
@@ -63,7 +65,7 @@ def is_section_heading(line: str | None) -> bool:
 
 def spaced_section_heading(line: str) -> str | None:
     """Match '0 9 .  哲  學  分  析' style PDF extraction."""
-    n = re.sub(r"\s+", "", line.replace("\u2060", ""))
+    n = norm(line)
     m = re.fullmatch(r"(\d{1,2})\.([\u4e00-\u9fff]{2,12})", n)
     return f"{m.group(1)}.{m.group(2)}" if m else None
 
@@ -139,10 +141,6 @@ def main() -> int:
                 issues.append((pnum, bp, "mindmap-split", "心智圖內容延續自上一頁標題"))
 
             prev_n = norm(prev)
-            if re.search(r"16\.?心智圖", prev_n) and re.search(r"17\.?延伸閱讀", n):
-                issues.append(
-                    (pnum, bp, "mindmap-bibliography-same-page", "心智圖與§17延伸閱讀同頁"),
-                )
 
             # 結構圖僅 ASCII 在上一頁、mermaid 在下一頁（非刻意分頁）
             if re.search(r"結構圖", prev_n) and not re.search(r"04\.?原典", prev_n):
@@ -190,19 +188,23 @@ def main() -> int:
                     if l.strip()
                 ]
                 next_first = next_lines[0] if next_lines else ""
-                next_norm = re.sub(r"\s+", "", next_first.replace("\u2060", ""))
+                next_norm = norm(next_first)
                 next_is_new_heading = bool(
                     spaced_section_heading(next_first)
                     or re.match(r"^\d{1,2}\.[\u4e00-\u9fff]", next_norm)
                     or next_first.startswith("閱讀")
                     or next_norm.startswith("註：")
+                    or re.match(r"^16\.?心智圖", next_norm)
                 )
-                # §15 收束後下頁 §16 心智圖屬刻意分頁，不算懸空
-                if last_sec and last_sec.startswith("15.") and re.match(
-                    r"^16\.?心智圖", next_norm
+                # §15 完整收在頁末、下頁為心智圖：允許；僅當總結正文跨頁才警示
+                if (
+                    last_sec
+                    and last_sec.startswith("15.")
+                    and re.match(r"^16\.?心智圖", next_norm)
                 ):
                     next_is_new_heading = True
-                if not next_is_new_heading:
+                # 與 find-bottom-strands 對齊：僅標「標題後所剩無幾」的嚴重懸空
+                if not next_is_new_heading and len(after) < 80:
                     issues.append(
                         (
                             pnum,

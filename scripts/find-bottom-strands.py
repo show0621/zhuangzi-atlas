@@ -11,6 +11,7 @@ from __future__ import annotations
 import json
 import re
 import sys
+import unicodedata
 from pathlib import Path
 
 try:
@@ -24,12 +25,12 @@ PDF = Path(sys.argv[1]) if len(sys.argv) > 1 else (
     Path(__file__).resolve().parents[1] / "public" / "downloads" / "zhuangzi-atlas-print.pdf"
 )
 
-Y_RATIO = 0.70
+Y_RATIO = 0.65
 AFTER_MAX = 160
 
 
 def norm(s: str) -> str:
-    return re.sub(r"[\s\u2060\u200b]+", "", s).replace("\u2060", "")
+    return unicodedata.normalize("NFKC", re.sub(r"[\s\u2060\u200b]+", "", s))
 
 
 def is_sec(s: str) -> re.Match[str] | None:
@@ -61,6 +62,7 @@ def main() -> int:
                 if not m:
                     continue
                 num = int(m.group(1))
+                # §15 若下頁已是 §16 則略過（見下方 next 判斷）；若總結正文跨頁仍要抓
                 if 2 <= num <= 15:
                     n = norm(text)
                     ord_i = heading_ord.get(n, 0)
@@ -101,10 +103,10 @@ def main() -> int:
             if s and not re.fullmatch(r"\d{1,3}", s):
                 next_first = s
                 break
-        if is_sec(next_first):
+        nf = norm(next_first)
+        if is_sec(next_first) or re.match(r"^16\.?心智圖", nf):
             # 下頁已是新節（含 §16）→ 本節已收束，不算跨頁斷裂
             continue
-        nf = norm(next_first)
         if nf.startswith("註：") or nf.startswith("閱讀"):
             continue
         key = (n, ord_i)
