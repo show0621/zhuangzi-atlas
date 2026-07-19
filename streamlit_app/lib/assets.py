@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[2]
 DOWNLOADS_DIR = ROOT / "public" / "downloads"
 
 # 改這個可強制破除瀏覽器／Pages 舊快取；本地下載鈕不依賴 Pages
-ASSET_V = "publish-v29-wrap-print-guide-701c"
+ASSET_V = "publish-v30-press-preflight-701c"
 PAGES_BASE = "https://show0621.github.io/zhuangzi-atlas"
 SITE_VERSION = "1.0.0"
 PRINT_PAGES_HINT = "約 450 頁"

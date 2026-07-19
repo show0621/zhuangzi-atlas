@@ -10,19 +10,50 @@
 | `莊子全解-印刷版.pdf` | 同上（中文檔名別名） |
 | `zhuangzi-atlas-cover-wrap.pdf` | **上機用**：封面展開（勒口＋封底＋書脊＋封面＋勒口）；第 2 頁為單本數位規格說明 |
 | `zhuangzi-atlas-spine.pdf` | 書脊條 1:1＋規格說明（核對中縫寬） |
+| `PRESS-PREFLIGHT.txt` | 交印預檢報告（字型／DPI／色彩／出血） |
 | `zhuangzi-atlas-cover.docx` 等 | 封面／封底／折頁／展開**示意 Word**（非正式裁切；上機用 PDF） |
 | `zhuangzi-atlas-print.docx` | Word 成冊版（可編輯；頁碼規則以 PDF 為準） |
 | `莊子全解-印刷版.docx` | Word 中文檔名別名 |
 | `zhuangzi-atlas-print.html` | 瀏覽器預覽；正式頁碼請用已產出的 PDF |
 | `zhuangzi-atlas-print.md` | 完整 Markdown 原稿 |
 
+## 交印四項檢查（重要）
+
+本庫印刷 PDF 由 **Chrome（RGB＋內嵌字型）** 產出，適合**單本數位印刷**。對照常見印廠檢查表：
+
+| 項目 | 本庫現況 | 說明 |
+|------|----------|------|
+| **文字轉曲** | 未轉曲，已**內嵌字型**（Noto Serif TC 等） | 數位機台通常可直接印，不怕缺字。若印廠**堅持**轉外框，請用 Acrobat「預檢／轉外框」或請廠處理；Chrome 無法產出轉曲 PDF。 |
+| **圖片 300 dpi** | 封面／題辭／書脊／後記書法於列印尺寸 **≥300 dpi** | 本機執行 `npm run print:press` 可複核。圖表（Mermaid）為向量路徑，縮放不模糊。 |
+| **色彩 CMYK** | 檔案為 **RGB（sRGB）** | 單本數位印刷多數接受 RGB。若膠印／傳統機要求 CMYK，請印廠轉檔，或用下方 Ghostscript 配方後製（仍建議打樣）。 |
+| **出血 3 mm** | **封面展開**：頁面含四周 3 mm，底色已延伸進出血。**內文**：成品 148×210 mm（無頁面出血） | 膠裝內文常見做法；版心邊距 ≥14 mm，裁切不易露白。上機書衣請用展開 PDF 第 1 頁。 |
+
+本機預檢：
+
+```bash
+npm run print:press
+```
+
+### （選用）RGB → CMYK 後製示例
+
+需本機安裝 Ghostscript；輸出請打樣確認色差：
+
+```bash
+gs -dSAFER -dBATCH -NOPAUSE -sDEVICE=pdfwrite \
+  -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK \
+  -sOutputFile=zhuangzi-atlas-print-cmyk.pdf \
+  public/downloads/zhuangzi-atlas-print.pdf
+```
+
+封面展開同理，將輸入改為 `zhuangzi-atlas-cover-wrap.pdf`。
+
 ## 單本數位｜建議工藝
 
 1. **裝訂**：平裝膠裝＋雙折口書衣（內書皮可用 250g 象牙卡等厚卡；外書衣印展開圖並摺成勒口）。
 2. **外書衣紙**：米色新浪潮（或同級微粗糙米色美術紙）。**不要上亮膜／霧膜**。
 3. **書名「霧沙金」**：首選數位燙消光金／霧金；備案為數位直印模擬沙金。單本不必開傳統鋅版。
-4. **頁數**：目前設計依約 **450 頁**（非舊估 355 頁）；下單前以最新 PDF 頁腳為準。
-5. **書脊／勒口（本檔預設）**：書脊 **32 mm**（450 頁／80g 米色輕質估）；勒口各 **90 mm**（厚書建議 80–100 mm）。改紙重請印廠紙樣複核後另出檔。
+4. **頁數**：目前設計依約 **450 頁**；下單前以最新 PDF 頁腳為準。
+5. **書脊／勒口（本檔預設）**：書脊 **32 mm**（450 頁／80g 米色輕質估）；勒口各 **90 mm**。改紙重請印廠紙樣複核後另出檔。
 
 ## 成冊步驟（菊16開）
 
@@ -32,7 +63,7 @@
 
 ## 詢問印廠可用話術
 
-> 想印單本作品集：菊16開，內文約 450 頁米色紙膠裝；外書衣用米色新浪潮、雙折口；書名希望數位燙霧金（消光金）。請以紙樣複核書脊；本檔書脊先按 32 mm 設計。
+> 想印單本作品集：菊16開，內文約 450 頁米色紙膠裝；外書衣用米色新浪潮、雙折口；書名希望數位燙霧金（消光金）。PDF 為 RGB＋內嵌字型（未轉曲）；封面展開含 3mm 出血。請以紙樣複核書脊；本檔書脊先按 32 mm 設計。若你們必須 CMYK 或轉曲，可否代轉？
 
 ## 重新產生
 
@@ -45,4 +76,5 @@ npm run ebook:wrap       # 封面展開 PDF
 npm run ebook:spine      # 書脊 PDF／Word
 npm run ebook:binding-docx  # 裝幀示意 Word
 npm run ebook:print:all  # HTML + PDF + Word + 裝訂／書脊／展開／示意 Word
+npm run print:press      # 交印預檢（DPI／字型／色彩／出血）
 ```

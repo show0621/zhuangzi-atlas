@@ -124,7 +124,12 @@ const FILES = [
   {
     name: "README-列印說明.md",
     label: "列印／裝訂說明",
-    desc: "影印店成冊步驟與重新產生指令。",
+    desc: "交印四項（轉曲／300dpi／CMYK／出血）、單本數位工藝與重新產生指令。",
+  },
+  {
+    name: "PRESS-PREFLIGHT.txt",
+    label: "交印預檢報告",
+    desc: "字型內嵌／圖片有效 DPI／RGB／封面出血現況（npm run print:press）。",
   },
 ] as const;
 
@@ -328,6 +333,11 @@ export default function DownloadPage() {
           <li>
             單本數位建議：<strong className="text-ink">平裝膠裝＋雙折口書衣</strong>
             （外書衣米色新浪潮；書名數位燙霧金／消光金；<strong className="text-ink">不要上膜</strong>）。書脊以紙樣複核。
+          </li>
+          <li>
+            交印注意：本庫 PDF 為 <strong className="text-ink">RGB＋內嵌字型</strong>
+            （未轉曲；數位印刷通常可直接印）。封面展開含 <strong className="text-ink">3mm 出血</strong>
+            ；內文為成品尺寸。詳見下載區「列印／裝訂說明」與 <code className="font-mono">PRESS-PREFLIGHT.txt</code>。
           </li>
         </ol>
         <p className="text-muted">

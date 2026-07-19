@@ -117,29 +117,47 @@ function wrapHtml(titleSrc: string, authorSrc: string, spineSrc: string, flapNam
       print-color-adjust: exact;
       font-family: "Noto Serif TC", "Source Han Serif TC", "Songti TC", serif;
     }
+    /* 面板色塊延伸至四周出血；內容鎖在裁切區（panel-trim） */
     .sheet {
       position: relative;
       width: ${pageW}mm; height: ${pageH}mm;
-      padding: ${BLEED}mm;
+      padding: 0;
     }
     .wrap {
-      width: ${WRAP_W}mm; height: ${TRIM_H}mm;
+      width: ${pageW}mm; height: ${pageH}mm;
       display: flex;
       flex-direction: row;
       background: #${C.coverPaper};
       overflow: hidden;
     }
-    .panel { position: relative; height: ${TRIM_H}mm; flex: 0 0 auto; overflow: hidden; }
-    .flap-back { width: ${FLAP_MM}mm; background: #${C.flapBg}; }
-    .back { width: ${TRIM_W}mm; }
+    .panel {
+      position: relative;
+      height: ${pageH}mm;
+      flex: 0 0 auto;
+      overflow: hidden;
+    }
+    .panel-trim {
+      position: absolute;
+      top: ${BLEED}mm;
+      height: ${TRIM_H}mm;
+      overflow: hidden;
+    }
+    .flap-back { width: ${FLAP_MM + BLEED}mm; background: #${C.flapBg}; }
+    .flap-back .panel-trim { left: ${BLEED}mm; width: ${FLAP_MM}mm; }
+    .back { width: ${TRIM_W}mm; background: #${C.coverPaper}; }
+    .back .panel-trim { left: 0; width: ${TRIM_W}mm; }
     .spine { width: ${SPINE_W}mm; background: #fff; }
-    .front { width: ${TRIM_W}mm; }
-    .flap-front { width: ${FLAP_MM}mm; background: #${C.flapBg}; }
+    .spine .panel-trim { left: 0; width: ${SPINE_W}mm; }
+    .front { width: ${TRIM_W}mm; background: #${C.coverPaper}; }
+    .front .panel-trim { left: 0; width: ${TRIM_W}mm; }
+    .flap-front { width: ${FLAP_MM + BLEED}mm; background: #${C.flapBg}; }
+    .flap-front .panel-trim { left: 0; width: ${FLAP_MM}mm; }
 
     /* 折線指示（僅上下出血區小刻度，不進入成品圖） */
     .tick {
       position: absolute; top: 0; width: 0; height: ${BLEED}mm;
       border-left: 0.2mm solid #888;
+      z-index: 20;
     }
     .tick-b { top: auto; bottom: 0; }
     .t1 { left: ${BLEED + FLAP_MM}mm; }
@@ -303,82 +321,92 @@ function wrapHtml(titleSrc: string, authorSrc: string, spineSrc: string, flapNam
     <span class="tick t3"></span><span class="tick tick-b t3"></span>
     <span class="tick t4"></span><span class="tick tick-b t4"></span>
 
-    <div class="wrap" aria-label="封面展開 1:1">
+    <div class="wrap" aria-label="封面展開 1:1（含 3mm 出血）">
       <!-- 後勒口 -->
       <section class="panel flap-back">
-        <div class="flap-inner">
-          <p class="flap-label">後勒口｜內容簡介</p>
-          <p class="flap-quote">${escapeHtml(AFTERWORD_CALLIGRAPHY)}</p>
-          <p class="flap-body">
-            原典・白話・哲學・人生智慧。本書依《莊子》篇章脈絡展開，清楚區分原典、歷代注家與現代詮釋，
-            並連回無待、心齋、無用之用等核心概念，供通讀、劃線與交叉思考。
-          </p>
-          <p class="flap-meta">
-            ${escapeHtml(SITE.englishTitle)}<br />
-            菊16開　｜　${DEFAULT_PAGE_COUNT} 頁　｜　版本 ${escapeHtml(SITE.version)}・${PRINT_YEAR}
-          </p>
+        <div class="panel-trim">
+          <div class="flap-inner">
+            <p class="flap-label">後勒口｜內容簡介</p>
+            <p class="flap-quote">${escapeHtml(AFTERWORD_CALLIGRAPHY)}</p>
+            <p class="flap-body">
+              原典・白話・哲學・人生智慧。本書依《莊子》篇章脈絡展開，清楚區分原典、歷代注家與現代詮釋，
+              並連回無待、心齋、無用之用等核心概念，供通讀、劃線與交叉思考。
+            </p>
+            <p class="flap-meta">
+              ${escapeHtml(SITE.englishTitle)}<br />
+              菊16開　｜　${DEFAULT_PAGE_COUNT} 頁　｜　版本 ${escapeHtml(SITE.version)}・${PRINT_YEAR}
+            </p>
+          </div>
         </div>
       </section>
 
       <!-- 封底 -->
       <section class="panel back">
-        <div class="back-geo-panel"></div>
-        <div class="back-geo-bar"></div>
-        <div class="back-geo-gold"></div>
-        <div class="back-inner">
-          <p class="flap-label">封底</p>
-          <p class="back-title">${escapeHtml(SITE.title)}</p>
-          <p class="back-blurb">
-            原典・白話・哲學・人生智慧。本書依《莊子》篇章脈絡展開，清楚區分原典、歷代注家與現代詮釋，
-            並連回無待、心齋、無用之用等核心概念。
-          </p>
-          <p class="back-quote">${escapeHtml(AFTERWORD_CALLIGRAPHY)}</p>
-          <div class="back-footer">
-            <p class="back-author">${escapeHtml(SITE.author)}</p>
-            <p class="back-meta">
-              ${escapeHtml(SITE.englishTitle)}　｜　版本 ${escapeHtml(SITE.version)}・${PRINT_YEAR}<br />
-              ${escapeHtml(SITE_URL)}
+        <div class="panel-trim">
+          <div class="back-geo-panel"></div>
+          <div class="back-geo-bar"></div>
+          <div class="back-geo-gold"></div>
+          <div class="back-inner">
+            <p class="flap-label">封底</p>
+            <p class="back-title">${escapeHtml(SITE.title)}</p>
+            <p class="back-blurb">
+              原典・白話・哲學・人生智慧。本書依《莊子》篇章脈絡展開，清楚區分原典、歷代注家與現代詮釋，
+              並連回無待、心齋、無用之用等核心概念。
             </p>
-            <p class="back-isbn">ISBN　—　—　—　—　—</p>
+            <p class="back-quote">${escapeHtml(AFTERWORD_CALLIGRAPHY)}</p>
+            <div class="back-footer">
+              <p class="back-author">${escapeHtml(SITE.author)}</p>
+              <p class="back-meta">
+                ${escapeHtml(SITE.englishTitle)}　｜　版本 ${escapeHtml(SITE.version)}・${PRINT_YEAR}<br />
+                ${escapeHtml(SITE_URL)}
+              </p>
+              <p class="back-isbn">ISBN　—　—　—　—　—</p>
+            </div>
           </div>
         </div>
       </section>
 
       <!-- 書脊 -->
       <section class="panel spine">
-        <div class="spine-inner">
-          <img src="${spineSrc}" alt="${escapeHtml(SITE.title)}．人生玩家　李孟霖 編集" />
+        <div class="panel-trim">
+          <div class="spine-inner">
+            <img src="${spineSrc}" alt="${escapeHtml(SITE.title)}．人生玩家　李孟霖 編集" />
+          </div>
         </div>
       </section>
 
       <!-- 封面 -->
       <section class="panel front">
-        <div class="front-geo-panel"></div>
-        <div class="front-geo-bar"></div>
-        <div class="front-geo-gold"></div>
-        <div class="front-titles">
-          <p class="front-title">
-            <img class="front-title-img" src="${titleSrc}" alt="${escapeHtml(SITE.title)}" />
+        <div class="panel-trim">
+          <div class="front-geo-panel"></div>
+          <div class="front-geo-bar"></div>
+          <div class="front-geo-gold"></div>
+          <div class="front-titles">
+            <p class="front-title">
+              <img class="front-title-img" src="${titleSrc}" alt="${escapeHtml(SITE.title)}" />
+            </p>
+            <p class="front-subtitle">${escapeHtml(SITE.subtitle)}</p>
+            <p class="front-english">${escapeHtml(SITE.englishTitle)}</p>
+            <p class="front-tagline">人生玩家</p>
+          </div>
+          <p class="front-author">
+            <img class="front-author-img" src="${authorSrc}" alt="${escapeHtml(SITE.author)}" />
           </p>
-          <p class="front-subtitle">${escapeHtml(SITE.subtitle)}</p>
-          <p class="front-english">${escapeHtml(SITE.englishTitle)}</p>
-          <p class="front-tagline">人生玩家</p>
+          <p class="front-meta">版本 ${escapeHtml(SITE.version)}・${PRINT_YEAR}</p>
         </div>
-        <p class="front-author">
-          <img class="front-author-img" src="${authorSrc}" alt="${escapeHtml(SITE.author)}" />
-        </p>
-        <p class="front-meta">版本 ${escapeHtml(SITE.version)}・${PRINT_YEAR}</p>
       </section>
 
       <!-- 前勒口 -->
       <section class="panel flap-front">
-        <div class="flap-inner">
-          <p class="flap-label">前勒口｜作者介紹</p>
-          <p class="author-name">
-            <img class="author-name-img" src="${flapNameSrc}" alt="${escapeHtml(AUTHOR_FLAP.name)}" />
-          </p>
-          <p class="author-role">${escapeHtml(AUTHOR_FLAP.role)}・《${escapeHtml(SITE.title)}》</p>
-          ${authorParas}
+        <div class="panel-trim">
+          <div class="flap-inner">
+            <p class="flap-label">前勒口｜作者介紹</p>
+            <p class="author-name">
+              <img class="author-name-img" src="${flapNameSrc}" alt="${escapeHtml(AUTHOR_FLAP.name)}" />
+            </p>
+            <p class="author-role">${escapeHtml(AUTHOR_FLAP.role)}・《${escapeHtml(SITE.title)}》</p>
+            ${authorParas}
+          </div>
         </div>
       </section>
     </div>
@@ -445,6 +473,13 @@ function specHtml(): string {
         <tr><th>數位碳粉提醒</th><td>微粗糙紙面大面積色塊可能略露紙紋／微漏白；文青路線通常可接受。大色塊請先打樣。</td></tr>
         <tr><th>與單頁檔關係</th><td>上機請用<strong>本展開 PDF 第 1 頁</strong>。<br />
           「封面／封底／折頁」單頁 PDF・Word 僅供分區校對；書脊條 PDF 可 1:1 核對中縫寬。</td></tr>
+      </table>
+      <h2>交印四項（Chrome→PDF 現況）</h2>
+      <table>
+        <tr><th>文字轉曲</th><td>本檔<strong>未轉曲</strong>，已<strong>內嵌</strong> Noto Serif TC 等字型（數位印刷通常可直接印）。若印廠堅持外框，請用 Acrobat「轉外框」或請廠處理。</td></tr>
+        <tr><th>圖片 300 dpi</th><td>封面書法／書名圖於本檔列印尺寸已 ≥300 dpi（見 <code>npm run print:press</code>）。</td></tr>
+        <tr><th>色彩模式</th><td>本檔為 <strong>RGB（sRGB）</strong>。單本數位印刷多數接受 RGB；若膠印要求 CMYK，請印廠轉檔或見 README Ghostscript 配方。</td></tr>
+        <tr><th>出血 3mm</th><td>本展開第 1 頁頁面含四周 <strong>3 mm</strong>；面板底色已延伸進出血。內文 PDF 為成品裁切尺寸（膠裝常見；邊距 ≥14 mm）。</td></tr>
       </table>
       <h2>詢問印廠可用話術</h2>
       <p class="note">
