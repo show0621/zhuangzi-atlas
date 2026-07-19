@@ -151,7 +151,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "天道",
     part: "外篇",
     order: 13,
-    status: "review",
+    status: "published",
     summary: "天道運而無所積；虛靜恬淡為帝王之休；君臣父子有序；輪扁斫輪示不可盡傳之知。",
   },
   {
@@ -169,7 +169,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "刻意",
     part: "外篇",
     order: 15,
-    status: "review",
+    status: "published",
     summary: "刻意尚行諸士之偏尚；導引養形對出養神；純粹不雜、淡然無極為天地之道。",
   },
   {
@@ -187,7 +187,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "秋水",
     part: "外篇",
     order: 17,
-    status: "review",
+    status: "published",
     summary: "河伯見海若而知小大無定；由尺度之相對，進到不以人滅天的生命分際。",
   },
   {
@@ -205,7 +205,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "達生",
     part: "外篇",
     order: 19,
-    status: "review",
+    status: "published",
     summary: "由養生、忘形到工巧，說明通達生命在於不以外物傷神。",
   },
   {
@@ -214,7 +214,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "山木",
     part: "外篇",
     order: 20,
-    status: "review",
+    status: "published",
     summary: "山木不材得全、雁不材被殺；在材與不材間，尋求不為物役的處世分際。",
   },
   {
