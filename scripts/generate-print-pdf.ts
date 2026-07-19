@@ -247,6 +247,32 @@ async function tryPuppeteer(htmlPath: string): Promise<string | null> {
 
       await new Promise((r) => setTimeout(r, 800));
 
+      // 心智圖 SVG：撐滿版心寬（不設 max-height，避免直向圖被壓成細條）；
+      // 不改 viewBox（改 viewBox 會弄亂 foreignObject 中文字）
+      await page.evaluate(`(() => {
+        document.querySelectorAll(".print-mindmap .mermaid svg").forEach((svg) => {
+          const parent = svg.parentElement as HTMLElement | null;
+          const cw = parent?.clientWidth || 0;
+          svg.removeAttribute("width");
+          svg.removeAttribute("height");
+          svg.style.display = "block";
+          svg.style.marginLeft = "auto";
+          svg.style.marginRight = "auto";
+          svg.style.maxHeight = "none";
+          svg.style.transform = "";
+          // 明確以版心寬度設定，避免 Mermaid 內建窄 width 殘留
+          if (cw > 0) {
+            svg.style.width = cw + "px";
+            svg.style.maxWidth = "100%";
+            svg.style.height = "auto";
+          } else {
+            svg.style.width = "100%";
+            svg.style.maxWidth = "100%";
+            svg.style.height = "auto";
+          }
+        });
+      })()`);
+
       // 移除書脊殘頁（勿進正文 PDF）
       await page.evaluate(`(() => {
         document.querySelectorAll(".spine-page").forEach((el) => {

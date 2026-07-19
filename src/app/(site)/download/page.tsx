@@ -23,7 +23,7 @@ const WORD_PRIMARY = {
 const COVER_WRAP = {
   name: "zhuangzi-atlas-cover-wrap.pdf",
   label: "封面展開 PDF（上機用）",
-  desc: "菊16開 1:1：後勒口＋封底＋書脊＋封面＋前勒口（含 3mm 出血）。約 432 頁／80g米色輕質估書脊 31mm（90g 約 35mm）。列印請選實際大小。",
+  desc: "菊16開 1:1：後勒口＋封底＋書脊＋封面＋前勒口（含 3mm 出血）。約 445 頁／80g米色輕質估書脊 31mm（90g 約 35mm）。列印請選實際大小。",
   alias: "莊子全解-封面展開.pdf",
 } as const;
 
@@ -44,7 +44,7 @@ const BINDING_PARTS = [
   {
     name: "zhuangzi-atlas-spine.pdf",
     label: "書脊 PDF",
-    desc: "菊16開 1:1 書脊條（預設約 31×210 mm，依 432 頁／80g 估算）＋規格說明頁。",
+    desc: "菊16開 1:1 書脊條（預設約 31×210 mm，依 445 頁／80g 估算）＋規格說明頁。",
     alias: "莊子全解-書脊.pdf",
   },
   {
