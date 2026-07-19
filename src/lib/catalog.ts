@@ -21,7 +21,7 @@ export const SITE = {
   englishTitle: "Zhuangzi Atlas",
   description:
     "中文世界最完整的《莊子》數位知識庫：原典、白話、歷代注家、哲學分析、現代應用與思想地圖。",
-  version: "0.3.0",
+  version: "1.0.0",
   author: "李孟霖編集",
 } as const;
 
@@ -32,7 +32,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "導論：如何閱讀《莊子》",
     part: "導論",
     order: 0,
-    status: "review",
+    status: "published",
     summary: "成書、版本、讀法、全書地圖與本專案體例說明。",
   },
   // 內篇
@@ -42,7 +42,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "逍遙遊",
     part: "內篇",
     order: 1,
-    status: "review",
+    status: "published",
     summary: "由鯤鵬至無待：小大之辯、有待／無待、至人無己，以及惠子「無用之用」。本篇為全書自由觀的總綱。",
   },
   {
@@ -106,7 +106,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "駢拇",
     part: "外篇",
     order: 8,
-    status: "review",
+    status: "published",
     summary: "以駢拇枝指、附贅縣疣為喻，辨仁義外加與性命之情；伯夷、盜跖名號異而傷性同。",
   },
   {
@@ -115,7 +115,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "馬蹄",
     part: "外篇",
     order: 9,
-    status: "review",
+    status: "published",
     summary: "馬之真性對照伯樂治馬、陶匠治埴木；治天下之過在於以規矩鉤繩強物就範，並以赫胥氏之民寫素樸。",
   },
   {
@@ -124,7 +124,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "胠篋",
     part: "外篇",
     order: 10,
-    status: "review",
+    status: "published",
     summary: "由守篋反為大盜積，寫田成子盜齊並盜聖知之法；盜亦有道，聖人不死則大盜不止。",
   },
   {
@@ -133,7 +133,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "在宥",
     part: "外篇",
     order: 11,
-    status: "review",
+    status: "published",
     summary: "聞在宥天下，不聞治天下；崔瞿問老聃、廣成子教黃帝、雲將遇鴻蒙，層層收束於無為而安性命之情。",
   },
   {
@@ -142,7 +142,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "天地",
     part: "外篇",
     order: 12,
-    status: "review",
+    status: "published",
     summary: "天地化均與帝王之德；漢陰丈人拒桔槔而護純白，由機心轉入忘乎物、入於天。",
   },
   {
@@ -160,7 +160,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "天運",
     part: "外篇",
     order: 14,
-    status: "review",
+    status: "published",
     summary: "天其運乎與禮樂興廢；芻狗、推舟於陸；孔子見老聃論六經陳跡與烏鵲孺之化。",
   },
   {
@@ -178,7 +178,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "繕性",
     part: "外篇",
     order: 16,
-    status: "review",
+    status: "published",
     summary: "由俗學、仁義與成心對性命的增飾，回到不失其初的自得。",
   },
   {
@@ -196,7 +196,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "至樂",
     part: "外篇",
     order: 18,
-    status: "review",
+    status: "published",
     summary: "由至樂之問、髑髏之辯與鼓盆而歌，辨快樂、生命變化與哀傷的分際。",
   },
   {
@@ -223,7 +223,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "田子方",
     part: "外篇",
     order: 21,
-    status: "review",
+    status: "published",
     summary: "以溫伯雪子、真畫者與魯哀公等故事，辨真偽、形神與不為名役。",
   },
   {
@@ -232,7 +232,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "知北遊",
     part: "外篇",
     order: 22,
-    status: "review",
+    status: "published",
     summary: "知向北方求道而不得，以道不可言、不可知的問答，轉入體道與不知之知。",
   },
   // 雜篇
@@ -242,7 +242,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "庚桑楚",
     part: "雜篇",
     order: 23,
-    status: "review",
+    status: "published",
     summary: "庚桑楚居畏壘、南榮趎問道；以衛生之經與「全汝形、抱汝生」論保全生命，並釐清道、德、形、名的層次。",
   },
   {
@@ -269,7 +269,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "外物",
     part: "雜篇",
     order: 26,
-    status: "review",
+    status: "published",
     summary: "外物不可必；任公子大鉤釣魚；得魚忘筌、得意忘言——論外在條件與言意工具的關係。",
   },
   {
@@ -278,7 +278,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "寓言",
     part: "雜篇",
     order: 27,
-    status: "review",
+    status: "published",
     summary: "「寓言十九、重言十七、卮言日出，和以天倪」：本篇自我揭示莊子式說話方法，並以陽子居、曾子等故事示範語言如何鬆動成見。",
   },
   {
@@ -287,7 +287,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "讓王",
     part: "雜篇",
     order: 28,
-    status: "review",
+    status: "published",
     summary: "堯舜讓天下、大王去邠、原憲曾子安貧等故事串成的尊生輕位敘事；宜作後出道家隱逸材料讀，勿逕稱為莊周親筆政論。",
   },
   {
@@ -296,7 +296,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "盜跖",
     part: "雜篇",
     order: 29,
-    status: "review",
+    status: "published",
     summary: "孔子見盜跖的誇飾辯難：以盜賊之口反詰仁義、名譽與聖王敘事的偽善；屬雜篇戲劇體，須先辨文類再談義理。",
   },
   {
@@ -305,7 +305,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "說劍",
     part: "雜篇",
     order: 30,
-    status: "review",
+    status: "published",
     summary: "趙文王好劍，莊子以庶人劍、諸侯劍、天子劍三層譬喻，把嗜殺之慾轉譯為治國尺度的政治諷喻。",
   },
   {
@@ -314,7 +314,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "漁父",
     part: "雜篇",
     order: 31,
-    status: "review",
+    status: "published",
     summary: "漁父於緇帷之林訓孔子：真者精誠之至，法天貴真；禮樂儀文若失誠，則徒成飾偽。",
   },
   {
@@ -323,7 +323,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "列御寇",
     part: "雜篇",
     order: 32,
-    status: "review",
+    status: "published",
     summary: "列子食於十漿、伯昏無人警「虛而遨遊」；曹商使秦諷刺啖名；莊子將死拒厚葬，以天地為棺槨。",
   },
   {
@@ -332,7 +332,7 @@ export const CHAPTERS: ChapterMeta[] = [
     title: "天下",
     part: "雜篇",
     order: 33,
-    status: "review",
+    status: "published",
     summary: "全書學術史收束：道術將為天下裂；依序衡定墨、宋尹、彭田慎、關老與莊周，並以寓言／重言／卮言自述莊學。",
   },
 ];

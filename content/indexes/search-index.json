@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-07-19T06:32:25.112Z",
+  "generatedAt": "2026-07-19T06:35:28.790Z",
   "chapters": [
     {
       "id": "00",
       "slug": "導論",
       "title": "導論：如何閱讀《莊子》",
       "part": "導論",
-      "status": "review",
+      "status": "published",
       "summary": "成書、版本、讀法、全書地圖與本專案體例說明。",
       "path": "content/chapters/00-導論/00-導論.md"
     },
@@ -15,7 +15,7 @@
       "slug": "逍遙遊",
       "title": "逍遙遊",
       "part": "內篇",
-      "status": "review",
+      "status": "published",
       "summary": "由鯤鵬至無待：小大之辯、有待／無待、至人無己，以及惠子「無用之用」。本篇為全書自由觀的總綱。",
       "path": "content/chapters/01-內篇/01-逍遙遊.md"
     },
@@ -213,7 +213,7 @@
       "slug": "庚桑楚",
       "title": "庚桑楚",
       "part": "雜篇",
-      "status": "review",
+      "status": "published",
       "summary": "庚桑楚居畏壘、南榮趎問道；以衛生之經與「全汝形、抱汝生」論保全生命，並釐清道、德、形、名的層次。",
       "path": "content/chapters/03-雜篇/23-庚桑楚.md"
     },
@@ -240,7 +240,7 @@
       "slug": "外物",
       "title": "外物",
       "part": "雜篇",
-      "status": "review",
+      "status": "published",
       "summary": "外物不可必；任公子大鉤釣魚；得魚忘筌、得意忘言——論外在條件與言意工具的關係。",
       "path": "content/chapters/03-雜篇/26-外物.md"
     },
@@ -249,7 +249,7 @@
       "slug": "寓言",
       "title": "寓言",
       "part": "雜篇",
-      "status": "review",
+      "status": "published",
       "summary": "「寓言十九、重言十七、卮言日出，和以天倪」：本篇自我揭示莊子式說話方法，並以陽子居、曾子等故事示範語言如何鬆動成見。",
       "path": "content/chapters/03-雜篇/27-寓言.md"
     },
@@ -258,7 +258,7 @@
       "slug": "讓王",
       "title": "讓王",
       "part": "雜篇",
-      "status": "review",
+      "status": "published",
       "summary": "堯舜讓天下、大王去邠、原憲曾子安貧等故事串成的尊生輕位敘事；宜作後出道家隱逸材料讀，勿逕稱為莊周親筆政論。",
       "path": "content/chapters/03-雜篇/28-讓王.md"
     },
@@ -267,7 +267,7 @@
       "slug": "盜跖",
       "title": "盜跖",
       "part": "雜篇",
-      "status": "review",
+      "status": "published",
       "summary": "孔子見盜跖的誇飾辯難：以盜賊之口反詰仁義、名譽與聖王敘事的偽善；屬雜篇戲劇體，須先辨文類再談義理。",
       "path": "content/chapters/03-雜篇/29-盜跖.md"
     },
@@ -276,7 +276,7 @@
       "slug": "說劍",
       "title": "說劍",
       "part": "雜篇",
-      "status": "review",
+      "status": "published",
       "summary": "趙文王好劍，莊子以庶人劍、諸侯劍、天子劍三層譬喻，把嗜殺之慾轉譯為治國尺度的政治諷喻。",
       "path": "content/chapters/03-雜篇/30-說劍.md"
     },
@@ -285,7 +285,7 @@
       "slug": "漁父",
       "title": "漁父",
       "part": "雜篇",
-      "status": "review",
+      "status": "published",
       "summary": "漁父於緇帷之林訓孔子：真者精誠之至，法天貴真；禮樂儀文若失誠，則徒成飾偽。",
       "path": "content/chapters/03-雜篇/31-漁父.md"
     },
@@ -294,7 +294,7 @@
       "slug": "列御寇",
       "title": "列御寇",
       "part": "雜篇",
-      "status": "review",
+      "status": "published",
       "summary": "列子食於十漿、伯昏無人警「虛而遨遊」；曹商使秦諷刺啖名；莊子將死拒厚葬，以天地為棺槨。",
       "path": "content/chapters/03-雜篇/32-列御寇.md"
     },
@@ -303,7 +303,7 @@
       "slug": "天下",
       "title": "天下",
       "part": "雜篇",
-      "status": "review",
+      "status": "published",
       "summary": "全書學術史收束：道術將為天下裂；依序衡定墨、宋尹、彭田慎、關老與莊周，並以寓言／重言／卮言自述莊學。",
       "path": "content/chapters/03-雜篇/33-天下.md"
     }
