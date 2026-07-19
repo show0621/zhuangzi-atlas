@@ -29,7 +29,7 @@ st.markdown(
 NEXT_BASE = "http://localhost:3000"
 PAGES_BASE = "https://show0621.github.io/zhuangzi-atlas"
 # 全套產檔版本戳：改這個可強制破除 GitHub Pages／瀏覽器舊快取
-_ASSET_V = "publish-v17-v1-701c"
+_ASSET_V = "publish-v18-v1-701c"
 _DL = f"{PAGES_BASE}/downloads"
 
 DOWNLOADS = [
