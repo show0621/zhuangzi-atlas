@@ -9,6 +9,7 @@
 | `zhuangzi-atlas-print.pdf` | **推薦**：菊16開（148×210 mm） 完整書 PDF（頁碼自「自序」=1） |
 | `莊子全解-印刷版.pdf` | 同上（中文檔名別名） |
 | `zhuangzi-atlas-cover-wrap.pdf` | 封面展開上機稿（勒口＋封底＋書脊＋封面＋勒口） |
+| `zhuangzi-atlas-cover.docx` 等 | 封面／封底／折頁／展開**示意 Word**（非正式裁切；上機用 PDF） |
 | `zhuangzi-atlas-print.docx` | Word 成冊版（可編輯；頁碼規則以 PDF 為準） |
 | `莊子全解-印刷版.docx` | Word 中文檔名別名 |
 | `zhuangzi-atlas-print.html` | 瀏覽器預覽；正式頁碼請用已產出的 PDF |
@@ -26,5 +27,8 @@
 npm run ebook:print      # HTML + Markdown
 npm run ebook:pdf        # 菊16開 PDF（需 Chrome／Edge）
 npm run ebook:docx       # Word
-npm run ebook:print:all  # HTML + PDF + Word + 裝訂／書脊／封面展開
+npm run ebook:binding    # 裝幀單頁 PDF
+npm run ebook:wrap       # 封面展開 PDF
+npm run ebook:binding-docx  # 裝幀示意 Word
+npm run ebook:print:all  # HTML + PDF + Word + 裝訂／書脊／展開／示意 Word
 ```

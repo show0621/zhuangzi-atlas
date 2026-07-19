@@ -62,6 +62,34 @@ const SPINE_WORD = {
   alias: "莊子全解-書脊.docx",
 } as const;
 
+const BINDING_WORDS = [
+  {
+    name: "zhuangzi-atlas-cover.docx",
+    label: "封面 Word（示意）",
+    desc: "封面單頁示意 Word（內嵌 PDF 預覽）；上機請用封面展開 PDF。",
+    alias: "莊子全解-封面.docx",
+  },
+  {
+    name: "zhuangzi-atlas-back.docx",
+    label: "封底 Word（示意）",
+    desc: "封底單頁示意 Word；上機請用封面展開 PDF。",
+    alias: "莊子全解-封底.docx",
+  },
+  {
+    name: "zhuangzi-atlas-flap.docx",
+    label: "作者折頁 Word（示意）",
+    desc: "折頁示意 Word，正文可編輯；版式以 PDF 為準。",
+    alias: "莊子全解-作者折頁.docx",
+  },
+  {
+    name: "zhuangzi-atlas-cover-wrap.docx",
+    label: "封面展開 Word（示意）",
+    desc: "展開稿示意縮圖 Word；上機請用展開 PDF 第 1 頁（實際大小）。",
+    alias: "莊子全解-封面展開.docx",
+  },
+  SPINE_WORD,
+] as const;
+
 const FILES = [
   {
     name: "莊子全解-印刷版.pdf",
@@ -78,11 +106,11 @@ const FILES = [
     label: `${p.label.replace(" PDF", "")}（中文檔名）`,
     desc: p.desc,
   })),
-  {
-    name: SPINE_WORD.alias,
-    label: "書脊 Word（中文檔名）",
-    desc: "單獨書脊 Word，檔名為中文。",
-  },
+  ...BINDING_WORDS.map((p) => ({
+    name: p.alias,
+    label: `${p.label}（中文檔名）`,
+    desc: p.desc,
+  })),
   {
     name: "zhuangzi-atlas-print.html",
     label: "印刷 HTML",
@@ -110,7 +138,6 @@ export default function DownloadPage() {
   const pdfAliasHref = assetPathWithVersion(`/downloads/${FILES[0].name}`);
   const wordHref = assetPathWithVersion(`/downloads/${WORD_PRIMARY.name}`);
   const wordAliasHref = assetPathWithVersion(`/downloads/${WORD_PRIMARY.alias}`);
-  const spineWordHref = assetPathWithVersion(`/downloads/${SPINE_WORD.name}`);
 
   return (
     <div className="space-y-10">
@@ -198,15 +225,34 @@ export default function DownloadPage() {
             );
           })}
         </ul>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center pt-1">
-          <a
-            href={spineWordHref}
-            download={SPINE_WORD.name}
-            className="inline-flex items-center justify-center rounded-full border border-ink/25 bg-white px-6 py-2.5 text-sm font-medium text-ink transition hover:bg-paper"
-          >
-            另：書脊 Word
-          </a>
-          <p className="text-xs text-muted">本機重產：<code className="font-mono">npm run ebook:wrap</code>（展開）／<code className="font-mono">npm run ebook:binding</code></p>
+        <div className="space-y-3 pt-1">
+          <p className="text-sm text-muted leading-relaxed max-w-xl">
+            另提供裝幀<strong className="text-ink">示意 Word</strong>（內嵌 PDF 預覽／可編折頁文案）。正式裁切、出血、上機請仍用上方 PDF。
+          </p>
+          <ul className="grid gap-2 sm:grid-cols-2">
+            {BINDING_WORDS.map((w) => {
+              const href = assetPathWithVersion(`/downloads/${w.name}`);
+              return (
+                <li key={w.name}>
+                  <a
+                    href={href}
+                    download={w.name}
+                    className="inline-flex w-full items-center justify-center rounded-full border border-ink/25 bg-white px-5 py-2.5 text-sm font-medium text-ink transition hover:bg-paper"
+                  >
+                    {w.label}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+          <p className="text-xs text-muted">
+            本機重產：
+            <code className="font-mono">npm run ebook:wrap</code>
+            （展開）／
+            <code className="font-mono">npm run ebook:binding</code>
+            ／
+            <code className="font-mono">npm run ebook:binding-docx</code>
+          </p>
         </div>
       </section>
 
@@ -286,7 +332,7 @@ export default function DownloadPage() {
         </p>
         <p className="text-muted text-xs">
           本機重新產生：<code className="font-mono">npm run ebook:print:all</code>
-          （HTML／Markdown → PDF → Word → 裝幀單頁 → 書脊 Word）。
+          （HTML／Markdown → PDF → Word → 裝幀單頁 → 書脊 → 展開 → 裝幀示意 Word）。
         </p>
       </section>
 
