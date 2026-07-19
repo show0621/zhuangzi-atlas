@@ -28,6 +28,8 @@ import {
   DEFAULT_PAGE_COUNT,
   SPINE_DESIGN,
   SPINE_DESIGN_90G,
+  SPINE_DESIGN_80G_DAOLIN,
+  SPINE_DESIGN_100G_DAOLIN,
   SPINE_IMAGE,
   coverWrapWidthMm,
 } from "../src/lib/printSpine";
@@ -126,23 +128,26 @@ function spineStripHtml(imgDataUri: string): string {
 function spineSpecHtml(imgDataUri: string): string {
   const wrap80 = coverWrapWidthMm(SPINE_DESIGN.designMm);
   const wrap90 = coverWrapWidthMm(SPINE_DESIGN_90G.designMm);
+  const wrap80Dao = coverWrapWidthMm(SPINE_DESIGN_80G_DAOLIN.designMm);
+  const wrap100Dao = coverWrapWidthMm(SPINE_DESIGN_100G_DAOLIN.designMm);
   return `<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8" />
   <title>${SITE.title} — 書脊規格</title>
   <style>
-    @page { size: A4; margin: 16mm; }
+    @page { size: A4; margin: 14mm; }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: "Noto Serif TC", "Source Han Serif TC", "Songti TC", serif;
       color: #1a1a1a;
-      font-size: 11pt;
-      line-height: 1.65;
+      font-size: 10.5pt;
+      line-height: 1.55;
     }
-    h1 { font-size: 16pt; margin: 0 0 0.6em; }
-    .row { display: flex; gap: 18mm; align-items: flex-start; }
+    h1 { font-size: 15pt; margin: 0 0 0.45em; }
+    h2 { font-size: 11pt; margin: 0.65em 0 0.3em; }
+    .row { display: flex; gap: 14mm; align-items: flex-start; }
     .preview-wrap {
       flex: 0 0 auto;
       display: flex;
@@ -150,7 +155,7 @@ function spineSpecHtml(imgDataUri: string): string {
       align-items: center;
       gap: 4mm;
     }
-    .preview-label { font-size: 9pt; color: #666; }
+    .preview-label { font-size: 9pt; color: #666; text-align: center; }
     .strip {
       width: ${SPINE_W}mm;
       height: ${SPINE_H}mm;
@@ -169,15 +174,16 @@ function spineSpecHtml(imgDataUri: string): string {
       object-fit: contain;
       object-position: center 12%;
     }
-    table { border-collapse: collapse; width: 100%; margin: 0.8em 0; font-size: 10.5pt; }
-    th, td { border: 1px solid #ccc; padding: 0.35em 0.55em; text-align: left; }
-    th { background: #f3f3f3; width: 38%; }
-    .note { margin-top: 1em; font-size: 9.5pt; color: #444; }
+    table { border-collapse: collapse; width: 100%; margin: 0.35em 0; font-size: 9.8pt; }
+    th, td { border: 1px solid #ccc; padding: 0.28em 0.5em; text-align: left; vertical-align: top; }
+    th { background: #f3f3f3; width: 34%; }
+    .note { margin-top: 0.7em; font-size: 9pt; color: #444; }
     code { font-family: ui-monospace, monospace; font-size: 0.95em; }
+    strong.warn { color: #6b3a0f; }
   </style>
 </head>
 <body>
-  <h1>書脊規格說明｜${SITE.title}</h1>
+  <h1>書脊規格說明｜${SITE.title}（單本數位）</h1>
   <div class="row">
     <div class="preview-wrap">
       <div class="strip">
@@ -188,18 +194,28 @@ function spineSpecHtml(imgDataUri: string): string {
     <div>
       <table>
         <tr><th>成品尺寸</th><td>菊16開（A5）${BOOK_TRIM_MM.width} × ${BOOK_TRIM_MM.height} mm</td></tr>
-        <tr><th>頁數</th><td>${DEFAULT_PAGE_COUNT} 頁（約 ${SPINE_DESIGN.sheets} 張）</td></tr>
-        <tr><th>裝訂</th><td>無線膠裝；雙邊勒口各 ${FLAP_MM} mm</td></tr>
-        <tr><th>內文紙（估）</th><td>80g 米色輕質 → 書脊設計 <strong>${SPINE_DESIGN.designMm} mm</strong>（估算 ${SPINE_DESIGN.spineMm.toFixed(1)} mm）<br />
-          90g 米色輕質 → 約 <strong>${SPINE_DESIGN_90G.designMm} mm</strong>（估算 ${SPINE_DESIGN_90G.spineMm.toFixed(1)} mm）</td></tr>
-        <tr><th>本檔書脊條</th><td>${SPINE_W} × ${SPINE_H} mm（依 80g 輕質進位）</td></tr>
-        <tr><th>封面展開寬（估）</th><td>80g：約 ${wrap80} mm<br />90g：約 ${wrap90} mm<br />（勒口+封面+書脊+封底+勒口，不含出血）</td></tr>
-        <tr><th>書皮</th><td>250g／300g 銅西卡，單面彩印</td></tr>
+        <tr><th>頁數</th><td>約 ${DEFAULT_PAGE_COUNT} 頁（約 ${SPINE_DESIGN.sheets} 張）；下單前以最新 PDF 頁腳為準</td></tr>
+        <tr><th>裝訂路線</th><td><strong>平裝膠裝＋雙折口書衣</strong>；勒口各 ${FLAP_MM} mm（厚書建議 80–100 mm）</td></tr>
+        <tr><th>本檔書脊條</th><td><strong>${SPINE_W} × ${SPINE_H} mm</strong>（依 ${DEFAULT_PAGE_COUNT} 頁／80g 米色輕質估 ${SPINE_DESIGN.spineMm.toFixed(1)} mm 後進位）</td></tr>
+        <tr><th>與展開稿</th><td>本條對應展開稿中縫；上機請用<strong>封面展開 PDF 第 1 頁</strong>整幅輸出。</td></tr>
+      </table>
+      <h2>內文書脊／展開對照（請紙樣複核）</h2>
+      <table>
+        <tr><th>80g 米色輕質（本檔）</th><td>書脊 ${SPINE_DESIGN.designMm} mm；展開約 ${wrap80} mm</td></tr>
+        <tr><th>90g 米色輕質</th><td>書脊約 ${SPINE_DESIGN_90G.designMm} mm；展開約 ${wrap90} mm（需另出檔）</td></tr>
+        <tr><th>80g 米色道林（0.10）</th><td>書脊約 ${SPINE_DESIGN_80G_DAOLIN.designMm} mm；展開約 ${wrap80Dao} mm（需另出檔）</td></tr>
+        <tr><th>100g 米色道林（0.13）</th><td>書脊約 ${SPINE_DESIGN_100G_DAOLIN.designMm} mm；展開約 ${wrap100Dao} mm（需另出檔）</td></tr>
+      </table>
+      <h2>書衣與霧沙金（單本數位）</h2>
+      <table>
+        <tr><th>外書衣紙</th><td>米色新浪潮（或同級微粗糙米色紙）。<strong class="warn">不要上亮膜／霧膜</strong>。</td></tr>
+        <tr><th>內書皮</th><td>可另用 250g 象牙卡等厚卡膠裝保護內頁；外書衣再包覆並摺成勒口。</td></tr>
+        <tr><th>書名霧沙金</th><td>首選數位燙消光金／霧金；備案為數位直印模擬沙金（勿開傳統鋅版燙金）。</td></tr>
       </table>
       <p class="note">
         估算式：書脊 ≈ (頁數÷2) × 單張厚度 + 膠水 1mm，再進位預留。<br />
-        輕質紙蓬鬆度因廠牌而異，<strong>下單前請印廠以實際紙樣複核書脊</strong>；若改 90g，請改用較寬書脊重出封面。<br />
-        PDF 第 1 頁為可直接貼／拼進封面展開的 1:1 書脊條；列印請選「實際大小／100%」，勿縮放。
+        輕質／道林／新浪潮蓬鬆度因廠牌而異，<strong>下單前請印廠以紙樣複核書脊</strong>；若改紙重，請改書脊寬後重出展開稿與本檔。<br />
+        PDF 第 1 頁為 1:1 書脊條；列印請選「實際大小／100%」，勿縮放。檔名：<code>${PDF_NAME}</code>／<code>${PDF_ALIAS}</code>
       </p>
     </div>
   </div>
@@ -320,7 +336,7 @@ async function writeDocx(spineImg: string): Promise<void> {
             spacing: { before: 200 },
             children: [
               new TextRun({
-                text: `90g 輕質約 ${SPINE_DESIGN_90G.designMm}mm；請印廠以紙樣複核。正式裁切請用 PDF 第 1 頁。`,
+                text: `單本數位：書衣＋霧沙金見 PDF 說明頁。90g 約 ${SPINE_DESIGN_90G.designMm}mm、80g 道林約 ${SPINE_DESIGN_80G_DAOLIN.designMm}mm；請紙樣複核。上機用 PDF 第 1 頁。`,
                 size: 16,
                 color: "666666",
                 font: "Microsoft JhengHei",

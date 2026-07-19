@@ -29,6 +29,8 @@ import {
   FLAP_MM,
   SPINE_DESIGN,
   SPINE_DESIGN_90G,
+  SPINE_DESIGN_80G_DAOLIN,
+  SPINE_DESIGN_100G_DAOLIN,
   SPINE_IMAGE,
   coverWrapWidthMm,
 } from "../src/lib/printSpine";
@@ -387,38 +389,72 @@ function wrapHtml(titleSrc: string, authorSrc: string, spineSrc: string, flapNam
 
 function specHtml(): string {
   const wrap90 = coverWrapWidthMm(SPINE_DESIGN_90G.designMm);
+  const wrap80Dao = coverWrapWidthMm(SPINE_DESIGN_80G_DAOLIN.designMm);
+  const wrap100Dao = coverWrapWidthMm(SPINE_DESIGN_100G_DAOLIN.designMm);
   return `<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8" />
   <title>${escapeHtml(SITE.title)} — 封面展開規格</title>
   <style>
-    @page { size: A4 landscape; margin: 14mm; }
-    body { font-family: "Noto Serif TC", "Songti TC", serif; font-size: 11pt; line-height: 1.65; color: #1a1a1a; }
-    h1 { font-size: 16pt; margin: 0 0 0.6em; }
-    table { border-collapse: collapse; width: 100%; margin: 0.6em 0; font-size: 10.5pt; }
-    th, td { border: 1px solid #ccc; padding: 0.35em 0.55em; text-align: left; vertical-align: top; }
-    th { background: #f3f3f3; width: 28%; }
-    .note { font-size: 9.5pt; color: #444; margin-top: 0.8em; }
+    @page { size: A4 landscape; margin: 12mm; }
+    body { font-family: "Noto Serif TC", "Songti TC", serif; font-size: 10.5pt; line-height: 1.55; color: #1a1a1a; }
+    h1 { font-size: 15pt; margin: 0 0 0.45em; }
+    h2 { font-size: 11.5pt; margin: 0.75em 0 0.35em; }
+    table { border-collapse: collapse; width: 100%; margin: 0.35em 0; font-size: 10pt; }
+    th, td { border: 1px solid #ccc; padding: 0.28em 0.5em; text-align: left; vertical-align: top; }
+    th { background: #f3f3f3; width: 26%; }
+    .note { font-size: 9pt; color: #444; margin-top: 0.55em; }
+    .cols { display: flex; gap: 4mm; }
+    .cols > div { flex: 1; }
+    ul { margin: 0.2em 0 0.4em; padding-left: 1.2em; }
+    li { margin: 0.15em 0; }
     code { font-family: ui-monospace, monospace; }
+    strong.warn { color: #6b3a0f; }
   </style>
 </head>
 <body>
-  <h1>封面展開規格｜${escapeHtml(SITE.title)}</h1>
-  <table>
-    <tr><th>展開順序（印刷面左→右）</th><td>後勒口 → 封底 → 書脊 → 封面 → 前勒口</td></tr>
-    <tr><th>成品</th><td>菊16開（A5）${TRIM_W} × ${TRIM_H} mm</td></tr>
-    <tr><th>勒口</th><td>各 ${FLAP_MM} mm</td></tr>
-    <tr><th>書脊（本檔）</th><td>${SPINE_W} mm（${DEFAULT_PAGE_COUNT} 頁／80g 米色輕質估算 ${SPINE_DESIGN.spineMm.toFixed(1)} mm 後進位）</td></tr>
-    <tr><th>90g 對照</th><td>書脊約 ${SPINE_DESIGN_90G.designMm} mm；展開寬約 ${wrap90} mm（需另出檔）</td></tr>
-    <tr><th>本檔裁切尺寸</th><td>${WRAP_W} × ${TRIM_H} mm</td></tr>
-    <tr><th>含出血頁面</th><td>${WRAP_W + BLEED * 2} × ${TRIM_H + BLEED * 2} mm（四周各 ${BLEED} mm）</td></tr>
-    <tr><th>書皮</th><td>250g／300g 銅西卡，單面彩色</td></tr>
-    <tr><th>裝訂</th><td>無線膠裝；內文米色輕質紙 80g／90g，順絲向</td></tr>
-  </table>
+  <h1>封面展開規格｜${escapeHtml(SITE.title)}（單本數位印刷指南）</h1>
+  <div class="cols">
+    <div>
+      <table>
+        <tr><th>展開順序（印刷面左→右）</th><td>後勒口 → 封底 → 書脊 → 封面 → 前勒口</td></tr>
+        <tr><th>成品</th><td>菊16開（A5）${TRIM_W} × ${TRIM_H} mm</td></tr>
+        <tr><th>勒口（折口）</th><td>各 <strong>${FLAP_MM} mm</strong>（厚書建議 80–100 mm；本檔已落在區間內）</td></tr>
+        <tr><th>書脊（本檔）</th><td><strong>${SPINE_W} mm</strong>（依 ${DEFAULT_PAGE_COUNT} 頁／80g 米色輕質估 ${SPINE_DESIGN.spineMm.toFixed(1)} mm 後進位）</td></tr>
+        <tr><th>本檔裁切尺寸</th><td>${WRAP_W} × ${TRIM_H} mm</td></tr>
+        <tr><th>含出血頁面</th><td>${WRAP_W + BLEED * 2} × ${TRIM_H + BLEED * 2} mm（四周各 ${BLEED} mm）</td></tr>
+        <tr><th>頁數</th><td>書內約 ${DEFAULT_PAGE_COUNT} 頁（約 ${SPINE_DESIGN.sheets} 張）；下單前以最新 PDF 頁腳為準</td></tr>
+      </table>
+      <h2>內文書脊對照（請印廠紙樣複核）</h2>
+      <table>
+        <tr><th>80g 米色輕質（本檔預設）</th><td>書脊設計 ${SPINE_DESIGN.designMm} mm；展開約 ${WRAP_W} mm</td></tr>
+        <tr><th>90g 米色輕質</th><td>書脊約 ${SPINE_DESIGN_90G.designMm} mm；展開約 ${wrap90} mm（需另出檔）</td></tr>
+        <tr><th>80g 米色道林（估 0.10 mm／張）</th><td>書脊約 ${SPINE_DESIGN_80G_DAOLIN.designMm} mm；展開約 ${wrap80Dao} mm（需另出檔）</td></tr>
+        <tr><th>100g 米色道林（估 0.13 mm／張）</th><td>書脊約 ${SPINE_DESIGN_100G_DAOLIN.designMm} mm；展開約 ${wrap100Dao} mm（需另出檔）</td></tr>
+      </table>
+    </div>
+    <div>
+      <h2>單本數位｜建議工藝</h2>
+      <table>
+        <tr><th>裝訂路線</th><td><strong>平裝膠裝＋雙折口書衣</strong>（或稱蝴蝶頁膠裝加書衣）最合適。<br />
+          內書皮可用較厚米色卡（如 250g 象牙卡）膠裝保護內頁；<strong>外書衣</strong>再印本展開圖（米色新浪潮紙），左右往內摺成勒口。</td></tr>
+        <tr><th>外書衣紙</th><td>米色新浪潮紙（或同級微粗糙米色美術紙）。<strong class="warn">不要上亮膜／霧膜</strong>，以免失去紙紋與霧沙金手感。</td></tr>
+        <tr><th>書名「霧沙金」</th><td><strong>首選</strong>：數位冷燙／數位燙金，箔選消光金或霧金（單本可不開鋅版）。<br />
+          <strong>備案</strong>：數位直印模擬沙金（霧金黃／古銅＋細微雜點）；新浪潮吸墨不反光，文青感佳但不發亮。</td></tr>
+        <tr><th>數位碳粉提醒</th><td>微粗糙紙面大面積色塊可能略露紙紋／微漏白；文青路線通常可接受。大色塊請先打樣。</td></tr>
+        <tr><th>與單頁檔關係</th><td>上機請用<strong>本展開 PDF 第 1 頁</strong>。<br />
+          「封面／封底／折頁」單頁 PDF・Word 僅供分區校對；書脊條 PDF 可 1:1 核對中縫寬。</td></tr>
+      </table>
+      <h2>詢問印廠可用話術</h2>
+      <p class="note">
+        「想印單本作品集：菊16開，內文約 ${DEFAULT_PAGE_COUNT} 頁米色紙膠裝；外書衣用米色新浪潮、雙折口；書名希望數位燙霧金（消光金）。請以紙樣複核書脊；本檔書脊先按 ${SPINE_W} mm 設計。」
+      </p>
+    </div>
+  </div>
   <p class="note">
-    第 1 頁為 1:1 展開稿（含出血與折線刻度）。列印／輸出請選實際大小 100%，勿縮放。<br />
-    輕質紙蓬鬆度因廠牌而異，<strong>下單前請印廠以紙樣複核書脊</strong>；若改 90g，請改書脊寬重出本檔。<br />
+    第 1 頁為 1:1 展開稿（含出血與折線刻度）。輸出請選實際大小 100%，勿縮放。<br />
+    輕質／道林／新浪潮蓬鬆度因廠牌而異，<strong>下單前請印廠以紙樣複核書脊</strong>；若改紙重或改估厚，請改書脊寬後重出本檔。<br />
     檔名：<code>${PDF_EN}</code>／<code>${PDF_ZH}</code>
   </p>
 </body>

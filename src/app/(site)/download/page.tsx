@@ -23,7 +23,7 @@ const WORD_PRIMARY = {
 const COVER_WRAP = {
   name: "zhuangzi-atlas-cover-wrap.pdf",
   label: "封面展開 PDF（上機用）",
-  desc: "菊16開 1:1：後勒口＋封底＋書脊＋封面＋前勒口（含 3mm 出血）。約 450 頁／80g米色輕質估書脊 32mm（90g 約 36mm）。列印請選實際大小。",
+  desc: "菊16開 1:1：後勒口＋封底＋書脊＋封面＋前勒口（含 3mm 出血）。約 450 頁／80g 輕質書脊 32mm；勒口各 90mm。第 2 頁含單本數位書衣／霧沙金說明。列印請選實際大小。",
   alias: "莊子全解-封面展開.pdf",
 } as const;
 
@@ -44,7 +44,7 @@ const BINDING_PARTS = [
   {
     name: "zhuangzi-atlas-spine.pdf",
     label: "書脊 PDF",
-    desc: "菊16開 1:1 書脊條（預設約 32×210 mm，依 450 頁／80g 估算）＋規格說明頁。",
+    desc: "菊16開 1:1 書脊條（32×210 mm，依 450 頁／80g 輕質）＋單本數位規格說明（書衣／霧沙金／紙種對照）。",
     alias: "莊子全解-書脊.pdf",
   },
   {
@@ -323,9 +323,12 @@ export default function DownloadPage() {
           </li>
           <li>
             內文紙張選 <strong className="text-ink">菊16開（148×210 mm）</strong>
-            ；版面直向；左側已預留裝訂邊。封面用「封面展開 PDF」，列印選實際大小。
+            ；版面直向；左側已預留裝訂邊。書衣用「封面展開 PDF」第 1 頁，列印選實際大小。
           </li>
-          <li>交印廠：內文＋封面展開對開本後<strong className="text-ink">左側無線膠裝</strong>；書脊寬以實際頁數與紙樣複核。</li>
+          <li>
+            單本數位建議：<strong className="text-ink">平裝膠裝＋雙折口書衣</strong>
+            （外書衣米色新浪潮；書名數位燙霧金／消光金；<strong className="text-ink">不要上膜</strong>）。書脊以紙樣複核。
+          </li>
         </ol>
         <p className="text-muted">
           目前版本 v{SITE.version}（draft）。內容與版式仍可能修訂；達出版級前請完成 review／published 與 ISBN。

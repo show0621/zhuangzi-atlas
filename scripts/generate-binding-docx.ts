@@ -32,6 +32,7 @@ import {
   FLAP_MM,
   SPINE_DESIGN,
   SPINE_DESIGN_90G,
+  SPINE_DESIGN_80G_DAOLIN,
   coverWrapWidthMm,
 } from "../src/lib/printSpine";
 
@@ -68,7 +69,7 @@ const PARTS: BindingDoc[] = [
     specs: [
       `成品裁切：菊16開 ${TRIM}`,
       "本檔為示意／校對用，版式近似 PDF，非上機出血稿。",
-      "正式印刷請用「封面展開 PDF」（含勒口＋書脊＋3mm 出血）。",
+      "正式印刷請用「封面展開 PDF」（含勒口＋書脊＋3mm 出血）。單本數位建議印在外書衣上。",
       `對應 PDF：${"zhuangzi-atlas-cover.pdf"}／莊子全解-封面.pdf`,
     ],
   },
@@ -94,8 +95,8 @@ const PARTS: BindingDoc[] = [
     title: "作者折頁（示意 Word）",
     previewWidthPx: 420,
     specs: [
-      `成品裁切：菊16開 ${TRIM}；折頁欄寬約 ${FLAP_MM} mm`,
-      "下方正文可編輯（示意）；版式／書法署名請以 PDF 為準。",
+      `成品裁切：菊16開 ${TRIM}；書衣勒口欄寬約 ${FLAP_MM} mm（厚書建議 80–100 mm）`,
+      "下方正文可編輯（示意）；版式／書法署名請以 PDF 為準。上機勒口見封面展開 PDF。",
       `對應 PDF：${"zhuangzi-atlas-flap.pdf"}／莊子全解-作者折頁.pdf`,
     ],
     editableParas: AUTHOR_FLAP.paragraphs,
@@ -108,9 +109,10 @@ const PARTS: BindingDoc[] = [
     title: "封面展開（示意 Word）",
     previewWidthPx: 640,
     specs: [
-      `展開裁切寬約 ${WRAP_W} mm × 高 ${BOOK_TRIM_MM.height} mm（後勒口＋封底＋書脊 ${SPINE_W} mm＋封面＋前勒口）`,
+      `展開裁切寬約 ${WRAP_W} mm × 高 ${BOOK_TRIM_MM.height} mm（後勒口＋封底＋書脊 ${SPINE_W} mm＋封面＋前勒口；勒口各 ${FLAP_MM} mm）`,
       `含出血約 ${WRAP_W + BLEED * 2}×${BOOK_TRIM_MM.height + BLEED * 2} mm（單邊出血 ${BLEED} mm）`,
-      `頁數估算：約 ${DEFAULT_PAGE_COUNT} 頁／80g 書脊 ${SPINE_W} mm（90g 約 ${SPINE_DESIGN_90G.designMm} mm）`,
+      `約 ${DEFAULT_PAGE_COUNT} 頁：80g 輕質書脊 ${SPINE_W} mm（本檔）；90g 約 ${SPINE_DESIGN_90G.designMm} mm；80g 道林約 ${SPINE_DESIGN_80G_DAOLIN.designMm} mm（改紙需另出檔）`,
+      "單本數位建議：平裝膠裝＋雙折口書衣；外書衣米色新浪潮；書名數位燙霧金／消光金；不要上膜。",
       "本檔為示意縮圖，方便校對文案與分區；上機請用 PDF 第 1 頁並選「實際大小」。",
       `對應 PDF：${"zhuangzi-atlas-cover-wrap.pdf"}／莊子全解-封面展開.pdf`,
     ],
