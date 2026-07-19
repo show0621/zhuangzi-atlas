@@ -1657,6 +1657,8 @@ function buildPrintHtml(bodyHtml: string): string {
         width: 100% !important;
         max-width: 100% !important;
         box-sizing: border-box;
+        break-before: page !important;
+        page-break-before: always !important;
         break-inside: avoid !important;
         page-break-inside: avoid !important;
       }
@@ -1674,9 +1676,7 @@ function buildPrintHtml(bodyHtml: string): string {
         text-align: center;
         box-sizing: border-box;
       }
-      /* 心智圖：撐滿版心；過高圖以 max-height 限制。
-         節點寬靠 Mermaid wrappingWidth；字級交給 themeVariables.fontSize，
-         勿再以較小 font-size !important 覆寫（會造成「框大字小」）。 */
+      /* 撐滿版心；過高圖以 max-height 限制。字級交給 Mermaid themeVariables。 */
       .print-mindmap .mermaid svg {
         display: block !important;
         margin-left: auto !important;
@@ -1684,7 +1684,7 @@ function buildPrintHtml(bodyHtml: string): string {
         max-width: 100% !important;
         width: 100% !important;
         height: auto !important;
-        max-height: 155mm;
+        max-height: 170mm;
       }
       .print-mindmap .mermaid .nodeLabel,
       .print-mindmap .mermaid foreignObject > div,
@@ -1748,17 +1748,17 @@ ${bodyHtml}
       securityLevel: "loose",
       fontFamily: "Noto Serif TC, serif",
       themeVariables: {
-        fontSize: "28px",
+        fontSize: "30px",
         fontFamily: "Noto Serif TC, serif",
       },
       flowchart: {
         useMaxWidth: true,
         htmlLabels: true,
         curve: "basis",
-        wrappingWidth: 420,
-        nodeSpacing: 40,
-        rankSpacing: 36,
-        padding: 14,
+        wrappingWidth: 460,
+        nodeSpacing: 36,
+        rankSpacing: 32,
+        padding: 12,
       },
     });
     document.addEventListener("DOMContentLoaded", () => {
@@ -1778,7 +1778,8 @@ ${bodyHtml}
             return;
           }
           const vb = svg.viewBox.baseVal;
-          const maxH = Math.round(cw * 1.28);
+          // 獨頁後可給更高：約 170mm
+          const maxH = Math.round(cw * 1.45);
           let w = cw;
           let h = (cw * vb.height) / vb.width;
           if (h > maxH) {

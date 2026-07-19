@@ -268,7 +268,8 @@ async function tryPuppeteer(htmlPath: string): Promise<string | null> {
             return;
           }
           const vb = svg.viewBox.baseVal;
-          const maxH = Math.round(cw * 1.28);
+          // 與印刷 CSS 一致：心智圖獨頁後約 170mm 高度預算
+          const maxH = Math.round(cw * 1.45);
           let w = cw;
           let h = (cw * vb.height) / vb.width;
           if (h > maxH) {
