@@ -19,6 +19,8 @@ BACK_MATTER_IMAGE_PAGES: set[int] = set()
 SPARSE_CHAR_THRESHOLD = 120
 # 僅圖表頁（心智圖 SVG）可低於此值
 MINDMAP_OK_PATTERNS = (r"16\.?心智圖", r"flowchart", r"→", r"\[")
+# 結構圖 ASCII 頁／Mermaid 分頁：字數少但圖佔版面，不算過疏
+STRUCTURE_OK_PATTERNS = (r"結構圖", r"結構流程圖", r"岸邊相遇", r"↓")
 
 
 def norm(s: str) -> str:
@@ -100,6 +102,7 @@ def main() -> int:
             len(body) < SPARSE_CHAR_THRESHOLD
             and pnum not in FRONT_MATTER_IMAGE_PAGES | BACK_MATTER_IMAGE_PAGES
             and not any(re.search(p, n) for p in MINDMAP_OK_PATTERNS)
+            and not any(re.search(p, n) for p in STRUCTURE_OK_PATTERNS)
         ):
             issues.append((pnum, bp, "sparse-page", f"內容過疏（{len(body)} 字）"))
 
@@ -142,13 +145,12 @@ def main() -> int:
 
             prev_n = norm(prev)
 
-            # 結構圖僅 ASCII 在上一頁、mermaid 在下一頁（非刻意分頁）
-            if re.search(r"結構圖", prev_n) and not re.search(r"04\.?原典", prev_n):
-                if ("flowchart" in n or re.search(r"[A-Z]\[", text)) and not re.search(
-                    r"結構圖", n
-                ):
+            # 結構圖標題在頁末、圖卻在下頁（真斷裂）。
+            # ASCII 文字圖與 Mermaid 刻意分頁：上頁有「結構圖」正文、下頁為流程圖——允許。
+            if prev_last and re.search(r"結構圖$", prev_last):
+                if "flowchart" in n or re.search(r"[A-Z]\[|→", text):
                     issues.append(
-                        (pnum, bp, "structure-diagram-split", "結構圖 ASCII 與流程圖割裂"),
+                        (pnum, bp, "structure-diagram-split", "結構圖標題與圖表跨頁割裂"),
                     )
 
         if last and last in ("原典與注疏", "今注今譯與研究", "本專案內交叉引用"):

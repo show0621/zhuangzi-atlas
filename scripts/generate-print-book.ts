@@ -643,7 +643,7 @@ function injectIllustratedCover(bodyHtml: string): string {
 }
 
 const PRINT_KEEP_OPEN =
-  /<div class="print-keep print-(?:mindmap|structure-diagram|h3-block|figure|section-head)">/g;
+  /<div class="print-keep print-(?:mindmap|structure-diagram|structure-mermaid|h3-block|figure|section-head)">/g;
 
 /** Warn if print-keep wrappers leave unbalanced divs (common source of blank PDF pages). */
 function assertPrintKeepBalance(html: string): void {
@@ -688,22 +688,39 @@ function wrapPrintKeepBlocks(html: string): string {
     '<div class="print-keep print-mindmap">$1\n$2',
   );
 
-  // §03「結構圖」：只綁 h3 + ASCII（+ 可選 mermaid），不包整段 §03
+  // §03「結構圖」：h3 + ASCII 一頁；若另有 mermaid，獨立成下頁放大呈現（避免雙圖擠一頁字小＋留白）
   out = out.replace(
-    /(?<!<div class="print-keep print-structure-diagram">)(<h3 id="結構圖">[\s\S]*?<\/h3>)\s*(<pre class="code code-diagram">[\s\S]*?<\/pre>)(\s*<div class="mermaid">[\s\S]*?<\/div>)?/g,
-    '<div class="print-keep print-structure-diagram">$1\n$2$3</div>',
+    /(?<!<div class="print-keep print-structure-diagram">)(<h3 id="結構圖">[^<]*<\/h3>)\s*(<pre class="code code-diagram">[\s\S]*?<\/pre>)(?:\s*(<div class="mermaid">[\s\S]*?<\/div>))?/g,
+    (_m, h3: string, pre: string, mermaid?: string) => {
+      const ascii = `<div class="print-keep print-structure-diagram">${h3}\n${pre}</div>`;
+      if (!mermaid) return ascii;
+      return `${ascii}\n<div class="print-keep print-structure-mermaid"><p class="structure-mermaid-label">結構流程圖</p>\n${mermaid}</div>`;
+    },
   );
 
-  // mermaid 落在 structure-diagram 外：併回區塊內
+  // mermaid 落在 ASCII 結構圖外：改為獨立下頁區塊（不再塞回同一 keep）
   out = out.replace(
-    /(<div class="print-keep print-structure-diagram">[\s\S]*?<\/pre>)<\/div>\s*(<div class="mermaid">[\s\S]*?<\/div>)(?=\s*(?:<p>|<h2 id="04-))/g,
+    /(<div class="print-keep print-structure-diagram">[\s\S]*?<\/pre><\/div>)\s*(<div class="mermaid">[\s\S]*?<\/div>)(?=\s*(?:<p>|<h2 id="04-))/g,
+    '$1\n<div class="print-keep print-structure-mermaid"><p class="structure-mermaid-label">結構流程圖</p>\n$2</div>',
+  );
+
+  // 總括句：有 mermaid 頁則跟流程圖；僅 ASCII 則跟文字圖（避免與 §04 割裂）
+  // 注意：structure-mermaid 內有巢狀 .mermaid；正文可能含 word joiner（U+2060）
+  const summaryP =
+    "<p>[\\s\\S]*?(?:總[\\u2060\\u200b]?括|一[\\u2060\\u200b]?句[\\u2060\\u200b]?話)[\\s\\S]*?<\\/p>";
+  out = out.replace(
+    new RegExp(
+      `(<div class="print-keep print-structure-mermaid">(?:<p class="structure-mermaid-label">[^<]*<\\/p>\\s*)?<div class="mermaid">[\\s\\S]*?<\\/div>)<\\/div>\\s*(${summaryP})\\s*(?:<\\/div>)?(\\s*<h2 id="04-)`,
+      "g",
+    ),
+    "$1\n$2</div>$3",
+  );
+  out = out.replace(
+    new RegExp(
+      `(<div class="print-keep print-structure-diagram"><h3 id="結構圖">[^<]*<\\/h3>\\s*<pre class="code code-diagram">[\\s\\S]*?<\\/pre>)<\\/div>(?!\\s*<div class="print-keep print-structure-mermaid">)\\s*(${summaryP})(?=\\s*<h2 id="04-)`,
+      "g",
+    ),
     "$1\n$2</div>",
-  );
-
-  // §03 結構圖：併入總括句，避免圖表與 §04 原典割裂
-  out = out.replace(
-    /(<div class="print-keep print-structure-diagram">[\s\S]*?<\/div>)\s*(<p>[\s\S]*?(?:總括|一句話)[\s\S]*?<\/p>)(?=\s*<h2 id="04-)/g,
-    (_, diagram, summary) => diagram.replace(/<\/div>\s*$/, `\n${summary}</div>`),
   );
 
   // 清掉殘留／未閉合的 print-h3-block（舊版誤開會把整節綁成不可拆塊 → 頁首只剩標題大片留白）
@@ -752,11 +769,11 @@ function wrapPrintKeepBlocks(html: string): string {
 
   // 修復：結構圖誤包 h3-block
   out = out.replace(
-    /<div class="print-keep print-structure-diagram"><div class="print-keep print-h3-block">(<h3 id="結構圖">[\s\S]*?<\/h3>\s*<pre class="code code-diagram">[\s\S]*?<\/pre>(?:\s*<div class="mermaid">[\s\S]*?<\/div>)?)<\/div><\/div>/g,
+    /<div class="print-keep print-structure-diagram"><div class="print-keep print-h3-block">(<h3 id="結構圖">[^<]*<\/h3>\s*<pre class="code code-diagram">[\s\S]*?<\/pre>)<\/div><\/div>/g,
     '<div class="print-keep print-structure-diagram">$1</div>',
   );
   out = out.replace(
-    /<div class="print-keep print-structure-diagram"><div class="print-keep print-h3-block">(<h3 id="結構圖">[\s\S]*?<\/h3>\s*<pre class="code code-diagram">[\s\S]*?<\/pre>(?:\s*<div class="mermaid">[\s\S]*?<\/div>)?)<\/div>/g,
+    /<div class="print-keep print-structure-diagram"><div class="print-keep print-h3-block">(<h3 id="結構圖">[^<]*<\/h3>\s*<pre class="code code-diagram">[\s\S]*?<\/pre>)<\/div>/g,
     '<div class="print-keep print-structure-diagram">$1</div>',
   );
 
@@ -770,9 +787,13 @@ function wrapPrintKeepBlocks(html: string): string {
     "$1</div>$2",
   );
 
-  // 修復：§03 結構圖 — 確保 structure-diagram 恰有一層閉合
+  // 修復：§03 結構圖 — 確保 structure-diagram／structure-mermaid 恰有一層閉合
   out = out.replace(
-    /(<div class="print-keep print-structure-diagram"><h3 id="結構圖">[^<]*<\/h3>\s*<pre class="code code-diagram">[\s\S]*?<\/pre>(?:\s*<div class="mermaid">[\s\S]*?<\/div>)?)(?:\s*<\/div>)?(\s*<h2 id=")/g,
+    /(<div class="print-keep print-structure-diagram"><h3 id="結構圖">[^<]*<\/h3>\s*<pre class="code code-diagram">[\s\S]*?<\/pre>)(?:\s*<\/div>)?(\s*(?:<div class="print-keep print-structure-mermaid">|<h2 id="))/g,
+    "$1</div>$2",
+  );
+  out = out.replace(
+    /(<div class="print-keep print-structure-mermaid">(?:<p class="structure-mermaid-label">[^<]*<\/p>\s*)?<div class="mermaid">[\s\S]*?<\/div>(?:\s*<p>[\s\S]*?<\/p>)?)(?:\s*<\/div>)+(\s*<h2 id=")/g,
     "$1</div>$2",
   );
 
@@ -1069,15 +1090,27 @@ function buildPrintHtml(bodyHtml: string): string {
       margin-top: 0.35em;
     }
     .print-structure-diagram pre.code-diagram,
-    .print-structure-diagram .mermaid {
+    .print-structure-mermaid .mermaid {
       margin-top: 0.35em;
     }
     .print-structure-diagram pre.code-diagram {
       font-size: 0.82em;
       line-height: 1.35;
     }
-    .print-structure-diagram .mermaid svg {
-      max-height: 65mm;
+    .print-structure-mermaid {
+      margin-top: 0.5em;
+    }
+    .structure-mermaid-label {
+      font-family: var(--font-serif);
+      font-size: 1.05em;
+      font-weight: 600;
+      margin: 0 0 0.4em;
+      color: var(--ink);
+    }
+    .print-structure-mermaid .mermaid svg {
+      max-height: 140mm;
+      width: auto;
+      height: auto;
     }
     .print-bibliography {
       break-inside: auto;
@@ -1561,18 +1594,26 @@ function buildPrintHtml(bodyHtml: string): string {
         break-after: avoid !important;
         page-break-after: avoid !important;
       }
-      .print-structure-diagram .mermaid svg,
       .print-mindmap .mermaid svg {
         max-height: 150mm;
         width: auto;
         height: auto;
       }
-      .print-structure-diagram:has(.mermaid) .mermaid svg {
-        max-height: 65mm;
-      }
       .print-structure-diagram {
         break-inside: avoid !important;
         page-break-inside: avoid !important;
+      }
+      /* ASCII 文字圖與 Mermaid 流程圖分頁：後者獨佔一頁並放大，避免字小＋底部留白 */
+      .print-structure-mermaid {
+        break-before: page !important;
+        page-break-before: always !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      .print-structure-mermaid .mermaid svg {
+        max-height: 145mm !important;
+        width: auto;
+        height: auto;
       }
       img.calligraphy-img,
       .epigraph-page,
